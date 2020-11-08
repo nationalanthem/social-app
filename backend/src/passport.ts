@@ -10,16 +10,16 @@ passport.use(
         const user = await User.findOne({ username })
 
         if (!user) {
-          return done(null, false, { message: 'Пользователь не найден' })
+          return done(null, false)
         }
 
         const validate = await user.validPassword(password)
 
         if (!validate) {
-          return done(null, false, { message: 'Введены неверные данные' })
+          return done(null, false)
         }
 
-        return done(null, user, { message: 'Выполнен вход в систему' })
+        return done(null, user)
       } catch (error) {
         return done(error)
       }
@@ -33,7 +33,7 @@ passport.use(
       secretOrKey: process.env.SECRET_KEY || 'secret_key',
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     },
-    (payload, done) => {
+    async (payload, done) => {
       try {
         return done(null, payload.user)
       } catch (error) {

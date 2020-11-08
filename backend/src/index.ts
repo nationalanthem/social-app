@@ -15,12 +15,18 @@ const PORT = process.env.PORT || 3000
 app.use(express.json())
 app.use(passport.initialize())
 
-app.get('/me', passport.authenticate('jwt'), userController.ownProfile)
+app.get('/me', passport.authenticate('jwt', { session: false }), userController.ownProfile)
 app.post('/register', registerValidation, userController.register)
-app.post('/login', passport.authenticate('local'), userController.login)
-app.post('/create', postValidation, passport.authenticate('jwt'), postController.create)
+app.post('/login', userController.login)
+
+app.post(
+  '/create',
+  postValidation,
+  passport.authenticate('jwt', { session: false }),
+  postController.create
+)
 app.get('/posts', postController.getAllPosts)
-app.get('/posts/my', passport.authenticate('jwt'), postController.getMyPosts)
+app.get('/posts/my', passport.authenticate('jwt', { session: false }), postController.getMyPosts)
 
 connectToDB()
 app.listen(PORT, () => {
