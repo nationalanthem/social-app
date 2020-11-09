@@ -1,26 +1,39 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
-import Typography from '@material-ui/core/Typography'
-import IconButton from '@material-ui/core/IconButton'
+import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem, Box } from '@material-ui/core/'
 import AccountCircle from '@material-ui/icons/AccountCircle'
-import MenuItem from '@material-ui/core/MenuItem'
-import Menu from '@material-ui/core/Menu'
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useHistory } from 'react-router-dom'
 
 const useStyles = makeStyles((theme) => ({
   title: {
     flex: 1,
+  },
+  home: {
+    textDecoration: 'none',
+    color: 'inherit',
+    transition: '.1s',
+    '&:hover': {
+      filter: 'invert(30%)',
+    },
   },
 }))
 
 const Navbar = () => {
   const classes = useStyles()
 
-  const [auth, setAuth] = React.useState(false)
+  const history = useHistory()
+  const location = useLocation()
+
+  const [auth, setAuth] = React.useState<string | null>(null)
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
+
+  React.useEffect(() => {
+    if (localStorage.getItem('token')) {
+      setAuth(localStorage.getItem('token'))
+    }
+  }, [])
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
@@ -30,13 +43,16 @@ const Navbar = () => {
     setAnchorEl(null)
   }
 
-  const handleLogin = () => {
-    setAuth(true)
-  }
-
   const handleExitAccount = () => {
     setAnchorEl(null)
-    setAuth(false)
+    localStorage.removeItem('token')
+    setAuth(null)
+    window.location.href = '/login'
+  }
+
+  const handleProfileClick = () => {
+    setAnchorEl(null)
+    history.push('/profile')
   }
 
   return (
@@ -44,13 +60,26 @@ const Navbar = () => {
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h5" className={classes.title}>
-            Social App
+            {auth ? (
+              <Link to="/feed" className={classes.home}>
+                Social App
+              </Link>
+            ) : (
+              'Social App'
+            )}
           </Typography>
           {auth && (
             <div>
-              <IconButton onClick={handleMenu} color="inherit">
-                <AccountCircle />
-              </IconButton>
+              <Box display="flex">
+                {location.pathname !== '/create' && (
+                  <MenuItem component={Link} to="/create">
+                    Создать пост
+                  </MenuItem>
+                )}
+                <IconButton onClick={handleMenu} color="inherit">
+                  <AccountCircle />
+                </IconButton>
+              </Box>
               <Menu
                 anchorEl={anchorEl}
                 anchorOrigin={{
@@ -65,17 +94,23 @@ const Navbar = () => {
                 open={open}
                 onClose={handleClose}
               >
-                <MenuItem onClick={handleClose}>Мой профиль</MenuItem>
+                <MenuItem onClick={handleProfileClick}>Мой профиль</MenuItem>
                 <MenuItem onClick={handleExitAccount}>Выйти из аккаунта</MenuItem>
               </Menu>
             </div>
           )}
           {!auth && (
             <>
-              <MenuItem onClick={handleLogin}>Вход</MenuItem>
-              <MenuItem component={Link} to="/register">
-                Регистрация
-              </MenuItem>
+              {location.pathname !== '/login' && (
+                <MenuItem component={Link} to="/login">
+                  Вход
+                </MenuItem>
+              )}
+              {location.pathname !== '/register' && (
+                <MenuItem component={Link} to="/register">
+                  Регистрация
+                </MenuItem>
+              )}
             </>
           )}
         </Toolbar>
