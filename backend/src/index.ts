@@ -20,10 +20,10 @@ app.post('/register', registerValidation, userController.register)
 app.post('/login', userController.login)
 
 app.post(
-  '/create',
+  '/createPost',
   postValidation,
   passport.authenticate('jwt', { session: false }),
-  postController.create
+  postController.createPost
 )
 app.get('/posts', postController.getAllPosts)
 app.get('/posts/my', passport.authenticate('jwt', { session: false }), postController.getMyPosts)

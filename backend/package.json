@@ -6,7 +6,9 @@
   "scripts": {
     "devBackend": "nodemon ./src/index.ts",
     "devFrontend": "npm start --prefix ../frontend",
-    "start": "concurrently \"npm run devBackend\" \"npm run devFrontend\""
+    "lintFrontend": "npm run lint --prefix ../frontend",
+    "start": "concurrently \"npm run devBackend\" \"npm run devFrontend\"",
+    "lint": "npm run lintFrontend"
   },
   "author": "nationalanthem",
   "license": "ISC",

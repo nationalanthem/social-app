@@ -77,7 +77,9 @@ const LoginPage = () => {
             type="password"
           />
 
-          {registerError && <Toast severity="error" message={registerError} />}
+          {registerError && (
+            <Toast closeBtn={true} severity="error" message={registerError} duration={5} />
+          )}
 
           <Button
             type="submit"

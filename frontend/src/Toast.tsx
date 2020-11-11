@@ -15,6 +15,8 @@ const useStyles = makeStyles((theme) => ({
 interface ToastProps {
   severity: 'error' | 'warning' | 'info' | 'success'
   message: string
+  duration: number | null
+  closeBtn: boolean
 }
 
 const Toast: React.FC<ToastProps> = (props) => {
@@ -31,8 +33,13 @@ const Toast: React.FC<ToastProps> = (props) => {
 
   return (
     <div className={classes.root}>
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity={props.severity} elevation={6} variant="filled">
+      <Snackbar open={open} autoHideDuration={props.duration} onClose={handleClose}>
+        <Alert
+          onClose={props.closeBtn ? handleClose : undefined}
+          severity={props.severity}
+          elevation={6}
+          variant="filled"
+        >
           {props.message}
         </Alert>
       </Snackbar>

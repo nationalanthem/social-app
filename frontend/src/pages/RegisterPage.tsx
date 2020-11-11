@@ -126,7 +126,9 @@ const RegisterPage = () => {
             helperText={errors.confirmPassword?.message}
           />
 
-          {registerError && <Toast severity="error" message={registerError} />}
+          {registerError && (
+            <Toast closeBtn={true} duration={5} severity="error" message={registerError} />
+          )}
 
           <Button
             type="submit"

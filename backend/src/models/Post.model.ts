@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 
 interface PostSchema {
   description: string
-  image?: string
+  image: string
   author: Express.User
 }
 
@@ -15,7 +15,7 @@ const schema = new mongoose.Schema({
   },
   image: {
     type: String,
-    default: 'blank',
+    required: true,
   },
   author: {
     type: mongoose.Schema.Types.ObjectId,

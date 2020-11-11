@@ -4,7 +4,7 @@ import Post from '../models/Post.model'
 import { UserSchema } from '../models/User.model'
 
 class PostController {
-  async create(req: Request, res: Response): Promise<void> {
+  async createPost(req: Request, res: Response): Promise<void> {
     try {
       const errors = validationResult(req)
       if (!errors.isEmpty()) {
@@ -12,10 +12,11 @@ class PostController {
         return
       }
 
-      const { description } = req.body
+      const { description, image } = req.body
 
       const post = await Post.create({
         description,
+        image,
         author: req.user as UserSchema,
       })
 
