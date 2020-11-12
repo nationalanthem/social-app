@@ -57,8 +57,6 @@ const PostCreationPage = () => {
   const [imageInfo, setImageInfo] = React.useState<IImageInfo | null>(null)
   const [fileSelectionError, setFileSelectionError] = React.useState<string | null>(null)
 
-  const token = localStorage.getItem('token')
-
   const onSubmit = async (data: IPostCreationForm) => {
     const formData = new FormData()
 
@@ -72,7 +70,7 @@ const PostCreationPage = () => {
 
     try {
       const { data: imageData } = await postAPI.uploadImage(formData)
-      await postAPI.createPost(data.description, imageData.secure_url, token!)
+      await postAPI.createPost(data.description, imageData.secure_url)
       window.location.href = '/feed'
     } catch (err) {
       alert('Возникла ошибка при публикации поста')

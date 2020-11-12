@@ -1,5 +1,14 @@
 import axios, { AxiosResponse } from 'axios'
 
+const token = localStorage.getItem('token')!
+
+interface IMyProfileResponse {
+  data: {
+    _id: string
+    username: string
+  }
+}
+
 class UserAPI {
   async register(username: string, password: string): Promise<AxiosResponse> {
     try {
@@ -25,11 +34,11 @@ class UserAPI {
     }
   }
 
-  async myProfile(token: string): Promise<AxiosResponse> {
+  async myProfile(): Promise<AxiosResponse<IMyProfileResponse>> {
     try {
       const response = await axios.get('/me', {
         headers: {
-          Authorization: 'Bearer ' + token,
+          Authorization: `Bearer ${token}`,
         },
       })
       return response

@@ -13,27 +13,23 @@ const useStyles = makeStyles((theme) => ({
     color: 'inherit',
     transition: '.1s',
     '&:hover': {
-      filter: 'invert(30%)',
+      color: 'blue',
     },
   },
 }))
 
-const Navbar = () => {
+interface NavbarProps {
+  authToken: string | null
+}
+
+const Navbar: React.FC<NavbarProps> = ({ authToken }) => {
   const classes = useStyles()
 
   const history = useHistory()
   const location = useLocation()
 
-  const [auth, setAuth] = React.useState<string | null>(null)
-
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
-  const open = Boolean(anchorEl)
-
-  React.useEffect(() => {
-    if (localStorage.getItem('token')) {
-      setAuth(localStorage.getItem('token'))
-    }
-  }, [])
+  const open = !!anchorEl
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
@@ -46,7 +42,6 @@ const Navbar = () => {
   const handleExitAccount = () => {
     setAnchorEl(null)
     localStorage.removeItem('token')
-    setAuth(null)
     window.location.href = '/login'
   }
 
@@ -60,7 +55,7 @@ const Navbar = () => {
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h5" className={classes.title}>
-            {auth ? (
+            {!!authToken && location.pathname !== '/feed' ? (
               <Link to="/feed" className={classes.home}>
                 Social App
               </Link>
@@ -68,7 +63,7 @@ const Navbar = () => {
               'Social App'
             )}
           </Typography>
-          {auth && (
+          {!!authToken ? (
             <div>
               <Box display="flex">
                 {location.pathname !== '/create' && (
@@ -98,8 +93,7 @@ const Navbar = () => {
                 <MenuItem onClick={handleExitAccount}>Выйти из аккаунта</MenuItem>
               </Menu>
             </div>
-          )}
-          {!auth && (
+          ) : (
             <>
               {location.pathname !== '/login' && (
                 <MenuItem component={Link} to="/login">

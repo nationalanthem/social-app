@@ -1,6 +1,16 @@
-import { Avatar, Box, Container, makeStyles, Typography } from '@material-ui/core'
+import {
+  Avatar,
+  Box,
+  Container,
+  GridList,
+  GridListTile,
+  makeStyles,
+  Typography,
+} from '@material-ui/core'
 
 import React from 'react'
+import { IPost, postAPI } from '../api/post.api'
+import { useUserContext } from '../context/UserContext'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -20,6 +30,21 @@ const useStyles = makeStyles((theme) => ({
 
 const ProfilePage = () => {
   const classes = useStyles()
+  const user = useUserContext()
+
+  const [myPostsData, setMyPostsData] = React.useState<IPost[] | null>(null)
+
+  React.useEffect(() => {
+    postAPI
+      .fetchPosts()
+      .then((res) => {
+        setMyPostsData(res.data.data)
+      })
+      .catch((err) => {
+        alert('Ошибка при загрузке данных')
+        console.log(err.response)
+      })
+  }, [])
 
   return (
     <div>
@@ -31,21 +56,19 @@ const ProfilePage = () => {
           justifyContent="center"
           alignItems="center"
         >
-          <Avatar
-            alt="User avatar"
-            classes={{ root: classes.root }}
-            src="https://images.unsplash.com/photo-1502791451862-7bd8c1df43a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=700&q=80g"
-          />
+          <Avatar alt={`${user ? user.username : 'User'} avatar`} classes={{ root: classes.root }}>
+            {user ? user.username.charAt(0).toUpperCase() : '...'}
+          </Avatar>
 
           <Typography variant="h5" component="h1" className={classes.username}>
-            Username
+            {user ? user.username : '...'}
           </Typography>
         </Box>
         <Box display="flex" justifyContent="space-between" mt={5}>
           <Box>
             <Typography variant="body1">
               <Typography variant="body1" className={classes.bold} component="span">
-                0
+                {myPostsData ? myPostsData.length : '...'}
               </Typography>{' '}
               публикаций
             </Typography>
@@ -69,33 +92,24 @@ const ProfilePage = () => {
         </Box>
       </Container>
       <Container maxWidth="lg" className={classes.galleryContainer}>
-        <Box display="flex" flexWrap="wrap">
-          <img
-            style={{ width: '29%', marginRight: '1em', marginBottom: '1em' }}
-            src="https://images.unsplash.com/photo-1604419481865-7bb53ed1237f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80"
-            alt="nature"
-          />
-          <img
-            style={{ width: '29%', marginRight: '1em', marginBottom: '1em' }}
-            src="https://images.unsplash.com/photo-1604419481865-7bb53ed1237f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80"
-            alt="nature"
-          />
-          <img
-            style={{ width: '29%', marginRight: '1em', marginBottom: '1em' }}
-            src="https://images.unsplash.com/photo-1604419481865-7bb53ed1237f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80"
-            alt="nature"
-          />
-          <img
-            style={{ width: '29%', marginRight: '1em', marginBottom: '1em' }}
-            src="https://images.unsplash.com/photo-1604419481865-7bb53ed1237f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80"
-            alt="nature"
-          />
-          <img
-            style={{ width: '29%', marginRight: '1em', marginBottom: '1em' }}
-            src="https://images.unsplash.com/photo-1604419481865-7bb53ed1237f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80"
-            alt="nature"
-          />
-        </Box>
+        {myPostsData ? (
+          <GridList cellHeight={250} cols={3} spacing={10}>
+            {myPostsData.map((post) => (
+              <GridListTile key={post._id}>
+                <img
+                  src={post.image}
+                  alt={
+                    post.description.length > 50
+                      ? `${post.description.slice(0, 50)}...`
+                      : post.description
+                  }
+                />
+              </GridListTile>
+            ))}
+          </GridList>
+        ) : (
+          'Загрузка...'
+        )}
       </Container>
     </div>
   )

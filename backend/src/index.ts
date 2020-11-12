@@ -25,7 +25,7 @@ app.post(
   passport.authenticate('jwt', { session: false }),
   postController.createPost
 )
-app.get('/posts', postController.getAllPosts)
+app.get('/posts', passport.authenticate('jwt', { session: false }), postController.getAllPosts)
 app.get('/posts/my', passport.authenticate('jwt', { session: false }), postController.getMyPosts)
 
 connectToDB()

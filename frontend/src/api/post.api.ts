@@ -1,7 +1,22 @@
 import axios, { AxiosResponse } from 'axios'
 
+const token = localStorage.getItem('token')!
+
 interface IUploadImageResponse {
   secure_url: string
+}
+
+export interface IPost {
+  _id: string
+  description: string
+  image: string
+  author: {
+    username: string
+  }
+}
+
+interface IGetPostsResponse {
+  data: IPost[]
 }
 
 class PostAPI {
@@ -18,7 +33,7 @@ class PostAPI {
     }
   }
 
-  async createPost(description: string, image: string, token: string): Promise<AxiosResponse> {
+  async createPost(description: string, image: string): Promise<AxiosResponse> {
     try {
       const response = await axios.post(
         '/createPost',
@@ -33,6 +48,32 @@ class PostAPI {
         }
       )
 
+      return response
+    } catch (err) {
+      throw err
+    }
+  }
+
+  async fetchPosts(): Promise<AxiosResponse<IGetPostsResponse>> {
+    try {
+      const response = await axios.get('/posts', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      return response
+    } catch (err) {
+      throw err
+    }
+  }
+
+  async getMyPosts(): Promise<AxiosResponse<IGetPostsResponse>> {
+    try {
+      const response = await axios.get('/posts/my', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       return response
     } catch (err) {
       throw err

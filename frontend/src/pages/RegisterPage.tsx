@@ -127,7 +127,7 @@ const RegisterPage = () => {
           />
 
           {registerError && (
-            <Toast closeBtn={true} duration={5} severity="error" message={registerError} />
+            <Toast closeBtn={true} duration={5000} severity="error" message={registerError} />
           )}
 
           <Button

@@ -78,7 +78,7 @@ const LoginPage = () => {
           />
 
           {registerError && (
-            <Toast closeBtn={true} severity="error" message={registerError} duration={5} />
+            <Toast closeBtn={true} severity="error" message={registerError} duration={5000} />
           )}
 
           <Button

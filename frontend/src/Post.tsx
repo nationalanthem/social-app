@@ -55,28 +55,36 @@ const Comment = () => {
   )
 }
 
-const Post = () => {
+interface IPostProps {
+  username: string
+  image_url: string
+  description: string
+}
+
+const Post: React.FC<IPostProps> = ({ username, image_url, description }) => {
   const classes = useStyles()
 
   return (
     <Paper elevation={5} className={classes.root}>
       <Box display="flex" alignItems="center">
-        <Avatar className={classes.avatar}>U</Avatar>
+        <Avatar className={classes.avatar}>{username.charAt(0).toUpperCase()}</Avatar>
         <Typography component="h3" variant="h6">
-          Username
+          {username}
         </Typography>
       </Box>
       <Box className={classes.imageContainer}>
         <img
-          alt="animal"
+          alt=""
           style={{
+            display: 'block',
+            margin: '0 auto',
             maxWidth: '100%',
             maxHeight: '600px',
           }}
-          src="https://images.unsplash.com/photo-1604864990572-993aae1ac5c2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80"
+          src={image_url}
         />
       </Box>
-      <Typography>Описание...</Typography>
+      <Typography>{description}</Typography>
       <Box className={classes.commentsContainer}>
         <Comment />
         <Comment />
