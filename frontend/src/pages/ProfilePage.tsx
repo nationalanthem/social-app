@@ -9,8 +9,10 @@ import {
 } from '@material-ui/core'
 
 import React from 'react'
-import { IPost, postAPI } from '../api/post.api'
-import { useUserContext } from '../context/UserContext'
+import { useDispatch, useSelector } from 'react-redux'
+import { selectMyPosts } from '../redux/re-ducks/posts/selectors'
+import { fetchOnlyMyPosts } from '../redux/re-ducks/posts'
+import { selectUser } from '../redux/re-ducks/user/selectors'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,21 +32,14 @@ const useStyles = makeStyles((theme) => ({
 
 const ProfilePage = () => {
   const classes = useStyles()
-  const user = useUserContext()
+  const dispatch = useDispatch()
+  const user = useSelector(selectUser)
 
-  const [myPostsData, setMyPostsData] = React.useState<IPost[] | null>(null)
+  const myPosts = useSelector(selectMyPosts)
 
   React.useEffect(() => {
-    postAPI
-      .fetchPosts()
-      .then((res) => {
-        setMyPostsData(res.data.data)
-      })
-      .catch((err) => {
-        alert('Ошибка при загрузке данных')
-        console.log(err.response)
-      })
-  }, [])
+    dispatch(fetchOnlyMyPosts())
+  }, [dispatch, user])
 
   return (
     <div>
@@ -57,7 +52,7 @@ const ProfilePage = () => {
           alignItems="center"
         >
           <Avatar alt={`${user ? user.username : 'User'} avatar`} classes={{ root: classes.root }}>
-            {user ? user.username.charAt(0).toUpperCase() : '...'}
+            {user ? user.username.charAt(0).toUpperCase() : ''}
           </Avatar>
 
           <Typography variant="h5" component="h1" className={classes.username}>
@@ -68,7 +63,7 @@ const ProfilePage = () => {
           <Box>
             <Typography variant="body1">
               <Typography variant="body1" className={classes.bold} component="span">
-                {myPostsData ? myPostsData.length : '...'}
+                {myPosts ? myPosts.length : '...'}
               </Typography>{' '}
               публикаций
             </Typography>
@@ -92,9 +87,9 @@ const ProfilePage = () => {
         </Box>
       </Container>
       <Container maxWidth="lg" className={classes.galleryContainer}>
-        {myPostsData ? (
+        {myPosts ? (
           <GridList cellHeight={250} cols={3} spacing={10}>
-            {myPostsData.map((post) => (
+            {myPosts.map((post) => (
               <GridListTile key={post._id}>
                 <img
                   src={post.image}

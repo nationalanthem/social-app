@@ -1,7 +1,5 @@
 import axios, { AxiosResponse } from 'axios'
 
-const token = localStorage.getItem('token')!
-
 interface IMyProfileResponse {
   data: {
     _id: string
@@ -10,6 +8,12 @@ interface IMyProfileResponse {
 }
 
 class UserAPI {
+  token: string
+
+  constructor() {
+    this.token = localStorage.getItem('token')!
+  }
+
   async register(username: string, password: string): Promise<AxiosResponse> {
     try {
       const response = await axios.post('/register', {
@@ -38,7 +42,7 @@ class UserAPI {
     try {
       const response = await axios.get('/me', {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${this.token}`,
         },
       })
       return response

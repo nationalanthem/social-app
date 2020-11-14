@@ -1,27 +1,22 @@
 import { Container } from '@material-ui/core'
 import React from 'react'
-import { IPost, postAPI } from '../api/post.api'
+import { useDispatch, useSelector } from 'react-redux'
 import Post from '../Post'
+import { fetchPosts } from '../redux/re-ducks/posts'
+import { selectPosts } from '../redux/re-ducks/posts/selectors'
 
 const FeedPage = () => {
-  const [postsData, setPostsData] = React.useState<IPost[] | null>(null)
+  const dispatch = useDispatch()
+  const posts = useSelector(selectPosts)
 
   React.useEffect(() => {
-    postAPI
-      .fetchPosts()
-      .then((res) => {
-        setPostsData(res.data.data)
-      })
-      .catch((err) => {
-        alert('Ошибка при загрузке данных')
-        console.log(err.response)
-      })
-  }, [])
+    dispatch(fetchPosts())
+  }, [dispatch])
 
   return (
     <Container maxWidth="md">
-      {postsData ? (
-        postsData.map((post) => (
+      {posts ? (
+        posts.map((post) => (
           <Post
             key={post._id}
             username={post.author.username}

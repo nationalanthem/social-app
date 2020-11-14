@@ -1,7 +1,5 @@
 import axios, { AxiosResponse } from 'axios'
 
-const token = localStorage.getItem('token')!
-
 interface IUploadImageResponse {
   secure_url: string
 }
@@ -11,6 +9,7 @@ export interface IPost {
   description: string
   image: string
   author: {
+    _id: string
     username: string
   }
 }
@@ -20,6 +19,12 @@ interface IGetPostsResponse {
 }
 
 class PostAPI {
+  token: string
+
+  constructor() {
+    this.token = localStorage.getItem('token')!
+  }
+
   async uploadImage(formData: FormData): Promise<AxiosResponse<IUploadImageResponse>> {
     try {
       const response = await axios.post(
@@ -43,7 +48,7 @@ class PostAPI {
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${this.token}`,
           },
         }
       )
@@ -58,7 +63,7 @@ class PostAPI {
     try {
       const response = await axios.get('/posts', {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${this.token}`,
         },
       })
       return response
@@ -71,7 +76,7 @@ class PostAPI {
     try {
       const response = await axios.get('/posts/my', {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${this.token}`,
         },
       })
       return response

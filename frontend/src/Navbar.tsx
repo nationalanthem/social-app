@@ -18,12 +18,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-interface NavbarProps {
-  authToken: string | null
-}
-
-const Navbar: React.FC<NavbarProps> = ({ authToken }) => {
+const Navbar = () => {
   const classes = useStyles()
+
+  const isAuthenticated = !!localStorage.getItem('token')
 
   const history = useHistory()
   const location = useLocation()
@@ -55,7 +53,7 @@ const Navbar: React.FC<NavbarProps> = ({ authToken }) => {
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h5" className={classes.title}>
-            {!!authToken && location.pathname !== '/feed' ? (
+            {isAuthenticated && location.pathname !== '/feed' ? (
               <Link to="/feed" className={classes.home}>
                 Social App
               </Link>
@@ -63,7 +61,7 @@ const Navbar: React.FC<NavbarProps> = ({ authToken }) => {
               'Social App'
             )}
           </Typography>
-          {!!authToken ? (
+          {isAuthenticated ? (
             <div>
               <Box display="flex">
                 {location.pathname !== '/create' && (

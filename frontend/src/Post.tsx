@@ -21,17 +21,16 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     margin: '1em 0',
   },
-  commentHeader: {
+  commentBody: {
     display: 'flex',
-    alignItems: 'center',
-    marginBottom: theme.spacing(1),
+    alignItems: 'baseline',
   },
-  commentAvatar: {
-    marginRight: theme.spacing(1),
+  commentUsername: {
+    fontWeight: 'bolder',
+    marginRight: theme.spacing(2),
   },
   addCommentForm: {
     display: 'flex',
-    alignItems: 'baseline',
     marginBottom: theme.spacing(1),
   },
   submit: {
@@ -45,11 +44,12 @@ const Comment = () => {
   return (
     <>
       <Box mb={2}>
-        <Box className={classes.commentHeader}>
-          <Avatar className={classes.commentAvatar}>U</Avatar>
-          <Typography>Username</Typography>
+        <Box className={classes.commentBody}>
+          <Typography variant="body2" className={classes.commentUsername}>
+            Username
+          </Typography>
+          <Typography variant="body2">Комментарий...</Typography>
         </Box>
-        <Typography variant="body2">Комментарий...</Typography>
       </Box>
     </>
   )
