@@ -1,5 +1,7 @@
 import { Paper, Typography, Avatar, Box, TextField, Button } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
+import DeleteIcon from '@material-ui/icons/Delete'
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
 import React from 'react'
 
 const useStyles = makeStyles((theme) => ({
@@ -13,21 +15,33 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(6),
   },
   imageContainer: {
-    height: '600px',
     margin: '1.5em 0',
   },
   commentsContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    margin: '1em 0',
+    marginTop: '2em',
   },
   commentBody: {
-    display: 'flex',
-    alignItems: 'baseline',
+    overflowWrap: 'break-word',
+    position: 'relative',
+    width: '97%',
   },
   commentUsername: {
     fontWeight: 'bolder',
-    marginRight: theme.spacing(2),
+    marginRight: '10px',
+    float: 'left',
+  },
+  deleteIcon: {
+    position: 'absolute',
+    top: 0,
+    right: -30,
+    transition: '0.1s all',
+    cursor: 'pointer',
+    '&:hover': {
+      color: 'red',
+    },
+    '&:active': {
+      top: '5px',
+    },
   },
   addCommentForm: {
     display: 'flex',
@@ -38,17 +52,48 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const Comment = () => {
+interface CommentProps {
+  onRequestCommentClick: (postID: string, commentID: string) => void
+  authorUsername: string
+  commentBody: string
+  postID: string
+  commentID: string
+  deleteBtn?: boolean
+}
+
+export const Comment: React.FC<CommentProps> = ({
+  onRequestCommentClick,
+  postID,
+  commentID,
+  authorUsername,
+  commentBody,
+  deleteBtn,
+}) => {
   const classes = useStyles()
+
+  const [isDeleting, setIsDeleting] = React.useState(false)
 
   return (
     <>
       <Box mb={2}>
         <Box className={classes.commentBody}>
-          <Typography variant="body2" className={classes.commentUsername}>
-            Username
+          <Typography variant="body2" component="h4" className={classes.commentUsername}>
+            {authorUsername}
           </Typography>
-          <Typography variant="body2">Комментарий...</Typography>
+          <Typography variant="body2" component="span">
+            {commentBody}
+          </Typography>
+          {deleteBtn && (
+            <i
+              onClick={() => {
+                setIsDeleting(true)
+                onRequestCommentClick(postID, commentID)
+              }}
+              className={classes.deleteIcon}
+            >
+              {isDeleting ? <DeleteForeverIcon /> : <DeleteIcon />}
+            </i>
+          )}
         </Box>
       </Box>
     </>
@@ -56,13 +101,33 @@ const Comment = () => {
 }
 
 interface IPostProps {
+  onRequestPostClick: (postID: string, body: string) => void
+  postID: string
   username: string
   image_url: string
   description: string
 }
 
-const Post: React.FC<IPostProps> = ({ username, image_url, description }) => {
+export const Post: React.FC<IPostProps> = ({
+  onRequestPostClick,
+  postID,
+  username,
+  image_url,
+  description,
+  children,
+}) => {
   const classes = useStyles()
+  const [commentBody, setCommentBody] = React.useState('')
+
+  const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    setCommentBody(e.target.value)
+  }
+
+  const handleCommentSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    if (!commentBody) return
+    onRequestPostClick(postID, commentBody)
+    setCommentBody('')
+  }
 
   return (
     <Paper elevation={5} className={classes.root}>
@@ -85,17 +150,20 @@ const Post: React.FC<IPostProps> = ({ username, image_url, description }) => {
         />
       </Box>
       <Typography>{description}</Typography>
-      <Box className={classes.commentsContainer}>
-        <Comment />
-        <Comment />
-        <Comment />
-      </Box>
+      <Box className={classes.commentsContainer}>{children}</Box>
       <Box className={classes.addCommentForm}>
-        <TextField type="text" label="Напишите комментарий" fullWidth />
-        <Button className={classes.submit}>Добавить</Button>
+        <TextField
+          onChange={handleCommentChange}
+          value={commentBody}
+          type="text"
+          label="Напишите комментарий"
+          multiline={true}
+          fullWidth
+        />
+        <Button disabled={!commentBody} onClick={handleCommentSubmit} className={classes.submit}>
+          Добавить
+        </Button>
       </Box>
     </Paper>
   )
 }
-
-export default Post

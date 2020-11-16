@@ -1,9 +1,9 @@
 import { Dispatch } from 'redux'
 import { postAPI } from '../../../api/post.api'
-import { Actions } from './@types'
+import { IPostsActions } from '../types'
 import { failureFetch, startFetch, successFetch, successFetchMyPosts } from './actions'
 
-export const fetchPosts = () => async (dispatch: Dispatch<Actions>) => {
+export const fetchAllPosts = () => async (dispatch: Dispatch<IPostsActions>) => {
   try {
     dispatch(startFetch())
 
@@ -15,7 +15,7 @@ export const fetchPosts = () => async (dispatch: Dispatch<Actions>) => {
   }
 }
 
-export const fetchOnlyMyPosts = () => async (dispatch: Dispatch<Actions>) => {
+export const fetchOnlyMyPosts = () => async (dispatch: Dispatch<IPostsActions>) => {
   try {
     dispatch(startFetch())
 

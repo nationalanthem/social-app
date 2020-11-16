@@ -27,6 +27,12 @@ app.post(
 )
 app.get('/posts', passport.authenticate('jwt', { session: false }), postController.getAllPosts)
 app.get('/posts/my', passport.authenticate('jwt', { session: false }), postController.getMyPosts)
+app.put('/addComment', passport.authenticate('jwt', { session: false }), postController.addComment)
+app.delete(
+  '/deleteComment/:postID/:commentID',
+  passport.authenticate('jwt', { session: false }),
+  postController.deleteComment
+)
 
 connectToDB()
 app.listen(PORT, () => {

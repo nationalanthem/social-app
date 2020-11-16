@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 import bcrypt from 'bcrypt'
 
 export interface UserSchema {
-  _id?: string
+  _id: mongoose.Types.ObjectId
   username: string
   password: string
   validPassword(password: string): Promise<boolean>

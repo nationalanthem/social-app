@@ -1,38 +1,34 @@
-import { produce, Draft } from 'immer'
-import { Actions, ActionTypes, LoadingState, Post } from './@types'
+import produce, { Draft } from 'immer'
+import { IPostsActions, IPostsState } from '../types'
+import { ActionTypes } from './actions'
 
-export interface PostsState {
-  posts: Post[]
-  loading: LoadingState
-  error: string | null
-  myPosts: Post[]
-}
-
-const initialState: PostsState = {
+const initialState: IPostsState = {
   posts: [],
-  loading: LoadingState.IDLE,
+  loading: false,
   error: null,
   myPosts: [],
 }
 
-export const rootReducer = produce((draft: Draft<PostsState>, action: Actions) => {
+const postsReducer = produce((draft: Draft<IPostsState>, action: IPostsActions) => {
   switch (action.type) {
     case ActionTypes.FETCH_POSTS_START:
-      draft.loading = LoadingState.LOADING
+      draft.loading = true
       break
     case ActionTypes.FETCH_POSTS_SUCCESS:
-      draft.loading = LoadingState.SUCCESS
+      draft.loading = false
       draft.error = null
       draft.posts = action.payload
       break
     case ActionTypes.FETCH_MY_POSTS_SUCCESS:
-      draft.loading = LoadingState.SUCCESS
+      draft.loading = false
       draft.error = null
       draft.myPosts = action.payload
       break
     case ActionTypes.FETCH_POSTS_FAILURE:
-      draft.loading = LoadingState.FAILURE
+      draft.loading = false
       draft.error = action.payload
       break
   }
 }, initialState)
+
+export default postsReducer

@@ -1,17 +1,8 @@
 import axios, { AxiosResponse } from 'axios'
+import { IPost } from '../redux/re-ducks/types'
 
 interface IUploadImageResponse {
   secure_url: string
-}
-
-export interface IPost {
-  _id: string
-  description: string
-  image: string
-  author: {
-    _id: string
-    username: string
-  }
 }
 
 interface IGetPostsResponse {
@@ -52,6 +43,41 @@ class PostAPI {
           },
         }
       )
+
+      return response
+    } catch (err) {
+      throw err
+    }
+  }
+
+  async addComment(postID: string, body: string): Promise<AxiosResponse> {
+    try {
+      const response = await axios.put(
+        '/addComment',
+        {
+          postID,
+          body,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        }
+      )
+
+      return response
+    } catch (err) {
+      throw err
+    }
+  }
+
+  async deleteComment(postID: string, commentID: string): Promise<AxiosResponse> {
+    try {
+      const response = await axios.delete(`/deleteComment/${postID}/${commentID}`, {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      })
 
       return response
     } catch (err) {

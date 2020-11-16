@@ -11,7 +11,7 @@ import {
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectMyPosts } from '../redux/re-ducks/posts/selectors'
-import { fetchOnlyMyPosts } from '../redux/re-ducks/posts'
+import { fetchOnlyMyPosts } from '../redux/re-ducks/posts/effects'
 import { selectUser } from '../redux/re-ducks/user/selectors'
 
 const useStyles = makeStyles((theme) => ({

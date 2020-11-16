@@ -1,10 +1,8 @@
 import axios, { AxiosResponse } from 'axios'
+import { User } from '../redux/re-ducks/user/@types'
 
 interface IMyProfileResponse {
-  data: {
-    _id: string
-    username: string
-  }
+  data: User
 }
 
 class UserAPI {
