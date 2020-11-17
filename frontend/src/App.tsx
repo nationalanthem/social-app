@@ -8,7 +8,7 @@ import PostCreationPage from './pages/PostCreationPage'
 import FeedPage from './pages/FeedPage'
 import { ProtectedRoute } from './ProtectedRoute'
 import { useDispatch } from 'react-redux'
-import { fetchUser } from './redux/re-ducks/user'
+import { fetchUser } from './redux/re-ducks/user/thunks'
 
 const App = () => {
   const isAuthenticated = !!localStorage.getItem('token')

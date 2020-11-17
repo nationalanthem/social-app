@@ -1,6 +1,6 @@
 import produce, { Draft } from 'immer'
 import { IPostsActions, IPostsState } from '../types'
-import { ActionTypes } from './actions'
+import { PostsActionTypes } from './actions'
 
 const initialState: IPostsState = {
   posts: [],
@@ -11,20 +11,20 @@ const initialState: IPostsState = {
 
 const postsReducer = produce((draft: Draft<IPostsState>, action: IPostsActions) => {
   switch (action.type) {
-    case ActionTypes.FETCH_POSTS_START:
+    case PostsActionTypes.FETCH_POSTS_START:
       draft.loading = true
       break
-    case ActionTypes.FETCH_POSTS_SUCCESS:
+    case PostsActionTypes.FETCH_POSTS_SUCCESS:
       draft.loading = false
       draft.error = null
       draft.posts = action.payload
       break
-    case ActionTypes.FETCH_MY_POSTS_SUCCESS:
+    case PostsActionTypes.FETCH_MY_POSTS_SUCCESS:
       draft.loading = false
       draft.error = null
       draft.myPosts = action.payload
       break
-    case ActionTypes.FETCH_POSTS_FAILURE:
+    case PostsActionTypes.FETCH_POSTS_FAILURE:
       draft.loading = false
       draft.error = action.payload
       break

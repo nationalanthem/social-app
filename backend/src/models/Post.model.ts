@@ -5,7 +5,7 @@ export interface CommentSchema {
   body: string
   author: {
     _id: mongoose.Types.ObjectId
-    username: string
+    username?: string
   }
 }
 
@@ -13,7 +13,10 @@ export interface PostSchema {
   _id?: mongoose.Types.ObjectId
   description: string
   image: string
-  author: Express.User
+  author: {
+    _id: mongoose.Types.ObjectId
+    username?: string
+  }
   comments: CommentSchema[]
 }
 

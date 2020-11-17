@@ -1,24 +1,24 @@
-import { ActionTypes } from './posts/actions'
-import { User } from './user/@types'
+import { PostsActionTypes } from './posts/actions'
+import { UserActionTypes } from './user/actions'
 
 // POSTS
 
 export interface IFetchPostsStart {
-  type: typeof ActionTypes.FETCH_POSTS_START
+  type: typeof PostsActionTypes.FETCH_POSTS_START
 }
 
 export interface IFetchPostsSuccess {
-  type: typeof ActionTypes.FETCH_POSTS_SUCCESS
+  type: typeof PostsActionTypes.FETCH_POSTS_SUCCESS
   payload: IPost[]
 }
 
 export interface IFetchMyPostsSuccess {
-  type: typeof ActionTypes.FETCH_MY_POSTS_SUCCESS
+  type: typeof PostsActionTypes.FETCH_MY_POSTS_SUCCESS
   payload: IPost[]
 }
 
 export interface IFetchPostsFailure {
-  type: typeof ActionTypes.FETCH_POSTS_FAILURE
+  type: typeof PostsActionTypes.FETCH_POSTS_FAILURE
   payload: string
 }
 
@@ -31,14 +31,14 @@ export type IPostsActions =
 export interface IComment {
   _id: string
   body: string
-  author: User
+  author: IUser
 }
 
 export interface IPost {
   _id: string
   description: string
   image: string
-  author: User
+  author: IUser
   comments: IComment[]
 }
 
@@ -50,3 +50,30 @@ export interface IPostsState {
 }
 
 // USER
+
+export interface IFetchUserStart {
+  type: typeof UserActionTypes.FETCH_USER_START
+}
+
+export interface IFetchUserSuccess {
+  type: typeof UserActionTypes.FETCH_USER_SUCCESS
+  payload: IUser
+}
+
+export interface IFetchUserFailure {
+  type: typeof UserActionTypes.FETCH_USER_FAILURE
+  payload: string
+}
+
+export type IUserActions = IFetchUserStart | IFetchUserSuccess | IFetchUserFailure
+
+export interface IUser {
+  _id: string
+  username: string
+}
+
+export interface IUserState {
+  user: IUser | null
+  loading: boolean
+  error: string | null
+}

@@ -33,6 +33,11 @@ app.delete(
   passport.authenticate('jwt', { session: false }),
   postController.deleteComment
 )
+app.delete(
+  '/deletePost/:postID',
+  passport.authenticate('jwt', { session: false }),
+  postController.deletePost
+)
 
 connectToDB()
 app.listen(PORT, () => {

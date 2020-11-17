@@ -2,6 +2,7 @@ import { Paper, Typography, Avatar, Box, TextField, Button } from '@material-ui/
 import { makeStyles } from '@material-ui/core/styles'
 import DeleteIcon from '@material-ui/icons/Delete'
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
+import HighlightOffIcon from '@material-ui/icons/HighlightOff'
 import React from 'react'
 
 const useStyles = makeStyles((theme) => ({
@@ -30,7 +31,20 @@ const useStyles = makeStyles((theme) => ({
     marginRight: '10px',
     float: 'left',
   },
-  deleteIcon: {
+  deletePostIcon: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    transition: '0.1s all',
+    cursor: 'pointer',
+    '&:hover': {
+      color: 'red',
+    },
+    '&:active': {
+      top: '2px',
+    },
+  },
+  deleteCommentIcon: {
     position: 'absolute',
     top: 0,
     right: -30,
@@ -40,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
       color: 'red',
     },
     '&:active': {
-      top: '5px',
+      top: '2px',
     },
   },
   addCommentForm: {
@@ -58,7 +72,7 @@ interface CommentProps {
   commentBody: string
   postID: string
   commentID: string
-  deleteBtn?: boolean
+  deleteBtn: boolean
 }
 
 export const Comment: React.FC<CommentProps> = ({
@@ -89,7 +103,7 @@ export const Comment: React.FC<CommentProps> = ({
                 setIsDeleting(true)
                 onRequestCommentClick(postID, commentID)
               }}
-              className={classes.deleteIcon}
+              className={classes.deleteCommentIcon}
             >
               {isDeleting ? <DeleteForeverIcon /> : <DeleteIcon />}
             </i>
@@ -102,7 +116,9 @@ export const Comment: React.FC<CommentProps> = ({
 
 interface IPostProps {
   onRequestPostClick: (postID: string, body: string) => void
+  onRequestDeletePostClick: (postID: string) => void
   postID: string
+  deleteBtn: boolean
   username: string
   image_url: string
   description: string
@@ -110,7 +126,9 @@ interface IPostProps {
 
 export const Post: React.FC<IPostProps> = ({
   onRequestPostClick,
+  onRequestDeletePostClick,
   postID,
+  deleteBtn,
   username,
   image_url,
   description,
@@ -118,6 +136,7 @@ export const Post: React.FC<IPostProps> = ({
 }) => {
   const classes = useStyles()
   const [commentBody, setCommentBody] = React.useState('')
+  const [isDeleting, setIsDeleting] = React.useState(false)
 
   const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     setCommentBody(e.target.value)
@@ -131,11 +150,22 @@ export const Post: React.FC<IPostProps> = ({
 
   return (
     <Paper elevation={5} className={classes.root}>
-      <Box display="flex" alignItems="center">
+      <Box display="flex" alignItems="center" position="relative">
         <Avatar className={classes.avatar}>{username.charAt(0).toUpperCase()}</Avatar>
         <Typography component="h3" variant="h6">
           {username}
         </Typography>
+        {deleteBtn && (
+          <i
+            onClick={() => {
+              setIsDeleting(true)
+              onRequestDeletePostClick(postID)
+            }}
+            className={classes.deletePostIcon}
+          >
+            <HighlightOffIcon color={isDeleting ? 'disabled' : 'action'} />
+          </i>
+        )}
       </Box>
       <Box className={classes.imageContainer}>
         <img

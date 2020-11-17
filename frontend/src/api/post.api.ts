@@ -50,6 +50,20 @@ class PostAPI {
     }
   }
 
+  async deletePost(postID: string): Promise<AxiosResponse> {
+    try {
+      const response = await axios.delete(`/deletePost/${postID}`, {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      })
+
+      return response
+    } catch (err) {
+      throw err
+    }
+  }
+
   async addComment(postID: string, body: string): Promise<AxiosResponse> {
     try {
       const response = await axios.put(

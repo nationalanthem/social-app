@@ -1,8 +1,8 @@
 import axios, { AxiosResponse } from 'axios'
-import { User } from '../redux/re-ducks/user/@types'
+import { IUser } from '../redux/re-ducks/types'
 
 interface IMyProfileResponse {
-  data: User
+  data: IUser
 }
 
 class UserAPI {

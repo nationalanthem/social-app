@@ -1,31 +1,27 @@
-import { produce, Draft } from 'immer'
-import { Actions, ActionTypes, LoadingState, User } from './@types'
+import produce, { Draft } from 'immer'
+import { IUserActions, IUserState } from '../types'
+import { UserActionTypes } from './actions'
 
-export interface UserState {
-  user: User | null
-  loading: LoadingState
-  error: string | null
-}
-
-const initialState: UserState = {
+const initialState: IUserState = {
   user: null,
-  loading: LoadingState.IDLE,
+  loading: false,
   error: null,
 }
-
-export const rootReducer = produce((draft: Draft<UserState>, action: Actions) => {
+const userReducer = produce((draft: Draft<IUserState>, action: IUserActions) => {
   switch (action.type) {
-    case ActionTypes.FETCH_USER_START:
-      draft.loading = LoadingState.LOADING
+    case UserActionTypes.FETCH_USER_START:
+      draft.loading = true
       break
-    case ActionTypes.FETCH_USER_SUCCESS:
-      draft.loading = LoadingState.SUCCESS
+    case UserActionTypes.FETCH_USER_SUCCESS:
+      draft.loading = false
       draft.error = null
       draft.user = action.payload
       break
-    case ActionTypes.FETCH_USER_FAILURE:
-      draft.loading = LoadingState.FAILURE
+    case UserActionTypes.FETCH_USER_FAILURE:
+      draft.loading = false
       draft.error = action.payload
       break
   }
 }, initialState)
+
+export default userReducer

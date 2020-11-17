@@ -34,6 +34,29 @@ class PostController {
     }
   }
 
+  deletePost(req: Request, res: Response): void {
+    const { postID } = req.params
+    const user = req.user as UserSchema
+
+    Post.findById(postID)
+      .populate('author', '_id username')
+      .exec((err, result) => {
+        if (err) return res.status(400).json({ status: 'error', error: err })
+        if (!result) return res.sendStatus(404)
+        if (result.author._id.equals(user._id)) {
+          result.deleteOne((err) => {
+            if (err) return res.status(400).json({ status: 'error', error: err })
+            res.json({
+              status: 'ok',
+              message: 'Публикация удалена',
+            })
+          })
+        } else {
+          res.sendStatus(403)
+        }
+      })
+  }
+
   addComment(req: Request, res: Response): void {
     const { postID, body } = req.body
     const user = req.user as UserSchema
@@ -59,11 +82,12 @@ class PostController {
     Post.findById(postID)
       .populate('comments.author', '_id username')
       .exec((err, result) => {
-        if (!result || err) return res.status(400).json({ status: 'error', error: err })
+        if (err) return res.status(400).json({ status: 'error', error: err })
+        if (!result) return res.sendStatus(404)
         const commentIndex = result.comments.findIndex((comment) => comment._id?.equals(commentID))
         if (commentIndex === -1) return res.sendStatus(404)
         if (result.comments[commentIndex].author._id?.equals(user._id)) {
-          result.updateOne({ $pull: { comments: { _id: commentID } } }, (err, result) => {
+          result.updateOne({ $pull: { comments: { _id: commentID } } }, (err) => {
             if (err) return res.status(400).json({ status: 'error', error: err })
             res.json({ status: 'ok', message: 'Комментарий удалён' })
           })
@@ -85,7 +109,10 @@ class PostController {
   async getMyPosts(req: Request, res: Response): Promise<void> {
     try {
       const user = req.user as UserSchema
-      const myPosts = await Post.find({ author: user._id }).populate('author', '_id username')
+      const myPosts = await Post.find({ author: { _id: user._id } }).populate(
+        'author',
+        '_id username'
+      )
 
       res.json({
         status: 'ok',

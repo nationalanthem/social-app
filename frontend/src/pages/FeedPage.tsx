@@ -20,6 +20,12 @@ const FeedPage = () => {
     })
   }
 
+  const handleRequestedOnDeletePostClick = (postID: string) => {
+    postAPI.deletePost(postID).then((_) => {
+      dispatch(fetchAllPosts())
+    })
+  }
+
   const handleRequestedOnCommentClick = (postID: string, commentID: string) => {
     postAPI.deleteComment(postID, commentID).then((_) => {
       dispatch(fetchAllPosts())
@@ -37,10 +43,12 @@ const FeedPage = () => {
           <Post
             key={post._id}
             postID={post._id}
+            deleteBtn={post.author._id === user?._id}
             username={post.author.username}
             image_url={post.image}
             description={post.description}
             onRequestPostClick={handleRequestedOnPostClick}
+            onRequestDeletePostClick={handleRequestedOnDeletePostClick}
           >
             {post.comments.map((comment) => (
               <Comment

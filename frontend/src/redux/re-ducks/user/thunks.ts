@@ -1,9 +1,9 @@
 import { Dispatch } from 'redux'
 import { userAPI } from '../../../api/user.api'
-import { Actions } from './@types'
+import { IUserActions } from '../types'
 import { failureFetch, startFetch, successFetch } from './actions'
 
-export const fetchUser = () => async (dispatch: Dispatch<Actions>) => {
+export const fetchUser = () => async (dispatch: Dispatch<IUserActions>) => {
   try {
     dispatch(startFetch())
 

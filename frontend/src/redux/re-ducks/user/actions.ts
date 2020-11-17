@@ -1,23 +1,27 @@
-import { ActionTypes, FetchUserFailure, FetchUserStart, FetchUserSuccess, User } from './@types'
+import { IFetchUserFailure, IFetchUserStart, IFetchUserSuccess, IUser } from '../types'
 
-const startFetch = (): FetchUserStart => {
+export enum UserActionTypes {
+  FETCH_USER_START = 'user/FETCH_USER_START',
+  FETCH_USER_SUCCESS = 'user/FETCH_USER_SUCCESS',
+  FETCH_USER_FAILURE = 'user/FETCH_USER_FAILURE',
+}
+
+export const startFetch = (): IFetchUserStart => {
   return {
-    type: ActionTypes.FETCH_USER_START,
+    type: UserActionTypes.FETCH_USER_START,
   }
 }
 
-const successFetch = (payload: User): FetchUserSuccess => {
+export const successFetch = (payload: IUser): IFetchUserSuccess => {
   return {
-    type: ActionTypes.FETCH_USER_SUCCESS,
+    type: UserActionTypes.FETCH_USER_SUCCESS,
     payload,
   }
 }
 
-const failureFetch = (payload: string): FetchUserFailure => {
+export const failureFetch = (payload: string): IFetchUserFailure => {
   return {
-    type: ActionTypes.FETCH_USER_FAILURE,
+    type: UserActionTypes.FETCH_USER_FAILURE,
     payload,
   }
 }
-
-export { startFetch, successFetch, failureFetch }
