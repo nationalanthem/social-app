@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { selectMyPosts } from '../redux/re-ducks/posts/selectors'
 import { fetchOnlyMyPosts } from '../redux/re-ducks/posts/effects'
 import { selectUser } from '../redux/re-ducks/user/selectors'
+import { NavLink } from 'react-router-dom'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -27,6 +28,14 @@ const useStyles = makeStyles((theme) => ({
   },
   galleryContainer: {
     marginTop: '5em',
+  },
+  image: {
+    maxWidth: '100%',
+    filter: 'grayscale(85%)',
+    transition: '0.5s all',
+    '&:hover': {
+      filter: 'grayscale(0%)',
+    },
   },
 }))
 
@@ -88,17 +97,21 @@ const ProfilePage = () => {
       </Container>
       <Container maxWidth="lg" className={classes.galleryContainer}>
         {myPosts ? (
-          <GridList cellHeight={250} cols={3} spacing={10}>
+          <GridList cellHeight={300} cols={3} spacing={5}>
             {myPosts.map((post) => (
               <GridListTile key={post._id}>
-                <img
-                  src={post.image}
-                  alt={
-                    post.description.length > 50
-                      ? `${post.description.slice(0, 50)}...`
-                      : post.description
-                  }
-                />
+                <NavLink to={`/p/${post._id}`}>
+                  <img
+                    src={post.image}
+                    className={classes.image}
+                    draggable={false}
+                    alt={
+                      post.description.length > 50
+                        ? `${post.description.slice(0, 50)}...`
+                        : post.description
+                    }
+                  />
+                </NavLink>
               </GridListTile>
             ))}
           </GridList>

@@ -9,6 +9,10 @@ interface IGetPostsResponse {
   data: IPost[]
 }
 
+interface IGetSinglePostResponse {
+  data: IPost
+}
+
 class PostAPI {
   token: string
 
@@ -102,6 +106,19 @@ class PostAPI {
   async fetchPosts(): Promise<AxiosResponse<IGetPostsResponse>> {
     try {
       const response = await axios.get('/posts', {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      })
+      return response
+    } catch (err) {
+      throw err
+    }
+  }
+
+  async getPostById(postID: string): Promise<AxiosResponse<IGetSinglePostResponse>> {
+    try {
+      const response = await axios.get(`/posts/${postID}`, {
         headers: {
           Authorization: `Bearer ${this.token}`,
         },

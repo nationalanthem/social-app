@@ -9,9 +9,9 @@ import { CssBaseline } from '@material-ui/core'
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 
 const theme = createMuiTheme({
-  palette: {
-    type: 'dark',
-  },
+  // palette: {
+  //   type: 'dark',
+  // },
 })
 
 ReactDOM.render(

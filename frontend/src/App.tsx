@@ -9,6 +9,7 @@ import FeedPage from './pages/FeedPage'
 import { ProtectedRoute } from './ProtectedRoute'
 import { useDispatch } from 'react-redux'
 import { fetchUser } from './redux/re-ducks/user/thunks'
+import SinglePostPage from './pages/SinglePostPage'
 
 const App = () => {
   const isAuthenticated = !!localStorage.getItem('token')
@@ -34,6 +35,11 @@ const App = () => {
           component={PostCreationPage}
         />
         <ProtectedRoute isAuthenticated={isAuthenticated} path="/feed" component={FeedPage} />
+        <ProtectedRoute
+          isAuthenticated={isAuthenticated}
+          path="/p/:postID"
+          component={SinglePostPage}
+        />
 
         <Route path="/login">{isAuthenticated ? <Redirect to="/feed" /> : <LoginPage />}</Route>
         <Route path="/register">

@@ -2,8 +2,8 @@ import { Paper, Typography, Avatar, Box, TextField, Button } from '@material-ui/
 import { makeStyles } from '@material-ui/core/styles'
 import DeleteIcon from '@material-ui/icons/Delete'
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
-import HighlightOffIcon from '@material-ui/icons/HighlightOff'
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -14,6 +14,13 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(2),
     width: theme.spacing(6),
     height: theme.spacing(6),
+  },
+  linkToPost: {
+    color: 'darkblue',
+    textDecoration: 'none',
+    '&:hover': {
+      textDecoration: 'underline',
+    },
   },
   imageContainer: {
     margin: '1.5em 0',
@@ -31,17 +38,15 @@ const useStyles = makeStyles((theme) => ({
     marginRight: '10px',
     float: 'left',
   },
-  deletePostIcon: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    transition: '0.1s all',
+  deletePostText: {
+    transition: '0.5s all',
     cursor: 'pointer',
+    paddingRight: theme.spacing(2),
     '&:hover': {
       color: 'red',
     },
     '&:active': {
-      top: '2px',
+      color: 'orange',
     },
   },
   deleteCommentIcon: {
@@ -150,22 +155,30 @@ export const Post: React.FC<IPostProps> = ({
 
   return (
     <Paper elevation={5} className={classes.root}>
-      <Box display="flex" alignItems="center" position="relative">
-        <Avatar className={classes.avatar}>{username.charAt(0).toUpperCase()}</Avatar>
-        <Typography component="h3" variant="h6">
-          {username}
-        </Typography>
-        {deleteBtn && (
-          <i
-            onClick={() => {
-              setIsDeleting(true)
-              onRequestDeletePostClick(postID)
-            }}
-            className={classes.deletePostIcon}
-          >
-            <HighlightOffIcon color={isDeleting ? 'disabled' : 'action'} />
-          </i>
-        )}
+      <Box display="flex" alignItems="center" justifyContent="space-between" position="relative">
+        <Box display="flex" alignItems="center">
+          <Avatar className={classes.avatar}>{username.charAt(0).toUpperCase()}</Avatar>
+          <Typography component="h3" variant="h6">
+            {username}
+          </Typography>
+        </Box>
+        <Box display="flex" alignItems="baseline">
+          {deleteBtn && (
+            <Typography
+              style={isDeleting ? { opacity: 0 } : {}}
+              onClick={() => {
+                setIsDeleting(true)
+                onRequestDeletePostClick(postID)
+              }}
+              className={classes.deletePostText}
+            >
+              Удалить
+            </Typography>
+          )}
+          <Link to={`/p/${postID}`} className={classes.linkToPost}>
+            <Typography>Перейти к публикации</Typography>
+          </Link>
+        </Box>
       </Box>
       <Box className={classes.imageContainer}>
         <img

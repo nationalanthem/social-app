@@ -3,20 +3,14 @@ import mongoose from 'mongoose'
 export interface CommentSchema {
   _id?: mongoose.Types.ObjectId
   body: string
-  author: {
-    _id: mongoose.Types.ObjectId
-    username?: string
-  }
+  author: any
 }
 
 export interface PostSchema {
   _id?: mongoose.Types.ObjectId
   description: string
   image: string
-  author: {
-    _id: mongoose.Types.ObjectId
-    username?: string
-  }
+  author: any
   comments: CommentSchema[]
 }
 

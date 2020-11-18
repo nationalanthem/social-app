@@ -27,6 +27,11 @@ app.post(
 )
 app.get('/posts', passport.authenticate('jwt', { session: false }), postController.getAllPosts)
 app.get('/posts/my', passport.authenticate('jwt', { session: false }), postController.getMyPosts)
+app.get(
+  '/posts/:postID',
+  passport.authenticate('jwt', { session: false }),
+  postController.getPostById
+)
 app.put('/addComment', passport.authenticate('jwt', { session: false }), postController.addComment)
 app.delete(
   '/deleteComment/:postID/:commentID',

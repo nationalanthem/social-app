@@ -66,7 +66,6 @@ const PostCreationPage = () => {
 
     formData.append('file', imageInfo.file)
     formData.append('upload_preset', 'social-app')
-    formData.append('cloud_name', 'dxe4jr7bn')
 
     try {
       const { data: imageData } = await postAPI.uploadImage(formData)

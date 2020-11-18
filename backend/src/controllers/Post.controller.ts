@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { validationResult } from 'express-validator'
 import { CommentSchema } from '../models/Post.model'
 import Post, { PostSchema } from '../models/Post.model'
-import { UserSchema, UserSchemaWithDocument } from '../models/User.model'
+import { IUser } from '../models/User.model'
 
 class PostController {
   async createPost(req: Request, res: Response): Promise<void> {
@@ -14,12 +14,12 @@ class PostController {
       }
 
       const { description, image } = req.body
-      const user = req.user as UserSchema
+      const user = req.user as IUser
 
       const post: PostSchema = {
         description,
         image,
-        author: user,
+        author: user._id,
         comments: [],
       }
 
@@ -36,7 +36,7 @@ class PostController {
 
   deletePost(req: Request, res: Response): void {
     const { postID } = req.params
-    const user = req.user as UserSchema
+    const user = req.user as IUser
 
     Post.findById(postID)
       .populate('author', '_id username')
@@ -59,11 +59,11 @@ class PostController {
 
   addComment(req: Request, res: Response): void {
     const { postID, body } = req.body
-    const user = req.user as UserSchema
+    const user = req.user as IUser
 
     const comment: CommentSchema = {
       body,
-      author: user,
+      author: user._id,
     }
 
     Post.findByIdAndUpdate(postID, { $push: { comments: comment } }, { new: true })
@@ -77,7 +77,7 @@ class PostController {
 
   deleteComment(req: Request, res: Response): void {
     const { postID, commentID } = req.params
-    const user = req.user as UserSchema
+    const user = req.user as IUser
 
     Post.findById(postID)
       .populate('comments.author', '_id username')
@@ -86,7 +86,7 @@ class PostController {
         if (!result) return res.sendStatus(404)
         const commentIndex = result.comments.findIndex((comment) => comment._id?.equals(commentID))
         if (commentIndex === -1) return res.sendStatus(404)
-        if (result.comments[commentIndex].author._id?.equals(user._id)) {
+        if (result.comments[commentIndex].author._id.equals(user._id)) {
           result.updateOne({ $pull: { comments: { _id: commentID } } }, (err) => {
             if (err) return res.status(400).json({ status: 'error', error: err })
             res.json({ status: 'ok', message: 'Комментарий удалён' })
@@ -106,21 +106,30 @@ class PostController {
     }
   }
 
-  async getMyPosts(req: Request, res: Response): Promise<void> {
-    try {
-      const user = req.user as UserSchema
-      const myPosts = await Post.find({ author: { _id: user._id } }).populate(
-        'author',
-        '_id username'
-      )
+  getPostById(req: Request, res: Response): void {
+    const { postID } = req.params
 
-      res.json({
-        status: 'ok',
-        data: myPosts,
+    Post.findById(postID)
+      .populate('author', '_id username')
+      .populate('comments.author', '_id username')
+      .exec((err, post) => {
+        if (err) return res.status(400).json({ status: 'error', error: err })
+        res.json({ status: 'ok', data: post })
       })
-    } catch (err) {
-      res.status(500).json({ status: 'error', error: err })
-    }
+  }
+
+  getMyPosts(req: Request, res: Response): void {
+    const user = req.user as IUser
+
+    Post.find({ author: user._id })
+      .populate('author', '_id username')
+      .exec((err, data) => {
+        if (err) return res.status(400).json({ status: 'error', error: err })
+        res.json({
+          status: 'ok',
+          data,
+        })
+      })
   }
 }
 

@@ -1,7 +1,7 @@
 import { Box, Container } from '@material-ui/core'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Post, Comment } from '../Post'
+import { Post, Comment } from '../FeedPost'
 import { fetchAllPosts } from '../redux/re-ducks/posts/effects'
 import { selectIfPostsLoaded, selectPosts } from '../redux/re-ducks/posts/selectors'
 import { CircularProgress } from '@material-ui/core'
