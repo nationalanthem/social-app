@@ -74,6 +74,7 @@ const useStyles = makeStyles((theme) => ({
 interface CommentProps {
   onRequestCommentClick: (postID: string, commentID: string) => void
   authorUsername: string
+  userID: string
   commentBody: string
   postID: string
   commentID: string
@@ -83,6 +84,7 @@ interface CommentProps {
 export const Comment: React.FC<CommentProps> = ({
   onRequestCommentClick,
   postID,
+  userID,
   commentID,
   authorUsername,
   commentBody,
@@ -96,9 +98,11 @@ export const Comment: React.FC<CommentProps> = ({
     <>
       <Box mb={2}>
         <Box className={classes.commentBody}>
-          <Typography variant="body2" component="h4" className={classes.commentUsername}>
-            {authorUsername}
-          </Typography>
+          <Link to={`/u/${userID}`}>
+            <Typography variant="body2" component="h4" className={classes.commentUsername}>
+              {authorUsername}
+            </Typography>
+          </Link>
           <Typography variant="body2" component="span">
             {commentBody}
           </Typography>
@@ -123,6 +127,7 @@ interface IPostProps {
   onRequestPostClick: (postID: string, body: string) => void
   onRequestDeletePostClick: (postID: string) => void
   postID: string
+  userID: string
   deleteBtn: boolean
   username: string
   image_url: string
@@ -133,6 +138,7 @@ export const Post: React.FC<IPostProps> = ({
   onRequestPostClick,
   onRequestDeletePostClick,
   postID,
+  userID,
   deleteBtn,
   username,
   image_url,
@@ -158,9 +164,11 @@ export const Post: React.FC<IPostProps> = ({
       <Box display="flex" alignItems="center" justifyContent="space-between" position="relative">
         <Box display="flex" alignItems="center">
           <Avatar className={classes.avatar}>{username.charAt(0).toUpperCase()}</Avatar>
-          <Typography component="h3" variant="h6">
-            {username}
-          </Typography>
+          <Link to={`/u/${userID}`}>
+            <Typography component="h3" variant="h6">
+              {username}
+            </Typography>
+          </Link>
         </Box>
         <Box display="flex" alignItems="baseline">
           {deleteBtn && (

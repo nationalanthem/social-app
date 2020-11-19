@@ -42,6 +42,7 @@ const FeedPage = () => {
         posts.map((post) => (
           <Post
             key={post._id}
+            userID={post.author._id}
             postID={post._id}
             deleteBtn={post.author._id === user?._id}
             username={post.author.username}
@@ -53,6 +54,7 @@ const FeedPage = () => {
             {post.comments.map((comment) => (
               <Comment
                 key={comment._id}
+                userID={comment.author._id}
                 postID={post._id}
                 commentID={comment._id}
                 deleteBtn={comment.author._id === user?._id}

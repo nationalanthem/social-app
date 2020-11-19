@@ -48,6 +48,7 @@ const SinglePostPage = () => {
       {postData ? (
         <Post
           key={postData._id}
+          userID={postData.author._id}
           deleteBtn={postData.author._id === user?._id}
           username={postData.author.username}
           image_url={postData.image}
@@ -58,6 +59,7 @@ const SinglePostPage = () => {
           {postData.comments.map((comment) => (
             <Comment
               key={comment._id}
+              userID={comment.author._id}
               commentID={comment._id}
               deleteBtn={comment.author._id === user?._id}
               authorUsername={comment.author.username}

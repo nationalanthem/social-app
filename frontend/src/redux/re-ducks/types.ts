@@ -2,9 +2,18 @@ import { PostsActionTypes } from './posts/actions'
 import { UserActionTypes } from './user/actions'
 
 // POSTS
+export enum LoadingState {
+  IDLE = 'IDLE',
+  LOADING = 'LOADING',
+  LOADED = 'LOADED',
+}
 
 export interface IFetchPostsStart {
   type: typeof PostsActionTypes.FETCH_POSTS_START
+}
+
+export interface IFetchMyPostsStart {
+  type: typeof PostsActionTypes.FETCH_MY_POSTS_START
 }
 
 export interface IFetchPostsSuccess {
@@ -22,11 +31,18 @@ export interface IFetchPostsFailure {
   payload: string
 }
 
+export interface IFetchMyPostsFailure {
+  type: typeof PostsActionTypes.FETCH_MY_POSTS_FAILURE
+  payload: string
+}
+
 export type IPostsActions =
   | IFetchPostsStart
+  | IFetchMyPostsStart
   | IFetchPostsSuccess
   | IFetchMyPostsSuccess
   | IFetchPostsFailure
+  | IFetchMyPostsFailure
 
 export interface IComment {
   _id: string
@@ -44,9 +60,11 @@ export interface IPost {
 
 export interface IPostsState {
   posts: IPost[]
-  loading: boolean
-  error: string | null
+  postsLoadingState: LoadingState
   myPosts: IPost[]
+  myPostsLoadingState: LoadingState
+  postsError: string | null
+  myPostsError: string | null
 }
 
 // USER
@@ -70,6 +88,8 @@ export type IUserActions = IFetchUserStart | IFetchUserSuccess | IFetchUserFailu
 export interface IUser {
   _id: string
   username: string
+  followers: string[]
+  followings: string[]
 }
 
 export interface IUserState {

@@ -13,6 +13,7 @@ import React from 'react'
 import DeleteIcon from '@material-ui/icons/Delete'
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
 import HighlightOffIcon from '@material-ui/icons/HighlightOff'
+import { Link } from 'react-router-dom'
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -110,6 +111,7 @@ const useStyles = makeStyles((theme) => ({
 interface CommentProps {
   onRequestDeleteCommentClick: (commentID: string) => void
   authorUsername: string
+  userID: string
   commentBody: string
   commentID: string
   deleteBtn: boolean
@@ -118,6 +120,7 @@ interface CommentProps {
 export const Comment: React.FC<CommentProps> = ({
   onRequestDeleteCommentClick,
   commentID,
+  userID,
   authorUsername,
   commentBody,
   deleteBtn,
@@ -128,9 +131,11 @@ export const Comment: React.FC<CommentProps> = ({
 
   return (
     <Box className={classes.commentWrapper}>
-      <Typography variant="body2" component="span" className={classes.commentUsername}>
-        {authorUsername}
-      </Typography>
+      <Link to={`/u/${userID}`}>
+        <Typography variant="body2" component="span" className={classes.commentUsername}>
+          {authorUsername}
+        </Typography>
+      </Link>
       <Grid item xs={10} sm={11}>
         <Typography variant="body2" component="span">
           {commentBody}
@@ -155,6 +160,7 @@ interface PostProps {
   children: React.ReactNode
   onRequestAddCommentClick: (body: string, divRev: React.RefObject<HTMLDivElement>) => void
   onRequestDeletePostClick: () => void
+  userID: string
   username: string
   deleteBtn: boolean
   image_url: string
@@ -164,6 +170,7 @@ interface PostProps {
 export const Post: React.FC<PostProps> = ({
   onRequestAddCommentClick,
   onRequestDeletePostClick,
+  userID,
   username,
   image_url,
   description,
@@ -201,9 +208,11 @@ export const Post: React.FC<PostProps> = ({
           <Grid item md={6} xs={12}>
             <div className={classes.postHeader}>
               <Avatar>{username.charAt(0).toUpperCase()}</Avatar>
-              <Typography variant="h6" component="h2" className={classes.username}>
-                {username}
-              </Typography>
+              <Link to={`/u/${userID}`}>
+                <Typography variant="h6" component="h2" className={classes.username}>
+                  {username}
+                </Typography>
+              </Link>
               {deleteBtn && (
                 <i
                   title="Удалить"

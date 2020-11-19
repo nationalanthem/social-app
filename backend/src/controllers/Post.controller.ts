@@ -118,6 +118,17 @@ class PostController {
       })
   }
 
+  getPostsFromUser(req: Request, res: Response): void {
+    const { userID } = req.params
+
+    Post.find({ author: userID })
+      .select('-comments -author')
+      .exec((err, posts) => {
+        if (err) return res.status(400).json({ status: 'error', error: err })
+        res.json({ status: 'ok', data: posts })
+      })
+  }
+
   getMyPosts(req: Request, res: Response): void {
     const user = req.user as IUser
 

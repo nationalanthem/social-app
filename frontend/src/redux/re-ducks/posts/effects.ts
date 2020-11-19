@@ -1,7 +1,14 @@
 import { Dispatch } from 'redux'
 import { postAPI } from '../../../api/post.api'
 import { IPostsActions } from '../types'
-import { failureFetch, startFetch, successFetch, successFetchMyPosts } from './actions'
+import {
+  failureFetch,
+  failureFetchMyPosts,
+  startFetch,
+  startFetchMyPosts,
+  successFetch,
+  successFetchMyPosts,
+} from './actions'
 
 export const fetchAllPosts = () => async (dispatch: Dispatch<IPostsActions>) => {
   try {
@@ -17,12 +24,12 @@ export const fetchAllPosts = () => async (dispatch: Dispatch<IPostsActions>) => 
 
 export const fetchOnlyMyPosts = () => async (dispatch: Dispatch<IPostsActions>) => {
   try {
-    dispatch(startFetch())
+    dispatch(startFetchMyPosts())
 
     const response = await postAPI.getMyPosts()
 
     dispatch(successFetchMyPosts(response.data.data))
   } catch (err) {
-    dispatch(failureFetch('Ошибка при загрузке данных'))
+    dispatch(failureFetchMyPosts('Ошибка при загрузке данных'))
   }
 }

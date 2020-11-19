@@ -18,6 +18,13 @@ app.use(passport.initialize())
 app.get('/me', passport.authenticate('jwt', { session: false }), userController.ownProfile)
 app.post('/register', registerValidation, userController.register)
 app.post('/login', userController.login)
+app.get(
+  '/users/:userID',
+  passport.authenticate('jwt', { session: false }),
+  userController.getUserById
+)
+app.put('/follow', passport.authenticate('jwt', { session: false }), userController.followUser)
+app.put('/unfollow', passport.authenticate('jwt', { session: false }), userController.unfollowUser)
 
 app.post(
   '/createPost',
@@ -32,6 +39,12 @@ app.get(
   passport.authenticate('jwt', { session: false }),
   postController.getPostById
 )
+app.get(
+  '/posts/from/:userID',
+  passport.authenticate('jwt', { session: false }),
+  postController.getPostsFromUser
+)
+
 app.put('/addComment', passport.authenticate('jwt', { session: false }), postController.addComment)
 app.delete(
   '/deleteComment/:postID/:commentID',

@@ -5,6 +5,8 @@ export interface UserSchema {
   _id: mongoose.Types.ObjectId
   username: string
   password: string
+  followers: mongoose.Types.ObjectId[]
+  followings: mongoose.Types.ObjectId[]
   validPassword(password: string): Promise<boolean>
 }
 
@@ -25,6 +27,18 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  followers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  ],
+  followings: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  ],
 })
 
 schema.pre('save', async function (next) {

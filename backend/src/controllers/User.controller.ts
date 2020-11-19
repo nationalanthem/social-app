@@ -1,14 +1,62 @@
 import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import { validationResult } from 'express-validator'
-import User, { UserSchemaWithDocument } from '../models/User.model'
+import User, { IUser, UserSchemaWithDocument } from '../models/User.model'
 import { passport } from '../passport'
 
 class UserController {
   ownProfile(req: Request, res: Response): void {
-    res.json({
-      status: 'ok',
-      data: req.user,
+    const user = req.user as IUser
+    User.findById(user._id).exec((error, data) => {
+      if (error) return res.status(400).json({ error })
+      res.json({ data })
+    })
+  }
+
+  getUserById(req: Request, res: Response): void {
+    const { userID } = req.params
+
+    User.findById(userID).exec((error, data) => {
+      if (error) return res.status(400).json({ error })
+      res.json({ data })
+    })
+  }
+
+  followUser(req: Request, res: Response): void {
+    const { userID } = req.body
+    const user = req.user as IUser
+
+    User.findById(userID, (error, userToFollow) => {
+      if (error) return res.status(400).json({ error })
+      if (!userToFollow) return res.sendStatus(404)
+      if (userToFollow.followers.includes(user._id)) return res.sendStatus(409)
+
+      userToFollow.updateOne({ $push: { followers: user._id } }).exec((error, _) => {
+        if (error) return res.status(400).json({ error })
+        User.findByIdAndUpdate(user._id, { $push: { followings: userID } }, (error, _) => {
+          if (error) return res.status(400).json({ error })
+          res.send()
+        })
+      })
+    })
+  }
+
+  unfollowUser(req: Request, res: Response): void {
+    const { userID } = req.body
+    const user = req.user as IUser
+
+    User.findById(userID, (error, userToUnfollow) => {
+      if (error) return res.status(400).json({ error })
+      if (!userToUnfollow) return res.sendStatus(404)
+      if (!userToUnfollow.followers.includes(user._id)) return res.sendStatus(409)
+
+      userToUnfollow.updateOne({ $pull: { followers: user._id } }).exec((error, _) => {
+        if (error) return res.status(400).json({ error })
+        User.findByIdAndUpdate(user._id, { $pull: { followings: userID } }, (error, _) => {
+          if (error) return res.status(400).json({ error })
+          res.send()
+        })
+      })
     })
   }
 
@@ -33,6 +81,8 @@ class UserController {
       const newUser = await User.create({
         username: req.body.username,
         password: req.body.password,
+        followers: [],
+        followings: [],
       })
 
       res.json({

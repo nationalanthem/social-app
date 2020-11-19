@@ -1,32 +1,41 @@
 import produce, { Draft } from 'immer'
-import { IPostsActions, IPostsState } from '../types'
+import { IPostsActions, IPostsState, LoadingState } from '../types'
 import { PostsActionTypes } from './actions'
 
 const initialState: IPostsState = {
   posts: [],
-  loading: false,
-  error: null,
+  postsLoadingState: LoadingState.IDLE,
   myPosts: [],
+  myPostsLoadingState: LoadingState.IDLE,
+  postsError: null,
+  myPostsError: null,
 }
 
 const postsReducer = produce((draft: Draft<IPostsState>, action: IPostsActions) => {
   switch (action.type) {
     case PostsActionTypes.FETCH_POSTS_START:
-      draft.loading = true
+      draft.postsLoadingState = LoadingState.LOADING
+      break
+    case PostsActionTypes.FETCH_MY_POSTS_START:
+      draft.myPostsLoadingState = LoadingState.LOADING
       break
     case PostsActionTypes.FETCH_POSTS_SUCCESS:
-      draft.loading = false
-      draft.error = null
+      draft.postsLoadingState = LoadingState.LOADED
+      draft.postsError = null
       draft.posts = action.payload
       break
     case PostsActionTypes.FETCH_MY_POSTS_SUCCESS:
-      draft.loading = false
-      draft.error = null
+      draft.myPostsLoadingState = LoadingState.LOADED
+      draft.myPostsError = null
       draft.myPosts = action.payload
       break
     case PostsActionTypes.FETCH_POSTS_FAILURE:
-      draft.loading = false
-      draft.error = action.payload
+      draft.postsLoadingState = LoadingState.IDLE
+      draft.postsError = action.payload
+      break
+    case PostsActionTypes.FETCH_MY_POSTS_FAILURE:
+      draft.myPostsLoadingState = LoadingState.IDLE
+      draft.myPostsError = action.payload
       break
   }
 }, initialState)

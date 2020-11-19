@@ -13,6 +13,15 @@ interface IGetSinglePostResponse {
   data: IPost
 }
 
+export interface IPostsFromUserId {
+  _id: string
+  description: string
+  image: string
+}
+interface IGetPostsFromUser {
+  data: IPostsFromUserId[]
+}
+
 class PostAPI {
   token: string
 
@@ -119,6 +128,19 @@ class PostAPI {
   async getPostById(postID: string): Promise<AxiosResponse<IGetSinglePostResponse>> {
     try {
       const response = await axios.get(`/posts/${postID}`, {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      })
+      return response
+    } catch (err) {
+      throw err
+    }
+  }
+
+  async getPostsFromUser(userID: string): Promise<AxiosResponse<IGetPostsFromUser>> {
+    try {
+      const response = await axios.get(`/posts/from/${userID}`, {
         headers: {
           Authorization: `Bearer ${this.token}`,
         },

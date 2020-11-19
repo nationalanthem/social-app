@@ -3,13 +3,14 @@ import Navbar from './Navbar'
 import { BrowserRouter, Link, Redirect, Route, Switch } from 'react-router-dom'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
-import ProfilePage from './pages/ProfilePage'
+import MyProfile from './pages/MyProfile'
 import PostCreationPage from './pages/PostCreationPage'
 import FeedPage from './pages/FeedPage'
 import { ProtectedRoute } from './ProtectedRoute'
 import { useDispatch } from 'react-redux'
-import { fetchUser } from './redux/re-ducks/user/thunks'
+import { fetchUser } from './redux/re-ducks/user/effects'
 import SinglePostPage from './pages/SinglePostPage'
+import UserProfile from './pages/UserProfile'
 
 const App = () => {
   const isAuthenticated = !!localStorage.getItem('token')
@@ -28,7 +29,12 @@ const App = () => {
         <Route exact path="/">
           {isAuthenticated ? <Redirect to="/feed" /> : <Redirect to="/login" />}
         </Route>
-        <ProtectedRoute isAuthenticated={isAuthenticated} path="/profile" component={ProfilePage} />
+        <ProtectedRoute isAuthenticated={isAuthenticated} path="/profile" component={MyProfile} />
+        <ProtectedRoute
+          isAuthenticated={isAuthenticated}
+          path="/u/:userID"
+          component={UserProfile}
+        />
         <ProtectedRoute
           isAuthenticated={isAuthenticated}
           path="/create"
