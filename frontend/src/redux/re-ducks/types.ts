@@ -47,14 +47,14 @@ export type IPostsActions =
 export interface IComment {
   _id: string
   body: string
-  author: IUser
+  author: IUserPopulated
 }
 
 export interface IPost {
   _id: string
   description: string
   image: string
-  author: IUser
+  author: IUserPopulated
   comments: IComment[]
 }
 
@@ -75,7 +75,7 @@ export interface IFetchUserStart {
 
 export interface IFetchUserSuccess {
   type: typeof UserActionTypes.FETCH_USER_SUCCESS
-  payload: IUser
+  payload: IUserPopulated
 }
 
 export interface IFetchUserFailure {
@@ -88,12 +88,17 @@ export type IUserActions = IFetchUserStart | IFetchUserSuccess | IFetchUserFailu
 export interface IUser {
   _id: string
   username: string
-  followers: string[]
-  followings: string[]
+}
+
+export interface IUserPopulated {
+  _id: string
+  username: string
+  followers: IUser[]
+  followings: IUser[]
 }
 
 export interface IUserState {
-  user: IUser | null
+  user: IUserPopulated | null
   loading: boolean
   error: string | null
 }

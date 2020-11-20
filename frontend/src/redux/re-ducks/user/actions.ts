@@ -1,4 +1,4 @@
-import { IFetchUserFailure, IFetchUserStart, IFetchUserSuccess, IUser } from '../types'
+import { IFetchUserFailure, IFetchUserStart, IFetchUserSuccess, IUserPopulated } from '../types'
 
 export enum UserActionTypes {
   FETCH_USER_START = 'user/FETCH_USER_START',
@@ -12,7 +12,7 @@ export const startFetch = (): IFetchUserStart => {
   }
 }
 
-export const successFetch = (payload: IUser): IFetchUserSuccess => {
+export const successFetch = (payload: IUserPopulated): IFetchUserSuccess => {
   return {
     type: UserActionTypes.FETCH_USER_SUCCESS,
     payload,

@@ -1,12 +1,12 @@
 import axios, { AxiosResponse } from 'axios'
-import { IUser } from '../redux/re-ducks/types'
+import { IUserPopulated } from '../redux/re-ducks/types'
 
 interface IMyProfileResponse {
-  data: IUser
+  data: IUserPopulated
 }
 
 interface IGetUserByIdResponse {
-  data: IUser
+  data: IUserPopulated
 }
 
 class UserAPI {
@@ -86,7 +86,7 @@ class UserAPI {
   async unfollowUser(userID: string): Promise<AxiosResponse> {
     try {
       const response = await axios.put(
-        '/unfollow/',
+        '/unfollow',
         { userID },
         {
           headers: {

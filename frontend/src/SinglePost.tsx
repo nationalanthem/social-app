@@ -40,6 +40,7 @@ const useStyles = makeStyles((theme) => ({
   },
   img: {
     maxWidth: '100%',
+    maxHeight: '80vh',
   },
   username: {
     paddingLeft: theme.spacing(2),

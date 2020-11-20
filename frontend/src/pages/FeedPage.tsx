@@ -66,7 +66,7 @@ const FeedPage = () => {
           </Post>
         ))
       ) : (
-        <Box display="flex" alignItems="center" justifyContent="center" height="100vh">
+        <Box display="flex" alignItems="center" justifyContent="center" height="90vh">
           <CircularProgress />
         </Box>
       )}

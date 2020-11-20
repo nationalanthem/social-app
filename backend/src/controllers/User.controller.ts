@@ -7,19 +7,23 @@ import { passport } from '../passport'
 class UserController {
   ownProfile(req: Request, res: Response): void {
     const user = req.user as IUser
-    User.findById(user._id).exec((error, data) => {
-      if (error) return res.status(400).json({ error })
-      res.json({ data })
-    })
+    User.findById(user._id)
+      .populate('followers followings', '_id username')
+      .exec((error, data) => {
+        if (error) return res.status(400).json({ error })
+        res.json({ data })
+      })
   }
 
   getUserById(req: Request, res: Response): void {
     const { userID } = req.params
 
-    User.findById(userID).exec((error, data) => {
-      if (error) return res.status(400).json({ error })
-      res.json({ data })
-    })
+    User.findById(userID)
+      .populate('followers followings', '_id username')
+      .exec((error, data) => {
+        if (error) return res.status(400).json({ error })
+        res.json({ data })
+      })
   }
 
   followUser(req: Request, res: Response): void {
