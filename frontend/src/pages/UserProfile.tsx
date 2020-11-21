@@ -229,20 +229,24 @@ const UserProfile = () => {
                 open={isFollowersModalOpen}
                 onClose={() => setIsFollowersModalOpen(false)}
               >
-                {userData.followers.map((follower) => (
-                  <ListItem
-                    key={follower._id}
-                    button
-                    onClick={() => handleFollowerClick(follower._id)}
-                  >
-                    <ListItemAvatar>
-                      <Avatar>{follower.username.charAt(0).toUpperCase()}</Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={`${follower.username}${follower._id === user._id && ' (это Вы)'}`}
-                    />
-                  </ListItem>
-                ))}
+                {userData.followers.map((follower) => {
+                  return (
+                    <ListItem
+                      key={follower._id}
+                      button
+                      onClick={() => handleFollowerClick(follower._id)}
+                    >
+                      <ListItemAvatar>
+                        <Avatar>{follower.username.charAt(0).toUpperCase()}</Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={`${follower.username}${
+                          follower._id === user._id ? ' (это Вы)' : ''
+                        }`}
+                      />
+                    </ListItem>
+                  )
+                })}
               </CustomDialog>
             ) : null}
           </Box>
@@ -288,7 +292,9 @@ const UserProfile = () => {
                       <Avatar>{following.username.charAt(0).toUpperCase()}</Avatar>
                     </ListItemAvatar>
                     <ListItemText
-                      primary={`${following.username}${following._id === user._id && ' (это Вы)'}`}
+                      primary={`${following.username}${
+                        following._id === user._id ? ' (это Вы)' : ''
+                      }`}
                     />
                   </ListItem>
                 ))}

@@ -95,15 +95,15 @@ class PostController {
       })
   }
 
-  async getAllPosts(req: Request, res: Response): Promise<void> {
-    try {
-      const posts = await Post.find({})
-        .populate('author', '_id username')
-        .populate('comments.author', '_id username')
-      res.json({ status: 'ok', data: posts })
-    } catch (err) {
-      res.status(500).json({ status: 'error', error: err })
-    }
+  getAllPosts(req: Request, res: Response): void {
+    Post.find({})
+      .populate('author', '_id username')
+      .populate('comments.author', '_id username')
+      .sort('-createdAt')
+      .exec((error, result) => {
+        if (error) return res.status(400).json({ error })
+        res.json({ data: result })
+      })
   }
 
   getPostById(req: Request, res: Response): void {
@@ -123,6 +123,7 @@ class PostController {
 
     Post.find({ author: userID })
       .select('-comments -author')
+      .sort('-createdAt')
       .exec((err, posts) => {
         if (err) return res.status(400).json({ status: 'error', error: err })
         res.json({ status: 'ok', data: posts })
@@ -134,6 +135,7 @@ class PostController {
 
     Post.find({ author: user._id })
       .populate('author', '_id username')
+      .sort('-createdAt')
       .exec((err, data) => {
         if (err) return res.status(400).json({ status: 'error', error: err })
         res.json({

@@ -1,14 +1,16 @@
 import { Box, Container } from '@material-ui/core'
 import React from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Post, Comment } from '../SinglePost'
 import { CircularProgress } from '@material-ui/core'
 import { postAPI } from '../api/post.api'
 import { selectUser } from '../redux/re-ducks/user/selectors'
 import { useHistory, useParams } from 'react-router-dom'
 import { IPost } from '../redux/re-ducks/types'
+import { fetchOnlyMyPosts } from '../redux/re-ducks/posts/effects'
 
 const SinglePostPage = () => {
+  const dispatch = useDispatch()
   const user = useSelector(selectUser)
   const { postID } = useParams<{ postID: string }>()
   const history = useHistory()
@@ -39,6 +41,7 @@ const SinglePostPage = () => {
 
   const handleRequestedDeletePostClick = () => {
     postAPI.deletePost(postID).then((_) => {
+      dispatch(fetchOnlyMyPosts())
       history.replace('/')
     })
   }
@@ -48,9 +51,9 @@ const SinglePostPage = () => {
       {postData ? (
         <Post
           key={postData._id}
-          userID={postData.author._id}
-          deleteBtn={postData.author._id === user?._id}
-          username={postData.author.username}
+          authorID={postData.author._id}
+          isUser={postData.author._id === user?._id}
+          authorUsername={postData.author.username}
           image_url={postData.image}
           description={postData.description}
           onRequestAddCommentClick={handleRequestedAddCommentClick}
@@ -59,9 +62,9 @@ const SinglePostPage = () => {
           {postData.comments.map((comment) => (
             <Comment
               key={comment._id}
-              userID={comment.author._id}
+              authorID={comment.author._id}
               commentID={comment._id}
-              deleteBtn={comment.author._id === user?._id}
+              isUser={comment.author._id === user?._id}
               authorUsername={comment.author.username}
               commentBody={comment.body}
               onRequestDeleteCommentClick={handleRequestedDeleteCommentClick}

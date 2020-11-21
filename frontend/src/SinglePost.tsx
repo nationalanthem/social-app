@@ -112,19 +112,19 @@ const useStyles = makeStyles((theme) => ({
 interface CommentProps {
   onRequestDeleteCommentClick: (commentID: string) => void
   authorUsername: string
-  userID: string
+  authorID: string
   commentBody: string
   commentID: string
-  deleteBtn: boolean
+  isUser: boolean
 }
 
 export const Comment: React.FC<CommentProps> = ({
   onRequestDeleteCommentClick,
   commentID,
-  userID,
+  authorID,
   authorUsername,
   commentBody,
-  deleteBtn,
+  isUser,
 }) => {
   const classes = useStyles()
 
@@ -132,7 +132,7 @@ export const Comment: React.FC<CommentProps> = ({
 
   return (
     <Box className={classes.commentWrapper}>
-      <Link to={`/u/${userID}`}>
+      <Link to={isUser ? '/profile' : `/u/${authorID}`}>
         <Typography variant="body2" component="span" className={classes.commentUsername}>
           {authorUsername}
         </Typography>
@@ -142,7 +142,7 @@ export const Comment: React.FC<CommentProps> = ({
           {commentBody}
         </Typography>
       </Grid>
-      {deleteBtn && (
+      {isUser && (
         <i
           onClick={() => {
             setIsDeleting(true)
@@ -161,9 +161,9 @@ interface PostProps {
   children: React.ReactNode
   onRequestAddCommentClick: (body: string, divRev: React.RefObject<HTMLDivElement>) => void
   onRequestDeletePostClick: () => void
-  userID: string
-  username: string
-  deleteBtn: boolean
+  authorID: string
+  authorUsername: string
+  isUser: boolean
   image_url: string
   description: string
 }
@@ -171,11 +171,11 @@ interface PostProps {
 export const Post: React.FC<PostProps> = ({
   onRequestAddCommentClick,
   onRequestDeletePostClick,
-  userID,
-  username,
+  authorID,
+  authorUsername,
   image_url,
   description,
-  deleteBtn,
+  isUser,
   children,
 }) => {
   const classes = useStyles()
@@ -201,20 +201,20 @@ export const Post: React.FC<PostProps> = ({
         <Grid container>
           <Grid item md={6} xs={12} className={classes.imgContainer}>
             <img
-              alt={`Публикация пользователя ${username}`}
+              alt={`Публикация пользователя ${authorUsername}`}
               src={image_url}
               className={classes.img}
             />
           </Grid>
           <Grid item md={6} xs={12}>
             <div className={classes.postHeader}>
-              <Avatar>{username.charAt(0).toUpperCase()}</Avatar>
-              <Link to={`/u/${userID}`}>
+              <Avatar>{authorUsername.charAt(0).toUpperCase()}</Avatar>
+              <Link to={isUser ? '/profile' : `/u/${authorID}`}>
                 <Typography variant="h6" component="h2" className={classes.username}>
-                  {username}
+                  {authorUsername}
                 </Typography>
               </Link>
-              {deleteBtn && (
+              {isUser && (
                 <i
                   title="Удалить"
                   onClick={() => {

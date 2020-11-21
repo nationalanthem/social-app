@@ -6,6 +6,9 @@ import React from 'react'
 import { postAPI } from '../api/post.api'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { useHistory } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { fetchOnlyMyPosts } from '../redux/re-ducks/posts/effects'
 
 const useStyles = makeStyles((theme) => ({
   outerContainer: {
@@ -50,6 +53,8 @@ const postCreationSchema = yup.object().shape({
 
 const PostCreationPage = () => {
   const classes = useStyles()
+  const dispatch = useDispatch()
+  const history = useHistory()
 
   const { handleSubmit, register, errors } = useForm<IPostCreationForm>({
     resolver: yupResolver(postCreationSchema),
@@ -70,7 +75,8 @@ const PostCreationPage = () => {
     try {
       const { data: imageData } = await postAPI.uploadImage(formData)
       await postAPI.createPost(data.description, imageData.secure_url)
-      window.location.href = '/feed'
+      dispatch(fetchOnlyMyPosts())
+      history.push('/feed')
     } catch (err) {
       alert('Возникла ошибка при публикации поста')
       console.log(err.response)

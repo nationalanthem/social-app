@@ -1,6 +1,17 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem, Box } from '@material-ui/core/'
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  Menu,
+  MenuItem,
+  Box,
+  Fab,
+  Zoom,
+} from '@material-ui/core/'
+import EditIcon from '@material-ui/icons/Edit'
 import AccountCircle from '@material-ui/icons/AccountCircle'
 import { Link, useLocation, useHistory } from 'react-router-dom'
 
@@ -15,6 +26,12 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       color: 'blue',
     },
+  },
+  fab: {
+    position: 'fixed',
+    bottom: theme.spacing(5),
+    right: theme.spacing(5),
+    zIndex: 100,
   },
 }))
 
@@ -64,11 +81,12 @@ const Navbar = () => {
           {isAuthenticated ? (
             <div>
               <Box display="flex">
-                {location.pathname !== '/create' && (
-                  <MenuItem component={Link} to="/create">
-                    Создать пост
-                  </MenuItem>
-                )}
+                <Zoom in={location.pathname !== '/create'}>
+                  <Fab className={classes.fab} color="primary" component={Link} to="/create">
+                    <EditIcon />
+                  </Fab>
+                </Zoom>
+
                 <IconButton onClick={handleMenu} color="inherit">
                   <AccountCircle />
                 </IconButton>

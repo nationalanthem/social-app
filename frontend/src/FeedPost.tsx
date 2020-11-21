@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    marginTop: theme.spacing(10),
+    marginBottom: theme.spacing(5),
     padding: theme.spacing(2),
   },
   avatar: {
@@ -74,21 +74,21 @@ const useStyles = makeStyles((theme) => ({
 interface CommentProps {
   onRequestCommentClick: (postID: string, commentID: string) => void
   authorUsername: string
-  userID: string
+  authorID: string
   commentBody: string
   postID: string
   commentID: string
-  deleteBtn: boolean
+  isUser: boolean
 }
 
 export const Comment: React.FC<CommentProps> = ({
   onRequestCommentClick,
   postID,
-  userID,
+  authorID,
   commentID,
   authorUsername,
   commentBody,
-  deleteBtn,
+  isUser,
 }) => {
   const classes = useStyles()
 
@@ -98,7 +98,7 @@ export const Comment: React.FC<CommentProps> = ({
     <>
       <Box mb={2}>
         <Box className={classes.commentBody}>
-          <Link to={`/u/${userID}`}>
+          <Link to={isUser ? '/profile' : `/u/${authorID}`}>
             <Typography variant="body2" component="h4" className={classes.commentUsername}>
               {authorUsername}
             </Typography>
@@ -106,7 +106,7 @@ export const Comment: React.FC<CommentProps> = ({
           <Typography variant="body2" component="span">
             {commentBody}
           </Typography>
-          {deleteBtn && (
+          {isUser && (
             <i
               onClick={() => {
                 setIsDeleting(true)
@@ -124,23 +124,23 @@ export const Comment: React.FC<CommentProps> = ({
 }
 
 interface IPostProps {
-  onRequestPostClick: (postID: string, body: string) => void
+  onRequestAddCommentClick: (postID: string, body: string) => void
   onRequestDeletePostClick: (postID: string) => void
   postID: string
-  userID: string
-  deleteBtn: boolean
-  username: string
+  authorID: string
+  isUser: boolean
+  authorUsername: string
   image_url: string
   description: string
 }
 
 export const Post: React.FC<IPostProps> = ({
-  onRequestPostClick,
+  onRequestAddCommentClick,
   onRequestDeletePostClick,
   postID,
-  userID,
-  deleteBtn,
-  username,
+  authorID,
+  isUser,
+  authorUsername,
   image_url,
   description,
   children,
@@ -155,7 +155,7 @@ export const Post: React.FC<IPostProps> = ({
 
   const handleCommentSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     if (!commentBody) return
-    onRequestPostClick(postID, commentBody)
+    onRequestAddCommentClick(postID, commentBody)
     setCommentBody('')
   }
 
@@ -163,15 +163,15 @@ export const Post: React.FC<IPostProps> = ({
     <Paper elevation={5} className={classes.root}>
       <Box display="flex" alignItems="center" justifyContent="space-between" position="relative">
         <Box display="flex" alignItems="center">
-          <Avatar className={classes.avatar}>{username.charAt(0).toUpperCase()}</Avatar>
-          <Link to={`/u/${userID}`}>
+          <Avatar className={classes.avatar}>{authorUsername.charAt(0).toUpperCase()}</Avatar>
+          <Link to={isUser ? '/profile' : `/u/${authorID}`}>
             <Typography component="h3" variant="h6">
-              {username}
+              {authorUsername}
             </Typography>
           </Link>
         </Box>
         <Box display="flex" alignItems="baseline">
-          {deleteBtn && (
+          {isUser && (
             <Typography
               style={isDeleting ? { opacity: 0 } : {}}
               onClick={() => {
