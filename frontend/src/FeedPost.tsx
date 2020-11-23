@@ -1,9 +1,10 @@
 import { Paper, Typography, Avatar, Box, TextField, Button } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import DeleteIcon from '@material-ui/icons/Delete'
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
+import {NewComment} from './FeedNewComment'
 import React from 'react'
 import { Link } from 'react-router-dom'
+import PostOptions from './PostOptions'
+import { postAPI } from './api/post.api'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -15,52 +16,27 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(6),
     height: theme.spacing(6),
   },
-  linkToPost: {
-    color: 'darkblue',
-    textDecoration: 'none',
-    '&:hover': {
-      textDecoration: 'underline',
-    },
-  },
   imageContainer: {
-    margin: '1.5em 0',
+    margin: '1.5em -16px',
+    maxHeight: '40vh',
+    backgroundColor: 'rgb(53, 53, 53)'
+  },
+  image: {
+    display: 'block',
+    margin: '0 auto',
+    maxWidth: '100%',
+    maxHeight:'40vh',
+  },
+
+  link: {
+    color: theme.palette.text.primary,
+    textDecoration: 'none',
+    '&:active': {
+      opacity: 0.5,
+    },
   },
   commentsContainer: {
     marginTop: '2em',
-  },
-  commentBody: {
-    overflowWrap: 'break-word',
-    position: 'relative',
-    width: '97%',
-  },
-  commentUsername: {
-    fontWeight: 'bolder',
-    marginRight: '10px',
-    float: 'left',
-  },
-  deletePostText: {
-    transition: '0.5s all',
-    cursor: 'pointer',
-    paddingRight: theme.spacing(2),
-    '&:hover': {
-      color: 'red',
-    },
-    '&:active': {
-      color: 'orange',
-    },
-  },
-  deleteCommentIcon: {
-    position: 'absolute',
-    top: 0,
-    right: -30,
-    transition: '0.1s all',
-    cursor: 'pointer',
-    '&:hover': {
-      color: 'red',
-    },
-    '&:active': {
-      top: '2px',
-    },
   },
   addCommentForm: {
     display: 'flex',
@@ -71,83 +47,37 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-interface CommentProps {
-  onRequestCommentClick: (postID: string, commentID: string) => void
-  authorUsername: string
-  authorID: string
-  commentBody: string
-  postID: string
-  commentID: string
-  isUser: boolean
-}
-
-export const Comment: React.FC<CommentProps> = ({
-  onRequestCommentClick,
-  postID,
-  authorID,
-  commentID,
-  authorUsername,
-  commentBody,
-  isUser,
-}) => {
-  const classes = useStyles()
-
-  const [isDeleting, setIsDeleting] = React.useState(false)
-
-  return (
-    <>
-      <Box mb={2}>
-        <Box className={classes.commentBody}>
-          <Link to={isUser ? '/profile' : `/u/${authorID}`}>
-            <Typography variant="body2" component="h4" className={classes.commentUsername}>
-              {authorUsername}
-            </Typography>
-          </Link>
-          <Typography variant="body2" component="span">
-            {commentBody}
-          </Typography>
-          {isUser && (
-            <i
-              onClick={() => {
-                setIsDeleting(true)
-                onRequestCommentClick(postID, commentID)
-              }}
-              className={classes.deleteCommentIcon}
-            >
-              {isDeleting ? <DeleteForeverIcon /> : <DeleteIcon />}
-            </i>
-          )}
-        </Box>
-      </Box>
-    </>
-  )
+interface Comment {
+  _id: string
+  username: string
+  body: string
 }
 
 interface IPostProps {
-  onRequestAddCommentClick: (postID: string, body: string) => void
   onRequestDeletePostClick: (postID: string) => void
   postID: string
   authorID: string
   isUser: boolean
   authorUsername: string
+  userUsername: string
   image_url: string
   description: string
 }
 
 export const Post: React.FC<IPostProps> = ({
-  onRequestAddCommentClick,
   onRequestDeletePostClick,
   postID,
   authorID,
   isUser,
   authorUsername,
+  userUsername,
   image_url,
   description,
   children,
 }) => {
   const classes = useStyles()
   const [commentBody, setCommentBody] = React.useState('')
-  const [isDeleting, setIsDeleting] = React.useState(false)
+  const [comments, setComments] = React.useState<Comment[]>([])
 
   const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     setCommentBody(e.target.value)
@@ -155,8 +85,22 @@ export const Post: React.FC<IPostProps> = ({
 
   const handleCommentSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     if (!commentBody) return
-    onRequestAddCommentClick(postID, commentBody)
+
     setCommentBody('')
+
+    postAPI.addComment(postID, commentBody).then(res => {
+      const { comments } = res.data.data
+      let lastCommentId: string 
+
+      for (let i = comments.length - 1; i >= 0; i--) {
+        if (comments[i].author.username === userUsername) {
+          lastCommentId = comments[i]._id
+          break
+        } 
+      }
+
+      setComments(comments => [...comments, { _id: lastCommentId, username: userUsername, body: commentBody }])
+    })
   }
 
   return (
@@ -164,44 +108,45 @@ export const Post: React.FC<IPostProps> = ({
       <Box display="flex" alignItems="center" justifyContent="space-between" position="relative">
         <Box display="flex" alignItems="center">
           <Avatar className={classes.avatar}>{authorUsername.charAt(0).toUpperCase()}</Avatar>
-          <Link to={isUser ? '/profile' : `/u/${authorID}`}>
-            <Typography component="h3" variant="h6">
+          <Typography component="h3" variant="h6">
+            <Link className={classes.link} to={isUser ? '/profile' : `/u/${authorID}`}>
               {authorUsername}
-            </Typography>
-          </Link>
+            </Link>
+          </Typography>
         </Box>
         <Box display="flex" alignItems="baseline">
-          {isUser && (
-            <Typography
-              style={isDeleting ? { opacity: 0 } : {}}
-              onClick={() => {
-                setIsDeleting(true)
-                onRequestDeletePostClick(postID)
-              }}
-              className={classes.deletePostText}
-            >
-              Удалить
-            </Typography>
-          )}
-          <Link to={`/p/${postID}`} className={classes.linkToPost}>
-            <Typography>Перейти к публикации</Typography>
-          </Link>
+          <PostOptions
+            isAuthor={isUser}
+            linkToPost={`/p/${postID}`}
+            onDelete={() => {
+              onRequestDeletePostClick(postID)
+            }}
+          />
         </Box>
       </Box>
       <Box className={classes.imageContainer}>
         <img
-          alt=""
-          style={{
-            display: 'block',
-            margin: '0 auto',
-            maxWidth: '100%',
-            maxHeight: '600px',
-          }}
+          alt={`Изображение пользователя ${authorUsername}`}
+          className={classes.image}
           src={image_url}
         />
       </Box>
       <Typography>{description}</Typography>
-      <Box className={classes.commentsContainer}>{children}</Box>
+      <Box className={classes.commentsContainer}>
+
+        {children}
+
+        {comments.length ? comments.map((comment) => (
+          <NewComment
+            key={comment._id}
+            username={comment.username}
+            commentBody={comment.body}
+            onRequestDeleteCommentClick={() => {
+              postAPI.deleteComment(postID, comment._id)
+            }}
+        />
+        )) : null}
+      </Box>
       <Box className={classes.addCommentForm}>
         <TextField
           onChange={handleCommentChange}

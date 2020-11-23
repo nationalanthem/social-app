@@ -8,11 +8,11 @@ import {
   Avatar,
   TextField,
   Button,
+  Tooltip,
+  IconButton,
 } from '@material-ui/core'
 import React from 'react'
 import DeleteIcon from '@material-ui/icons/Delete'
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
-import HighlightOffIcon from '@material-ui/icons/HighlightOff'
 import { Link } from 'react-router-dom'
 
 const useStyles = makeStyles((theme) => ({
@@ -42,6 +42,13 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: '100%',
     maxHeight: '80vh',
   },
+  link: {
+    color: theme.palette.text.primary,
+    textDecoration: 'none',
+    '&:active': {
+      opacity: 0.5,
+    },
+  },
   username: {
     paddingLeft: theme.spacing(2),
   },
@@ -62,42 +69,10 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(2),
     marginBottom: theme.spacing(3),
   },
-  commentWrapper: {
-    overflowWrap: 'break-word',
-    position: 'relative',
-    paddingLeft: theme.spacing(1),
-    marginBottom: theme.spacing(2),
-  },
-  commentUsername: {
-    fontWeight: 'bolder',
-    marginRight: '10px',
-    float: 'left',
-  },
-  deleteCommentIcon: {
-    position: 'absolute',
-    top: 0,
-    right: 10,
-    transition: '0.1s all',
-    cursor: 'pointer',
-    '&:hover': {
-      color: 'red',
-    },
-    '&:active': {
-      top: '2px',
-    },
-  },
   deletePostIcon: {
     position: 'absolute',
-    top: 18,
+    top: 8,
     right: 10,
-    transition: '0.1s all',
-    cursor: 'pointer',
-    '&:hover': {
-      color: 'red',
-    },
-    '&:active': {
-      top: 20,
-    },
   },
   addCommentForm: {
     display: 'flex',
@@ -108,54 +83,6 @@ const useStyles = makeStyles((theme) => ({
     padding: '0 2em',
   },
 }))
-
-interface CommentProps {
-  onRequestDeleteCommentClick: (commentID: string) => void
-  authorUsername: string
-  authorID: string
-  commentBody: string
-  commentID: string
-  isUser: boolean
-}
-
-export const Comment: React.FC<CommentProps> = ({
-  onRequestDeleteCommentClick,
-  commentID,
-  authorID,
-  authorUsername,
-  commentBody,
-  isUser,
-}) => {
-  const classes = useStyles()
-
-  const [isDeleting, setIsDeleting] = React.useState(false)
-
-  return (
-    <Box className={classes.commentWrapper}>
-      <Link to={isUser ? '/profile' : `/u/${authorID}`}>
-        <Typography variant="body2" component="span" className={classes.commentUsername}>
-          {authorUsername}
-        </Typography>
-      </Link>
-      <Grid item xs={10} sm={11}>
-        <Typography variant="body2" component="span">
-          {commentBody}
-        </Typography>
-      </Grid>
-      {isUser && (
-        <i
-          onClick={() => {
-            setIsDeleting(true)
-            onRequestDeleteCommentClick(commentID)
-          }}
-          className={classes.deleteCommentIcon}
-        >
-          {isDeleting ? <DeleteForeverIcon /> : <DeleteIcon />}
-        </i>
-      )}
-    </Box>
-  )
-}
 
 interface PostProps {
   children: React.ReactNode
@@ -179,9 +106,9 @@ export const Post: React.FC<PostProps> = ({
   children,
 }) => {
   const classes = useStyles()
-  const [isDeleting, setIsDeleting] = React.useState(false)
   const [commentBody, setCommentBody] = React.useState('')
   const divRef = React.useRef<HTMLDivElement>(null)
+  const [isDeleting, setIsDeleting] = React.useState(false)
 
   const handleCommentBodyChange = (
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
@@ -209,22 +136,24 @@ export const Post: React.FC<PostProps> = ({
           <Grid item md={6} xs={12}>
             <div className={classes.postHeader}>
               <Avatar>{authorUsername.charAt(0).toUpperCase()}</Avatar>
-              <Link to={isUser ? '/profile' : `/u/${authorID}`}>
+              <Link className={classes.link} to={isUser ? '/profile' : `/u/${authorID}`}>
                 <Typography variant="h6" component="h2" className={classes.username}>
                   {authorUsername}
                 </Typography>
               </Link>
               {isUser && (
-                <i
-                  title="Удалить"
-                  onClick={() => {
-                    setIsDeleting(true)
-                    onRequestDeletePostClick()
-                  }}
-                  className={classes.deletePostIcon}
-                >
-                  <HighlightOffIcon color={isDeleting ? 'disabled' : 'action'} />
-                </i>
+                <Tooltip title="Удалить" arrow placement="left">
+                  <IconButton
+                    className={classes.deletePostIcon}
+                    onClick={() => {
+                      setIsDeleting(true)
+                      onRequestDeletePostClick()
+                    }}
+                    disabled={isDeleting}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
               )}
             </div>
             <hr />

@@ -13,6 +13,17 @@ interface IGetSinglePostResponse {
   data: IPost
 }
 
+interface IAddCommentResponse {
+  data: {
+    comments: {
+      _id: string
+      author: {
+        username: string
+      }
+    }[]
+  }
+}
+
 export interface IPostsFromUserId {
   _id: string
   description: string
@@ -77,7 +88,7 @@ class PostAPI {
     }
   }
 
-  async addComment(postID: string, body: string): Promise<AxiosResponse> {
+  async addComment(postID: string, body: string): Promise<AxiosResponse<IAddCommentResponse>> {
     try {
       const response = await axios.put(
         '/addComment',

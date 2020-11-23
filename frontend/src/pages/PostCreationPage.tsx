@@ -1,4 +1,4 @@
-import { Container, Paper, Typography, TextField, Button, Box } from '@material-ui/core'
+import { Container, Paper, Typography, TextField, Button, Box, CircularProgress,Backdrop } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import { useForm } from 'react-hook-form'
 import Toast from '../Toast'
@@ -28,6 +28,9 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     alignSelf: 'flex-end',
   },
+  backdrop: {
+    zIndex: 100
+  }
 }))
 
 interface IPostCreationForm {
@@ -61,6 +64,7 @@ const PostCreationPage = () => {
   })
   const [imageInfo, setImageInfo] = React.useState<IImageInfo | null>(null)
   const [fileSelectionError, setFileSelectionError] = React.useState<string | null>(null)
+  const [isLoading, setIsLoading] = React.useState(false)
 
   const onSubmit = async (data: IPostCreationForm) => {
     const formData = new FormData()
@@ -68,6 +72,8 @@ const PostCreationPage = () => {
     if (!imageInfo?.file) {
       return setFileSelectionError('Пожалуйста, добавьте изображение')
     }
+
+    setIsLoading(true)
 
     formData.append('file', imageInfo.file)
     formData.append('upload_preset', 'social-app')
@@ -78,8 +84,8 @@ const PostCreationPage = () => {
       dispatch(fetchOnlyMyPosts())
       history.push('/feed')
     } catch (err) {
+      setIsLoading(false)
       alert('Возникла ошибка при публикации поста')
-      console.log(err.response)
     }
   }
 
@@ -120,6 +126,11 @@ const PostCreationPage = () => {
 
   return (
     <Container maxWidth="md" className={classes.outerContainer}>
+      
+      <Backdrop className={classes.backdrop} open={isLoading}>
+        <CircularProgress />
+      </Backdrop>
+      
       <Typography className={classes.header} align="center" variant="h5" component="h2">
         Создать новый пост
       </Typography>
@@ -212,7 +223,7 @@ const PostCreationPage = () => {
             <Toast closeBtn={false} duration={null} severity="error" message={fileSelectionError} />
           )}
 
-          <Button type="submit" variant="contained" color="primary" className={classes.submit}>
+          <Button disabled={isLoading} type="submit" variant="contained" color="primary" className={classes.submit}>
             Создать пост
           </Button>
         </form>

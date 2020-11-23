@@ -1,37 +1,18 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  IconButton,
-  Menu,
-  MenuItem,
-  Box,
-  Fab,
-  Zoom,
-} from '@material-ui/core/'
-import EditIcon from '@material-ui/icons/Edit'
-import AccountCircle from '@material-ui/icons/AccountCircle'
+import { AppBar, Toolbar, IconButton, Menu, MenuItem, Button } from '@material-ui/core/'
 import { Link, useLocation, useHistory } from 'react-router-dom'
 
+import HomeIcon from '@material-ui/icons/Home'
+import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined'
+import AddBoxIcon from '@material-ui/icons/AddBox'
+import AddBoxOutlinedIcon from '@material-ui/icons/AddBoxOutlined'
+import PersonIcon from '@material-ui/icons/Person'
+import PersonOutlineOutlinedIcon from '@material-ui/icons/PersonOutlineOutlined'
+
 const useStyles = makeStyles((theme) => ({
-  title: {
-    flex: 1,
-  },
-  home: {
-    textDecoration: 'none',
-    color: 'inherit',
-    transition: '.1s',
-    '&:hover': {
-      color: 'blue',
-    },
-  },
-  fab: {
-    position: 'fixed',
-    bottom: theme.spacing(5),
-    right: theme.spacing(5),
-    zIndex: 100,
+  toolbar: {
+    justifyContent: 'space-between',
   },
 }))
 
@@ -68,29 +49,33 @@ const Navbar = () => {
   return (
     <div>
       <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h5" className={classes.title}>
-            {isAuthenticated && location.pathname !== '/feed' ? (
-              <Link to="/feed" className={classes.home}>
-                Social App
-              </Link>
-            ) : (
-              'Social App'
-            )}
-          </Typography>
+        <Toolbar className={classes.toolbar}>
           {isAuthenticated ? (
-            <div>
-              <Box display="flex">
-                <Zoom in={location.pathname !== '/create'}>
-                  <Fab className={classes.fab} color="primary" component={Link} to="/create">
-                    <EditIcon />
-                  </Fab>
-                </Zoom>
+            location.pathname !== '/feed' ? (
+              <IconButton component={Link} to="/feed">
+                <HomeOutlinedIcon />
+              </IconButton>
+            ) : (
+              <HomeIcon />
+            )
+          ) : (
+            <HomeOutlinedIcon />
+          )}
 
-                <IconButton onClick={handleMenu} color="inherit">
-                  <AccountCircle />
+          {isAuthenticated ? (
+            <>
+              {location.pathname !== '/create' ? (
+                <IconButton component={Link} to="/create">
+                  <AddBoxOutlinedIcon />
                 </IconButton>
-              </Box>
+              ) : (
+                <AddBoxIcon />
+              )}
+
+              <IconButton onClick={handleMenu} color="inherit">
+                {location.pathname !== '/profile' ? <PersonOutlineOutlinedIcon /> : <PersonIcon />}
+              </IconButton>
+
               <Menu
                 anchorEl={anchorEl}
                 anchorOrigin={{
@@ -108,20 +93,20 @@ const Navbar = () => {
                 <MenuItem onClick={handleProfileClick}>Мой профиль</MenuItem>
                 <MenuItem onClick={handleExitAccount}>Выйти из аккаунта</MenuItem>
               </Menu>
-            </div>
+            </>
           ) : (
-            <>
+            <div>
               {location.pathname !== '/login' && (
-                <MenuItem component={Link} to="/login">
+                <Button component={Link} to="/login">
                   Вход
-                </MenuItem>
+                </Button>
               )}
               {location.pathname !== '/register' && (
-                <MenuItem component={Link} to="/register">
+                <Button component={Link} to="/register">
                   Регистрация
-                </MenuItem>
+                </Button>
               )}
-            </>
+            </div>
           )}
         </Toolbar>
       </AppBar>
