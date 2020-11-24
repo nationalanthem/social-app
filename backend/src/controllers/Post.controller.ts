@@ -95,15 +95,23 @@ class PostController {
       })
   }
 
-  getAllPosts(req: Request, res: Response): void {
-    Post.find({})
-      .populate('author', '_id username')
-      .populate('comments.author', '_id username')
-      .sort('-createdAt')
-      .exec((error, result) => {
-        if (error) return res.status(400).json({ error })
-        res.json({ data: result })
-      })
+  async getPosts(req: Request, res: Response): Promise<void> {
+    const { page = 1 } = req.query
+
+    try {
+      const posts = await Post.find({})
+        .limit(5)
+        .skip((+page - 1) * 5)
+        .sort('-createdAt')
+        .populate('author', '_id username')
+        .populate('comments.author', '_id username')
+
+      const count = await Post.countDocuments()
+
+      res.json({ posts, totalPages: Math.ceil(count / 5), currentPage: +page })
+    } catch (error) {
+      res.status(500).json({ error })
+    }
   }
 
   getPostById(req: Request, res: Response): void {

@@ -6,6 +6,13 @@ interface IUploadImageResponse {
 }
 
 interface IGetPostsResponse {
+  totalPages: number
+  currentPage: number
+  posts: IPost[]
+}
+
+
+interface IGetMyPostsResponse {
   data: IPost[]
 }
 
@@ -123,12 +130,15 @@ class PostAPI {
     }
   }
 
-  async fetchPosts(): Promise<AxiosResponse<IGetPostsResponse>> {
+  async fetchPosts(page?: number): Promise<AxiosResponse<IGetPostsResponse>> {
     try {
       const response = await axios.get('/posts', {
         headers: {
           Authorization: `Bearer ${this.token}`,
         },
+        params: {
+          page
+        }
       })
       return response
     } catch (err) {
@@ -162,7 +172,7 @@ class PostAPI {
     }
   }
 
-  async getMyPosts(): Promise<AxiosResponse<IGetPostsResponse>> {
+  async getMyPosts(): Promise<AxiosResponse<IGetMyPostsResponse>> {
     try {
       const response = await axios.get('/posts/my', {
         headers: {

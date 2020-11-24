@@ -14,6 +14,8 @@ import {
 import React from 'react'
 import DeleteIcon from '@material-ui/icons/Delete'
 import { Link } from 'react-router-dom'
+import { ru } from 'date-fns/locale'
+import { formatDistance } from 'date-fns'
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -66,13 +68,17 @@ const useStyles = makeStyles((theme) => ({
   descriptionContainer: {
     overflowWrap: 'break-word',
     paddingLeft: '0.5em',
-    paddingTop: theme.spacing(2),
+    paddingTop: theme.spacing(1),
     marginBottom: theme.spacing(3),
   },
   deletePostIcon: {
     position: 'absolute',
     top: 8,
     right: 10,
+  },
+  timestamp: {
+    paddingTop: theme.spacing(2),
+    paddingLeft: theme.spacing(1),
   },
   addCommentForm: {
     display: 'flex',
@@ -93,6 +99,7 @@ interface PostProps {
   isUser: boolean
   image_url: string
   description: string
+  timestamp: Date
 }
 
 export const Post: React.FC<PostProps> = ({
@@ -103,12 +110,22 @@ export const Post: React.FC<PostProps> = ({
   image_url,
   description,
   isUser,
+  timestamp,
   children,
 }) => {
   const classes = useStyles()
   const [commentBody, setCommentBody] = React.useState('')
   const divRef = React.useRef<HTMLDivElement>(null)
   const [isDeleting, setIsDeleting] = React.useState(false)
+  const [unix, setUnix] = React.useState(Date.now())
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setUnix(Date.now())
+    }, 10000)
+
+    return () => clearInterval(interval)
+  }, [])
 
   const handleCommentBodyChange = (
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
@@ -158,6 +175,13 @@ export const Post: React.FC<PostProps> = ({
             </div>
             <hr />
             <div ref={divRef} className={classes.bodyContainer}>
+              <Typography className={classes.timestamp} color="textSecondary" variant="body2">
+                {formatDistance(new Date(timestamp), unix, {
+                  locale: ru,
+                  includeSeconds: true,
+                  addSuffix: true,
+                })}
+              </Typography>
               <div className={classes.descriptionContainer}>
                 <Typography variant="body1" component="span">
                   {description}

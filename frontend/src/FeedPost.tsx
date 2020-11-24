@@ -1,10 +1,12 @@
 import { Paper, Typography, Avatar, Box, TextField, Button } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import {NewComment} from './FeedNewComment'
+import { NewComment } from './FeedNewComment'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import PostOptions from './PostOptions'
 import { postAPI } from './api/post.api'
+import { ru } from 'date-fns/locale'
+import { formatDistance } from 'date-fns'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -19,15 +21,20 @@ const useStyles = makeStyles((theme) => ({
   imageContainer: {
     margin: '1.5em -16px',
     maxHeight: '40vh',
-    backgroundColor: 'rgb(53, 53, 53)'
+    backgroundColor: 'rgb(53, 53, 53)',
   },
   image: {
     display: 'block',
     margin: '0 auto',
     maxWidth: '100%',
-    maxHeight:'40vh',
+    maxHeight: '40vh',
   },
-
+  timestamp: {
+    marginBottom: theme.spacing(2),
+  },
+  description: {
+    overflowWrap: 'break-word',
+  },
   link: {
     color: theme.palette.text.primary,
     textDecoration: 'none',
@@ -36,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   commentsContainer: {
-    marginTop: '2em',
+    marginTop: theme.spacing(2),
   },
   addCommentForm: {
     display: 'flex',
@@ -62,104 +69,142 @@ interface IPostProps {
   userUsername: string
   image_url: string
   description: string
+  timestamp: Date
+  children: any
 }
 
-export const Post: React.FC<IPostProps> = ({
-  onRequestDeletePostClick,
-  postID,
-  authorID,
-  isUser,
-  authorUsername,
-  userUsername,
-  image_url,
-  description,
-  children,
-}) => {
-  const classes = useStyles()
-  const [commentBody, setCommentBody] = React.useState('')
-  const [comments, setComments] = React.useState<Comment[]>([])
+export const Post = React.forwardRef(
+  (
+    {
+      authorID,
+      timestamp,
+      authorUsername,
+      children,
+      description,
+      image_url,
+      isUser,
+      onRequestDeletePostClick,
+      postID,
+      userUsername,
+    }: IPostProps,
+    ref:
+      | ((instance: HTMLButtonElement | null) => void)
+      | React.MutableRefObject<HTMLButtonElement | null>
+      | null
+  ) => {
+    const classes = useStyles()
+    const [commentBody, setCommentBody] = React.useState('')
+    const [comments, setComments] = React.useState<Comment[]>([])
+    const [unix, setUnix] = React.useState(Date.now())
 
-  const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-    setCommentBody(e.target.value)
-  }
+    React.useEffect(() => {
+      const interval = setInterval(() => {
+        setUnix(Date.now())
+      }, 10000)
 
-  const handleCommentSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    if (!commentBody) return
+      return () => clearInterval(interval)
+    }, [])
 
-    setCommentBody('')
+    const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+      setCommentBody(e.target.value)
+    }
 
-    postAPI.addComment(postID, commentBody).then(res => {
-      const { comments } = res.data.data
-      let lastCommentId: string 
+    const handleCommentSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      if (!commentBody) return
 
-      for (let i = comments.length - 1; i >= 0; i--) {
-        if (comments[i].author.username === userUsername) {
-          lastCommentId = comments[i]._id
-          break
-        } 
-      }
+      setCommentBody('')
 
-      setComments(comments => [...comments, { _id: lastCommentId, username: userUsername, body: commentBody }])
-    })
-  }
+      postAPI.addComment(postID, commentBody).then((res) => {
+        const { comments } = res.data.data
+        let lastCommentId: string
 
-  return (
-    <Paper elevation={5} className={classes.root}>
-      <Box display="flex" alignItems="center" justifyContent="space-between" position="relative">
-        <Box display="flex" alignItems="center">
-          <Avatar className={classes.avatar}>{authorUsername.charAt(0).toUpperCase()}</Avatar>
-          <Typography component="h3" variant="h6">
-            <Link className={classes.link} to={isUser ? '/profile' : `/u/${authorID}`}>
-              {authorUsername}
-            </Link>
-          </Typography>
+        for (let i = comments.length - 1; i >= 0; i--) {
+          if (comments[i].author.username === userUsername) {
+            lastCommentId = comments[i]._id
+            break
+          }
+        }
+
+        setComments((comments) => [
+          ...comments,
+          { _id: lastCommentId, username: userUsername, body: commentBody },
+        ])
+      })
+    }
+
+    return (
+      <Paper elevation={5} className={classes.root}>
+        <Box display="flex" alignItems="center" justifyContent="space-between" position="relative">
+          <Box display="flex" alignItems="center">
+            <Avatar className={classes.avatar}>{authorUsername.charAt(0).toUpperCase()}</Avatar>
+            <Typography component="h3" variant="h6">
+              <Link className={classes.link} to={isUser ? '/profile' : `/u/${authorID}`}>
+                {authorUsername}
+              </Link>
+            </Typography>
+          </Box>
+          <Box display="flex" alignItems="baseline">
+            <PostOptions
+              isAuthor={isUser}
+              linkToPost={`/p/${postID}`}
+              onDelete={() => {
+                onRequestDeletePostClick(postID)
+              }}
+            />
+          </Box>
         </Box>
-        <Box display="flex" alignItems="baseline">
-          <PostOptions
-            isAuthor={isUser}
-            linkToPost={`/p/${postID}`}
-            onDelete={() => {
-              onRequestDeletePostClick(postID)
-            }}
+        <Box className={classes.imageContainer}>
+          <img
+            alt={`Изображение пользователя ${authorUsername}`}
+            className={classes.image}
+            src={image_url}
           />
         </Box>
-      </Box>
-      <Box className={classes.imageContainer}>
-        <img
-          alt={`Изображение пользователя ${authorUsername}`}
-          className={classes.image}
-          src={image_url}
-        />
-      </Box>
-      <Typography>{description}</Typography>
-      <Box className={classes.commentsContainer}>
+        <Typography className={classes.timestamp} color="textSecondary" variant="body2">
+          {formatDistance(new Date(timestamp), unix, {
+            locale: ru,
+            includeSeconds: true,
+            addSuffix: true,
+          })}
+        </Typography>
+        <Typography className={classes.description} variant="body1">
+          {description}
+        </Typography>
+        <Box className={classes.commentsContainer}>
+          {children}
 
-        {children}
-
-        {comments.length ? comments.map((comment) => (
-          <NewComment
-            key={comment._id}
-            username={comment.username}
-            commentBody={comment.body}
-            onRequestDeleteCommentClick={() => {
-              postAPI.deleteComment(postID, comment._id)
-            }}
-        />
-        )) : null}
-      </Box>
-      <Box className={classes.addCommentForm}>
-        <TextField
-          onChange={handleCommentChange}
-          value={commentBody}
-          type="text"
-          label="Напишите комментарий"
-          multiline={true}
-          fullWidth
-        />
-        <Button disabled={!commentBody} onClick={handleCommentSubmit} className={classes.submit}>
-          Добавить
-        </Button>
-      </Box>
-    </Paper>
-  )
-}
+          {comments.length
+            ? comments.map((comment) => (
+                <NewComment
+                  key={comment._id}
+                  username={comment.username}
+                  commentBody={comment.body}
+                  onRequestDeleteCommentClick={() => {
+                    postAPI.deleteComment(postID, comment._id)
+                  }}
+                />
+              ))
+            : null}
+        </Box>
+        <Box className={classes.addCommentForm}>
+          <TextField
+            onChange={handleCommentChange}
+            value={commentBody}
+            type="text"
+            label="Напишите комментарий"
+            multiline={true}
+            fullWidth
+          />
+          <Button
+            ref={ref}
+            disabled={!commentBody}
+            onClick={handleCommentSubmit}
+            className={classes.submit}
+          >
+            Добавить
+          </Button>
+        </Box>
+      </Paper>
+    )
+  }
+)

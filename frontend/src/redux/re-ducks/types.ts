@@ -16,9 +16,26 @@ export interface IFetchMyPostsStart {
   type: typeof PostsActionTypes.FETCH_MY_POSTS_START
 }
 
+export interface IFetchRestPostsStart {
+  type: typeof PostsActionTypes.FETCH_REST_POSTS_START
+}
+
 export interface IFetchPostsSuccess {
   type: typeof PostsActionTypes.FETCH_POSTS_SUCCESS
-  payload: IPost[]
+  payload: {
+    totalPages: number
+    currentPage: number
+    posts: IPost[]
+  }
+}
+
+export interface IFetchRestPostsSuccess {
+  type: typeof PostsActionTypes.FETCH_REST_POSTS_SUCCESS
+  payload: {
+    totalPages: number
+    currentPage: number
+    posts: IPost[]
+  }
 }
 
 export interface IFetchMyPostsSuccess {
@@ -36,13 +53,27 @@ export interface IFetchMyPostsFailure {
   payload: string
 }
 
+export interface IFetchRestPostsFailure {
+  type: typeof PostsActionTypes.FETCH_REST_POSTS_FAILURE
+  payload: string
+}
+
+export interface SuccessPostsPayload {
+  totalPages: number
+  currentPage: number
+  posts: IPost[]
+}
+
 export type IPostsActions =
   | IFetchPostsStart
   | IFetchMyPostsStart
+  | IFetchRestPostsStart
   | IFetchPostsSuccess
+  | IFetchRestPostsSuccess
   | IFetchMyPostsSuccess
   | IFetchPostsFailure
   | IFetchMyPostsFailure
+  | IFetchRestPostsFailure
 
 export interface IComment {
   _id: string
@@ -56,14 +87,19 @@ export interface IPost {
   image: string
   author: IUserPopulated
   comments: IComment[]
+  createdAt: Date
 }
 
 export interface IPostsState {
+  totalPages: number | null
+  currentPage: number | null
   posts: IPost[]
-  postsLoadingState: LoadingState
   myPosts: IPost[]
+  postsLoadingState: LoadingState
+  restPostsLoadingState: LoadingState
   myPostsLoadingState: LoadingState
   postsError: string | null
+  restPostsError: string | null
   myPostsError: string | null
 }
 

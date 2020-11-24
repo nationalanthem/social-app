@@ -59,6 +59,7 @@ const SinglePostPage = () => {
           description={postData.description}
           onRequestAddCommentClick={handleRequestedAddCommentClick}
           onRequestDeletePostClick={handleRequestedDeletePostClick}
+          timestamp={postData.createdAt}
         >
           {postData.comments.map((comment) => (
             <Comment

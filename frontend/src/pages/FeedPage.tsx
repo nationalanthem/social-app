@@ -1,11 +1,26 @@
-import { Box, Container, makeStyles, Paper, Tab, Tabs, Typography, Zoom } from '@material-ui/core'
+import {
+  Box,
+  Container,
+  makeStyles,
+  Paper,
+  Tab,
+  Tabs,
+  Typography,
+  CircularProgress,
+  LinearProgress,
+} from '@material-ui/core'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Post } from '../FeedPost'
 import { Comment } from '../FeedComment'
-import { fetchAllPosts, fetchOnlyMyPosts } from '../redux/re-ducks/posts/effects'
-import { selectIfPostsLoaded, selectPosts } from '../redux/re-ducks/posts/selectors'
-import { CircularProgress } from '@material-ui/core'
+import { fetchRecentPosts, fetchRestPosts, fetchOnlyMyPosts } from '../redux/re-ducks/posts/effects'
+import {
+  selectIfPostsLoaded,
+  selectPosts,
+  selectTotalPages,
+  selectCurrentPage,
+  selectIfRestPostsLoading,
+} from '../redux/re-ducks/posts/selectors'
 import { postAPI } from '../api/post.api'
 import { selectUser } from '../redux/re-ducks/user/selectors'
 import RestoreIcon from '@material-ui/icons/Restore'
@@ -16,18 +31,9 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(5),
     marginBottom: theme.spacing(5),
   },
-  centeredText: {
-    textAlign: 'center',
-  },
-  fixedPaper: {
-    position: 'fixed',
-    zIndex: 100,
-    width: 150,
-    padding: theme.spacing(2),
-    opacity: 0.8,
-    top: theme.spacing(3),
-    left: '50%',
-    marginLeft: -75,
+  topLoading: {
+    position:'absolute',
+    width: '100%',
   },
 }))
 
@@ -41,7 +47,26 @@ const FeedPage = () => {
   const dispatch = useDispatch()
   const user = useSelector(selectUser)
   const posts = useSelector(selectPosts)
-  const isLoaded = useSelector(selectIfPostsLoaded)
+  const postsLoaded = useSelector(selectIfPostsLoaded)
+  const restPostsLoading = useSelector(selectIfRestPostsLoading)
+  const totalPages = useSelector(selectTotalPages)
+  const currentPage = useSelector(selectCurrentPage)
+
+  const observer = React.useRef<IntersectionObserver>()
+  const lastPost = React.useCallback(
+    (element) => {
+      if (observer.current) observer.current.disconnect()
+
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && currentPage && totalPages) {
+          if (currentPage < totalPages) dispatch(fetchRestPosts(currentPage + 1))
+        }
+      })
+
+      if (element) observer.current.observe(element)
+    },
+    [dispatch, totalPages, currentPage]
+  )
 
   const [postsCategory, setPostsCategory] = React.useState<PostsCategory>(PostsCategory.all)
 
@@ -50,29 +75,31 @@ const FeedPage = () => {
   }
 
   React.useEffect(() => {
-    if (postsCategory === PostsCategory.all) {
-      dispatch(fetchAllPosts())
+    if (postsCategory === PostsCategory.all && !postsLoaded) {
+      dispatch(fetchRecentPosts())
     }
-  }, [postsCategory, dispatch])
+  }, [dispatch, postsCategory, postsLoaded])
 
   const handleRequestedOnDeletePostClick = (postID: string) => {
     postAPI.deletePost(postID).then((_) => {
-      dispatch(fetchAllPosts())
+      dispatch(fetchRecentPosts())
       dispatch(fetchOnlyMyPosts())
     })
   }
 
   if (!user) {
     return (
-      <Box display="flex" alignItems="center" justifyContent="center" height="70vh">
+      <Box display="flex" alignItems="center" justifyContent="center" height="16vh">
         <CircularProgress />
       </Box>
     )
   }
 
-  return (
+  return (<>
+    {!postsLoaded && <LinearProgress className={classes.topLoading} />}
     <Container maxWidth="md">
       <Paper className={classes.tabs}>
+        
         <Tabs
           value={postsCategory}
           onChange={handlePostsCategoryChange}
@@ -80,22 +107,25 @@ const FeedPage = () => {
           indicatorColor="primary"
           textColor="primary"
         >
-          <Tab icon={<RestoreIcon />} label="Последние" />
-          <Tab disabled={!isLoaded} icon={<FavoriteIcon />} label="Отслеживаемые" />
+          <Tab
+            icon={<RestoreIcon />}
+            disabled={!postsLoaded}
+            onClick={() => {
+              if (postsCategory === PostsCategory.all) {
+                dispatch(fetchRecentPosts())
+              }
+            }}
+            label="Последние"
+          />
+          <Tab disabled={!postsLoaded} icon={<FavoriteIcon />} label="Отслеживаемые" />
         </Tabs>
       </Paper>
 
-      <Zoom in={!isLoaded}>
-        <Paper className={classes.fixedPaper}>
-          <Typography>Обновление...</Typography>
-        </Paper>
-      </Zoom>
-
-      {isLoaded && !posts.length && postsCategory === PostsCategory.all ? (
-        <Typography className={classes.centeredText}>Ничего нет :(</Typography>
-      ) : posts.length || isLoaded ? (
+      {postsLoaded && !posts.length && postsCategory === PostsCategory.all ? (
+        <Typography align="center">Ничего нет :(</Typography>
+      ) : posts.length || postsLoaded ? (
         <>
-          {posts.map((post) => {
+          {posts.map((post, index) => {
             if (postsCategory === PostsCategory.followings) {
               if (!user.followings.find((following) => following._id === post.author._id)) {
                 return null
@@ -104,6 +134,7 @@ const FeedPage = () => {
 
             return (
               <Post
+                ref={posts.length === index + 1 ? lastPost : null}
                 authorID={post.author._id}
                 key={post._id}
                 postID={post._id}
@@ -113,6 +144,7 @@ const FeedPage = () => {
                 image_url={post.image}
                 description={post.description}
                 onRequestDeletePostClick={handleRequestedOnDeletePostClick}
+                timestamp={post.createdAt}
               >
                 {post.comments.map((comment) => (
                   <Comment
@@ -129,8 +161,14 @@ const FeedPage = () => {
             )
           })}
 
+          {restPostsLoading && posts.length > 2 && (
+            <Box mt={3} mb={3} display="flex" alignItems="center" justifyContent="center">
+              <CircularProgress />
+            </Box>
+          )}
+
           {postsCategory === PostsCategory.followings && !user.followings.length && (
-            <Typography className={classes.centeredText}>У вас нет подписок</Typography>
+            <Typography align="center">У вас нет подписок</Typography>
           )}
         </>
       ) : (
@@ -139,7 +177,7 @@ const FeedPage = () => {
         </Box>
       )}
     </Container>
-  )
+  </>)
 }
 
 export default FeedPage

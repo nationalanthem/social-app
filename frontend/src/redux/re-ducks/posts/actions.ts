@@ -5,16 +5,23 @@ import {
   IFetchPostsFailure,
   IFetchPostsStart,
   IFetchPostsSuccess,
+  IFetchRestPostsFailure,
+  IFetchRestPostsStart,
+  IFetchRestPostsSuccess,
   IPost,
+  SuccessPostsPayload,
 } from '../types'
 
 export enum PostsActionTypes {
   FETCH_POSTS_START = 'posts/FETCH_POSTS_START',
   FETCH_MY_POSTS_START = 'posts/FETCH_MY_POSTS_START',
+  FETCH_REST_POSTS_START = 'posts/FETCH_REST_POSTS_START',
   FETCH_POSTS_SUCCESS = 'posts/FETCH_POSTS_SUCCESS',
+  FETCH_REST_POSTS_SUCCESS = 'posts/FETCH_REST_POSTS_SUCCESS',
   FETCH_MY_POSTS_SUCCESS = 'posts/FETCH_MY_POSTS_SUCCESS',
   FETCH_POSTS_FAILURE = 'posts/FETCH_POSTS_FAILURE',
   FETCH_MY_POSTS_FAILURE = 'posts/FETCH_MY_POSTS_FAILURE',
+  FETCH_REST_POSTS_FAILURE = 'posts/FETCH_REST_POSTS_FAILURE',
 }
 
 export const startFetch = (): IFetchPostsStart => {
@@ -29,9 +36,22 @@ export const startFetchMyPosts = (): IFetchMyPostsStart => {
   }
 }
 
-export const successFetch = (payload: IPost[]): IFetchPostsSuccess => {
+export const startFetchRestPosts = (): IFetchRestPostsStart => {
+  return {
+    type: PostsActionTypes.FETCH_REST_POSTS_START,
+  }
+}
+
+export const successFetch = (payload: SuccessPostsPayload): IFetchPostsSuccess => {
   return {
     type: PostsActionTypes.FETCH_POSTS_SUCCESS,
+    payload,
+  }
+}
+
+export const successFetchRestPosts = (payload: SuccessPostsPayload): IFetchRestPostsSuccess => {
+  return {
+    type: PostsActionTypes.FETCH_REST_POSTS_SUCCESS,
     payload,
   }
 }
@@ -56,3 +76,11 @@ export const failureFetchMyPosts = (payload: string): IFetchMyPostsFailure => {
     payload,
   }
 }
+
+export const failureFetchRestPosts = (payload: string): IFetchRestPostsFailure => {
+  return {
+    type: PostsActionTypes.FETCH_REST_POSTS_FAILURE,
+    payload,
+  }
+}
+

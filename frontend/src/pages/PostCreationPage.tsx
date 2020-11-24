@@ -8,7 +8,7 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useHistory } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import { fetchOnlyMyPosts } from '../redux/re-ducks/posts/effects'
+import { fetchOnlyMyPosts, fetchRecentPosts } from '../redux/re-ducks/posts/effects'
 
 const useStyles = makeStyles((theme) => ({
   outerContainer: {
@@ -82,6 +82,7 @@ const PostCreationPage = () => {
       const { data: imageData } = await postAPI.uploadImage(formData)
       await postAPI.createPost(data.description, imageData.secure_url)
       dispatch(fetchOnlyMyPosts())
+      dispatch(fetchRecentPosts())
       history.push('/feed')
     } catch (err) {
       setIsLoading(false)

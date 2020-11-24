@@ -30,6 +30,9 @@ const useStyles = makeStyles((theme) => ({
       opacity: 0.5
     },
   },
+  delete: {
+    opacity: 0.25
+  }
 }))
 
 interface CommentProps {
@@ -54,7 +57,7 @@ export const Comment: React.FC<CommentProps> = ({
   const [isDeleting, setIsDeleting] = React.useState(false)
 
   return (
-    <Box>
+    <Box className={isDeleting ? classes.delete : undefined}>
       <Box className={classes.commentWrapper}>
         <Typography variant="body2" component="span" className={classes.commentUsername}>
           <Link className={classes.link} to={isUser ? '/profile' : `/u/${authorID}`}>
