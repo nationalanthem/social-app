@@ -1,14 +1,14 @@
 import { Box, Container } from '@material-ui/core'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Post } from '../SinglePost'
-import { Comment } from '../SingleComment'
+import { Post } from '../components/SinglePost/SinglePost'
+import { Comment } from '../components/SinglePost/SingleComment'
 import { CircularProgress } from '@material-ui/core'
 import { postAPI } from '../api/post.api'
 import { selectUser } from '../redux/re-ducks/user/selectors'
 import { useHistory, useParams } from 'react-router-dom'
 import { IPost } from '../redux/re-ducks/types'
-import { fetchOnlyMyPosts } from '../redux/re-ducks/posts/effects'
+import { fetchMyPosts } from '../redux/re-ducks/myPosts/effects'
 
 const SinglePostPage = () => {
   const dispatch = useDispatch()
@@ -42,7 +42,7 @@ const SinglePostPage = () => {
 
   const handleRequestedDeletePostClick = () => {
     postAPI.deletePost(postID).then((_) => {
-      dispatch(fetchOnlyMyPosts())
+      dispatch(fetchMyPosts())
       history.replace('/')
     })
   }

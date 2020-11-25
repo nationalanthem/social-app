@@ -7,6 +7,8 @@ import HomeIcon from '@material-ui/icons/Home'
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined'
 import AddBoxIcon from '@material-ui/icons/AddBox'
 import AddBoxOutlinedIcon from '@material-ui/icons/AddBoxOutlined'
+import StarBorderIcon from '@material-ui/icons/StarBorder'
+import StarIcon from '@material-ui/icons/Star'
 import PersonIcon from '@material-ui/icons/Person'
 import PersonOutlineOutlinedIcon from '@material-ui/icons/PersonOutlineOutlined'
 
@@ -70,6 +72,14 @@ const Navbar = () => {
                 </IconButton>
               ) : (
                 <AddBoxIcon />
+              )}
+
+              {location.pathname !== '/followings' ? (
+                <IconButton component={Link} to="/followings">
+                  <StarBorderIcon />
+                </IconButton>
+              ) : (
+                <StarIcon />
               )}
 
               <IconButton onClick={handleMenu} color="inherit">

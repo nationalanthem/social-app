@@ -1,58 +1,20 @@
-import { Paper, Typography, Avatar, Box, TextField, Button } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
+import {
+  Paper,
+  Typography,
+  Avatar,
+  Box,
+  TextField,
+  Button,
+  CircularProgress,
+} from '@material-ui/core'
 import { NewComment } from './FeedNewComment'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import PostOptions from './PostOptions'
-import { postAPI } from './api/post.api'
+import { postAPI } from '../../api/post.api'
 import { ru } from 'date-fns/locale'
 import { formatDistance } from 'date-fns'
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    marginBottom: theme.spacing(5),
-    padding: theme.spacing(2),
-  },
-  avatar: {
-    marginRight: theme.spacing(2),
-    width: theme.spacing(6),
-    height: theme.spacing(6),
-  },
-  imageContainer: {
-    margin: '1.5em -16px',
-    maxHeight: '40vh',
-    backgroundColor: 'rgb(53, 53, 53)',
-  },
-  image: {
-    display: 'block',
-    margin: '0 auto',
-    maxWidth: '100%',
-    maxHeight: '40vh',
-  },
-  timestamp: {
-    marginBottom: theme.spacing(2),
-  },
-  description: {
-    overflowWrap: 'break-word',
-  },
-  link: {
-    color: theme.palette.text.primary,
-    textDecoration: 'none',
-    '&:active': {
-      opacity: 0.5,
-    },
-  },
-  commentsContainer: {
-    marginTop: theme.spacing(2),
-  },
-  addCommentForm: {
-    display: 'flex',
-    marginBottom: theme.spacing(1),
-  },
-  submit: {
-    marginLeft: theme.spacing(2),
-  },
-}))
+import { useStyles } from './FeedPost.styles'
 
 interface Comment {
   _id: string
@@ -61,31 +23,31 @@ interface Comment {
 }
 
 interface IPostProps {
-  onRequestDeletePostClick: (postID: string) => void
+  onRequestDeletePost?: (postID: string) => void
   postID: string
   authorID: string
-  isUser: boolean
   authorUsername: string
-  userUsername: string
   image_url: string
   description: string
   timestamp: Date
+  isUser: boolean
+  userUsername: string
   children: any
 }
 
 export const Post = React.forwardRef(
   (
     {
+      onRequestDeletePost,
       authorID,
       timestamp,
       authorUsername,
       children,
       description,
       image_url,
-      isUser,
-      onRequestDeletePostClick,
-      postID,
       userUsername,
+      isUser,
+      postID,
     }: IPostProps,
     ref:
       | ((instance: HTMLButtonElement | null) => void)
@@ -95,6 +57,7 @@ export const Post = React.forwardRef(
     const classes = useStyles()
     const [commentBody, setCommentBody] = React.useState('')
     const [comments, setComments] = React.useState<Comment[]>([])
+    const [isDeleting, setIsDeleting] = React.useState(false)
     const [unix, setUnix] = React.useState(Date.now())
 
     React.useEffect(() => {
@@ -148,15 +111,21 @@ export const Post = React.forwardRef(
               isAuthor={isUser}
               linkToPost={`/p/${postID}`}
               onDelete={() => {
-                onRequestDeletePostClick(postID)
+                setIsDeleting(true)
+                if (onRequestDeletePost) onRequestDeletePost(postID)
               }}
             />
           </Box>
         </Box>
-        <Box className={classes.imageContainer}>
+        <Box className={classes.imageContainer} position="relative">
+          {isDeleting && (
+            <Box className={classes.deleted}>
+              <CircularProgress />
+            </Box>
+          )}
           <img
             alt={`Изображение пользователя ${authorUsername}`}
-            className={classes.image}
+            className={isDeleting ? `${classes.deletedImage} ${classes.image}` : classes.image}
             src={image_url}
           />
         </Box>
@@ -190,6 +159,7 @@ export const Post = React.forwardRef(
           <TextField
             onChange={handleCommentChange}
             value={commentBody}
+            disabled={isDeleting}
             type="text"
             label="Напишите комментарий"
             multiline={true}

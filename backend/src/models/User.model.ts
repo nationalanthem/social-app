@@ -13,6 +13,8 @@ export interface UserSchema {
 export interface IUser {
   _id: mongoose.Types.ObjectId
   username?: string
+  followers?: mongoose.Types.ObjectId[]
+  followings?: mongoose.Types.ObjectId[]
 }
 
 export type UserSchemaWithDocument = UserSchema & mongoose.Document

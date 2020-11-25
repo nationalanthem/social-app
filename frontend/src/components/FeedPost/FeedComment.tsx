@@ -1,7 +1,8 @@
 import React from 'react'
-import ClearIcon from '@material-ui/icons/Clear';
+import ClearIcon from '@material-ui/icons/Clear'
 import { Typography, Box, IconButton, makeStyles } from '@material-ui/core'
 import { Link } from 'react-router-dom'
+import { postAPI } from '../../api/post.api'
 
 const useStyles = makeStyles((theme) => ({
   link: {
@@ -35,19 +36,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-interface NewCommentProps {
-  onRequestDeleteCommentClick: () => void
-  username: string
+interface CommentProps {
+  authorUsername: string
+  authorID: string
   commentBody: string
+  postID: string
+  commentID: string
+  isUser: boolean
 }
 
-export const NewComment: React.FC<NewCommentProps> = ({
-  onRequestDeleteCommentClick,
-  username,
+export const Comment: React.FC<CommentProps> = ({
+  postID,
+  authorID,
+  commentID,
+  authorUsername,
   commentBody,
+  isUser,
 }) => {
   const classes = useStyles()
-
   const [isDeleting, setIsDeleting] = React.useState(false)
 
   return (
@@ -55,25 +61,25 @@ export const NewComment: React.FC<NewCommentProps> = ({
       <Box mb={2} className={isDeleting ? classes.deleted : undefined}>
         <Box className={classes.commentBody}>
           <Typography variant="body2" component="h3" className={classes.commentUsername}>
-            <Link className={classes.link} to={'/profile'}>
-              {username}
+            <Link className={classes.link} to={isUser ? '/profile' : `/u/${authorID}`}>
+              {authorUsername}
             </Link>
           </Typography>
           <Typography variant="body2" component="span">
             {commentBody}
           </Typography>
-          
+          {isUser && (
             <IconButton
               onClick={() => {
                 setIsDeleting(true)
-                onRequestDeleteCommentClick()
+                postAPI.deleteComment(postID, commentID)
               }}
               className={classes.deleteCommentIcon}
               size="small"
             >
-              {isDeleting ? null : <ClearIcon fontSize="small"/>}
+              {isDeleting ? null : <ClearIcon fontSize="small" />}
             </IconButton>
-          
+          )}
         </Box>
       </Box>
     </>

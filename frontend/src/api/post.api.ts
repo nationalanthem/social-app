@@ -5,12 +5,11 @@ interface IUploadImageResponse {
   secure_url: string
 }
 
-interface IGetPostsResponse {
+export interface IGetPostsResponse {
   totalPages: number
   currentPage: number
   posts: IPost[]
 }
-
 
 interface IGetMyPostsResponse {
   data: IPost[]
@@ -137,8 +136,24 @@ class PostAPI {
           Authorization: `Bearer ${this.token}`,
         },
         params: {
-          page
-        }
+          page,
+        },
+      })
+      return response
+    } catch (err) {
+      throw err
+    }
+  }
+
+  async fetchFollowings(page?: number): Promise<AxiosResponse<IGetPostsResponse>> {
+    try {
+      const response = await axios.get('/posts/followings', {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+        params: {
+          page,
+        },
       })
       return response
     } catch (err) {

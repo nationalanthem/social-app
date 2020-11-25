@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form'
 import { userAPI } from '../api/user.api'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
-import Toast from '../Toast'
+import Toast from '../components/Toast'
 
 const useStyles = makeStyles((theme) => ({
   container: {

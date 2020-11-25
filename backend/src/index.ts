@@ -35,6 +35,11 @@ app.post(
 app.get('/posts', passport.authenticate('jwt', { session: false }), postController.getPosts)
 app.get('/posts/my', passport.authenticate('jwt', { session: false }), postController.getMyPosts)
 app.get(
+  '/posts/followings',
+  passport.authenticate('jwt', { session: false }),
+  postController.getFollowingsPosts
+)
+app.get(
   '/posts/:postID',
   passport.authenticate('jwt', { session: false }),
   postController.getPostById

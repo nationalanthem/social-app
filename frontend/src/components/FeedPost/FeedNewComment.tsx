@@ -2,7 +2,6 @@ import React from 'react'
 import ClearIcon from '@material-ui/icons/Clear'
 import { Typography, Box, IconButton, makeStyles } from '@material-ui/core'
 import { Link } from 'react-router-dom'
-import { postAPI } from './api/post.api'
 
 const useStyles = makeStyles((theme) => ({
   link: {
@@ -36,22 +35,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-interface CommentProps {
-  authorUsername: string
-  authorID: string
+interface NewCommentProps {
+  onRequestDeleteCommentClick: () => void
+  username: string
   commentBody: string
-  postID: string
-  commentID: string
-  isUser: boolean
 }
 
-export const Comment: React.FC<CommentProps> = ({
-  postID,
-  authorID,
-  commentID,
-  authorUsername,
+export const NewComment: React.FC<NewCommentProps> = ({
+  onRequestDeleteCommentClick,
+  username,
   commentBody,
-  isUser,
 }) => {
   const classes = useStyles()
 
@@ -62,25 +55,24 @@ export const Comment: React.FC<CommentProps> = ({
       <Box mb={2} className={isDeleting ? classes.deleted : undefined}>
         <Box className={classes.commentBody}>
           <Typography variant="body2" component="h3" className={classes.commentUsername}>
-            <Link className={classes.link} to={isUser ? '/profile' : `/u/${authorID}`}>
-              {authorUsername}
+            <Link className={classes.link} to={'/profile'}>
+              {username}
             </Link>
           </Typography>
           <Typography variant="body2" component="span">
             {commentBody}
           </Typography>
-          {isUser && (
-            <IconButton
-              onClick={() => {
-                setIsDeleting(true)
-                postAPI.deleteComment(postID, commentID)
-              }}
-              className={classes.deleteCommentIcon}
-              size="small"
-            >
-              {isDeleting ? null : <ClearIcon fontSize="small" />}
-            </IconButton>
-          )}
+
+          <IconButton
+            onClick={() => {
+              setIsDeleting(true)
+              onRequestDeleteCommentClick()
+            }}
+            className={classes.deleteCommentIcon}
+            size="small"
+          >
+            {isDeleting ? null : <ClearIcon fontSize="small" />}
+          </IconButton>
         </Box>
       </Box>
     </>

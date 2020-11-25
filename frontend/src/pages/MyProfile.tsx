@@ -1,7 +1,7 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectIfMyPostsLoaded, selectMyPosts } from '../redux/re-ducks/posts/selectors'
-import { fetchOnlyMyPosts } from '../redux/re-ducks/posts/effects'
+import { selectIfMyPostsLoaded, selectMyPosts } from '../redux/re-ducks/myPosts/selectors'
+import { fetchMyPosts } from '../redux/re-ducks/myPosts/effects'
 import { selectUser } from '../redux/re-ducks/user/selectors'
 import { Box, CircularProgress, GridListTile, Link, makeStyles } from '@material-ui/core'
 import { Link as RouterLink, useHistory } from 'react-router-dom'
@@ -93,7 +93,7 @@ const MyProfile = () => {
 
   React.useEffect(() => {
     if (!myPostsLoaded) {
-      dispatch(fetchOnlyMyPosts())
+      dispatch(fetchMyPosts())
     }
   }, [dispatch, myPostsLoaded])
 

@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 import { Typography } from '@material-ui/core'
 import { useForm } from 'react-hook-form'
 import { userAPI } from '../api/user.api'
-import Toast from '../Toast'
+import Toast from '../components/Toast'
 
 const useStyles = makeStyles((theme) => ({
   container: {

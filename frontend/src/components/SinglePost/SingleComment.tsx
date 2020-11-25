@@ -1,6 +1,6 @@
 import React from 'react'
-import ClearIcon from '@material-ui/icons/Clear';
-import {Box, Typography, Grid, makeStyles, IconButton} from '@material-ui/core'
+import ClearIcon from '@material-ui/icons/Clear'
+import { Box, Typography, Grid, makeStyles, IconButton } from '@material-ui/core'
 import { Link } from 'react-router-dom'
 
 const useStyles = makeStyles((theme) => ({
@@ -27,12 +27,12 @@ const useStyles = makeStyles((theme) => ({
     top: 0,
     right: 10,
     '&:active': {
-      opacity: 0.5
+      opacity: 0.5,
     },
   },
   delete: {
-    opacity: 0.25
-  }
+    opacity: 0.25,
+  },
 }))
 
 interface CommentProps {

@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { validationResult } from 'express-validator'
 import { CommentSchema } from '../models/Post.model'
 import Post, { PostSchema } from '../models/Post.model'
+import User from '../models/User.model'
 import { IUser } from '../models/User.model'
 
 class PostController {
@@ -100,15 +101,41 @@ class PostController {
 
     try {
       const posts = await Post.find({})
-        .limit(5)
-        .skip((+page - 1) * 5)
+        .limit(3)
+        .skip((+page - 1) * 3)
         .sort('-createdAt')
         .populate('author', '_id username')
         .populate('comments.author', '_id username')
 
       const count = await Post.countDocuments()
 
-      res.json({ posts, totalPages: Math.ceil(count / 5), currentPage: +page })
+      res.json({ posts, totalPages: Math.ceil(count / 3), currentPage: +page })
+    } catch (error) {
+      res.status(500).json({ error })
+    }
+  }
+
+  async getFollowingsPosts(req: Request, res: Response): Promise<void> {
+    const { page = 1 } = req.query
+    const userFromReq = req.user as IUser
+
+    const user = (await User.findById(userFromReq._id)) as IUser
+
+    try {
+      const posts = await Post.find({
+        author: { $in: user.followings },
+      })
+        .limit(3)
+        .skip((+page - 1) * 3)
+        .sort('-createdAt')
+        .populate('author', '_id username')
+        .populate('comments.author', '_id username')
+
+      const count = await Post.find({}).countDocuments({
+        author: { $in: user.followings },
+      })
+
+      res.json({ posts, totalPages: Math.ceil(count / 3), currentPage: +page })
     } catch (error) {
       res.status(500).json({ error })
     }

@@ -1,14 +1,23 @@
-import { Container, Paper, Typography, TextField, Button, Box, CircularProgress,Backdrop } from '@material-ui/core'
+import {
+  Container,
+  Paper,
+  Typography,
+  TextField,
+  Button,
+  Box,
+  CircularProgress,
+  Backdrop,
+} from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import { useForm } from 'react-hook-form'
-import Toast from '../Toast'
+import Toast from '../components/Toast'
 import React from 'react'
 import { postAPI } from '../api/post.api'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useHistory } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import { fetchOnlyMyPosts, fetchRecentPosts } from '../redux/re-ducks/posts/effects'
+import { fetchMyPosts } from '../redux/re-ducks/myPosts/effects'
 
 const useStyles = makeStyles((theme) => ({
   outerContainer: {
@@ -29,8 +38,8 @@ const useStyles = makeStyles((theme) => ({
     alignSelf: 'flex-end',
   },
   backdrop: {
-    zIndex: 100
-  }
+    zIndex: 100,
+  },
 }))
 
 interface IPostCreationForm {
@@ -81,8 +90,8 @@ const PostCreationPage = () => {
     try {
       const { data: imageData } = await postAPI.uploadImage(formData)
       await postAPI.createPost(data.description, imageData.secure_url)
-      dispatch(fetchOnlyMyPosts())
-      dispatch(fetchRecentPosts())
+      dispatch(fetchMyPosts())
+      // dispatch(fetchRecentPosts())
       history.push('/feed')
     } catch (err) {
       setIsLoading(false)
@@ -127,11 +136,10 @@ const PostCreationPage = () => {
 
   return (
     <Container maxWidth="md" className={classes.outerContainer}>
-      
       <Backdrop className={classes.backdrop} open={isLoading}>
         <CircularProgress />
       </Backdrop>
-      
+
       <Typography className={classes.header} align="center" variant="h5" component="h2">
         Создать новый пост
       </Typography>
@@ -224,7 +232,13 @@ const PostCreationPage = () => {
             <Toast closeBtn={false} duration={null} severity="error" message={fileSelectionError} />
           )}
 
-          <Button disabled={isLoading} type="submit" variant="contained" color="primary" className={classes.submit}>
+          <Button
+            disabled={isLoading}
+            type="submit"
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+          >
             Создать пост
           </Button>
         </form>

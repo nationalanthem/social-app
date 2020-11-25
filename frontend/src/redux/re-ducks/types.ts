@@ -1,79 +1,27 @@
-import { PostsActionTypes } from './posts/actions'
+import { MyPostsActionTypes } from './myPosts/actions'
 import { UserActionTypes } from './user/actions'
 
-// POSTS
 export enum LoadingState {
   IDLE = 'IDLE',
   LOADING = 'LOADING',
   LOADED = 'LOADED',
 }
 
-export interface IFetchPostsStart {
-  type: typeof PostsActionTypes.FETCH_POSTS_START
-}
-
+// MY POSTS
 export interface IFetchMyPostsStart {
-  type: typeof PostsActionTypes.FETCH_MY_POSTS_START
+  type: typeof MyPostsActionTypes.FETCH_ITEMS_START
 }
-
-export interface IFetchRestPostsStart {
-  type: typeof PostsActionTypes.FETCH_REST_POSTS_START
-}
-
-export interface IFetchPostsSuccess {
-  type: typeof PostsActionTypes.FETCH_POSTS_SUCCESS
-  payload: {
-    totalPages: number
-    currentPage: number
-    posts: IPost[]
-  }
-}
-
-export interface IFetchRestPostsSuccess {
-  type: typeof PostsActionTypes.FETCH_REST_POSTS_SUCCESS
-  payload: {
-    totalPages: number
-    currentPage: number
-    posts: IPost[]
-  }
-}
-
 export interface IFetchMyPostsSuccess {
-  type: typeof PostsActionTypes.FETCH_MY_POSTS_SUCCESS
+  type: typeof MyPostsActionTypes.FETCH_ITEMS_SUCCESS
   payload: IPost[]
 }
 
-export interface IFetchPostsFailure {
-  type: typeof PostsActionTypes.FETCH_POSTS_FAILURE
-  payload: string
-}
-
 export interface IFetchMyPostsFailure {
-  type: typeof PostsActionTypes.FETCH_MY_POSTS_FAILURE
+  type: typeof MyPostsActionTypes.FETCH_ITEMS_FAILURE
   payload: string
 }
 
-export interface IFetchRestPostsFailure {
-  type: typeof PostsActionTypes.FETCH_REST_POSTS_FAILURE
-  payload: string
-}
-
-export interface SuccessPostsPayload {
-  totalPages: number
-  currentPage: number
-  posts: IPost[]
-}
-
-export type IPostsActions =
-  | IFetchPostsStart
-  | IFetchMyPostsStart
-  | IFetchRestPostsStart
-  | IFetchPostsSuccess
-  | IFetchRestPostsSuccess
-  | IFetchMyPostsSuccess
-  | IFetchPostsFailure
-  | IFetchMyPostsFailure
-  | IFetchRestPostsFailure
+export type IMyPostsActions = IFetchMyPostsStart | IFetchMyPostsSuccess | IFetchMyPostsFailure
 
 export interface IComment {
   _id: string
@@ -91,16 +39,9 @@ export interface IPost {
 }
 
 export interface IPostsState {
-  totalPages: number | null
-  currentPage: number | null
   posts: IPost[]
-  myPosts: IPost[]
-  postsLoadingState: LoadingState
-  restPostsLoadingState: LoadingState
-  myPostsLoadingState: LoadingState
-  postsError: string | null
-  restPostsError: string | null
-  myPostsError: string | null
+  loadingState: LoadingState
+  error: string | null
 }
 
 // USER

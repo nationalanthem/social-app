@@ -1,5 +1,5 @@
 import React from 'react'
-import Navbar from './Navbar'
+import Navbar from './components/Navbar'
 import { BrowserRouter, Link, Redirect, Route, Switch } from 'react-router-dom'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
@@ -11,6 +11,7 @@ import { useDispatch } from 'react-redux'
 import { fetchUser } from './redux/re-ducks/user/effects'
 import SinglePostPage from './pages/SinglePostPage'
 import UserProfile from './pages/UserProfile'
+import FollowingsPage from './pages/FollowingsPage'
 
 const App = () => {
   const isAuthenticated = !!localStorage.getItem('token')
@@ -29,6 +30,11 @@ const App = () => {
         <Route exact path="/">
           {isAuthenticated ? <Redirect to="/feed" /> : <Redirect to="/login" />}
         </Route>
+        <ProtectedRoute
+          isAuthenticated={isAuthenticated}
+          path="/followings"
+          component={FollowingsPage}
+        />
         <ProtectedRoute isAuthenticated={isAuthenticated} path="/profile" component={MyProfile} />
         <ProtectedRoute
           isAuthenticated={isAuthenticated}

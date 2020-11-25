@@ -2,31 +2,19 @@ import { Box, Container, CircularProgress, Typography } from '@material-ui/core'
 import React from 'react'
 import { Post } from '../components/FeedPost/FeedPost'
 import { Comment } from '../components/FeedPost/FeedComment'
-import usePosts from '../hooks/usePosts'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { selectUser } from '../redux/re-ducks/user/selectors'
-import { postAPI } from '../api/post.api'
-import { fetchMyPosts } from '../redux/re-ducks/myPosts/effects'
-import { useHistory } from 'react-router-dom'
+import useFollowings from '../hooks/useFollowings'
 import { useObserver } from '../hooks/useObserver'
 
-const FeedPage = () => {
-  const dispatch = useDispatch()
-  const history = useHistory()
+const FollowingsPage = () => {
   const user = useSelector(selectUser)
 
   const [page, setPage] = React.useState(1)
 
-  const { posts, loading, hasNextPage } = usePosts(page)
+  const { posts, loading, hasNextPage } = useFollowings(page)
 
   const lastPost = useObserver(loading, hasNextPage, setPage)
-
-  const handleRequestDeletePost = (postID: string) => {
-    postAPI.deletePost(postID).then((_) => {
-      dispatch(fetchMyPosts())
-      history.go(0)
-    })
-  }
 
   return (
     <Container maxWidth="md">
@@ -50,12 +38,11 @@ const FeedPage = () => {
                 authorID={post.author._id}
                 postID={post._id}
                 authorUsername={post.author.username}
-                isUser={user._id === post.author._id}
+                isUser={false}
                 userUsername={user.username}
                 image_url={post.image}
                 description={post.description}
                 timestamp={post.createdAt}
-                onRequestDeletePost={handleRequestDeletePost}
               >
                 {post.comments.map((comment) => (
                   <Comment
@@ -75,7 +62,7 @@ const FeedPage = () => {
       )}
 
       {loading && posts.length >= 2 && (
-        <Box mt={10} mb={10} display="flex" alignItems="center" justifyContent="center">
+        <Box mt={5} mb={5} display="flex" alignItems="center" justifyContent="center">
           <CircularProgress />
         </Box>
       )}
@@ -83,4 +70,4 @@ const FeedPage = () => {
   )
 }
 
-export default FeedPage
+export default FollowingsPage
