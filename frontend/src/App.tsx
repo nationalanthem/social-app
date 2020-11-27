@@ -1,6 +1,6 @@
 import React from 'react'
 import Navbar from './components/Navbar'
-import { BrowserRouter, Link, Redirect, Route, Switch } from 'react-router-dom'
+import { Link, Redirect, Route, Switch } from 'react-router-dom'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import MyProfile from './pages/MyProfile'
@@ -12,10 +12,12 @@ import { fetchUser } from './redux/re-ducks/user/effects'
 import SinglePostPage from './pages/SinglePostPage'
 import UserProfile from './pages/UserProfile'
 import FollowingsPage from './pages/FollowingsPage'
+import { Typography, Box } from '@material-ui/core'
+import SettingsPage from './pages/SettingsPage'
 
 const App = () => {
-  const isAuthenticated = !!localStorage.getItem('token')
   const dispatch = useDispatch()
+  const isAuthenticated = !!localStorage.getItem('token')
 
   React.useEffect(() => {
     if (isAuthenticated) {
@@ -24,7 +26,7 @@ const App = () => {
   }, [isAuthenticated, dispatch])
 
   return (
-    <BrowserRouter>
+    <>
       <Navbar />
       <Switch>
         <Route exact path="/">
@@ -36,6 +38,11 @@ const App = () => {
           component={FollowingsPage}
         />
         <ProtectedRoute isAuthenticated={isAuthenticated} path="/profile" component={MyProfile} />
+        <ProtectedRoute
+          isAuthenticated={isAuthenticated}
+          path="/settings"
+          component={SettingsPage}
+        />
         <ProtectedRoute
           isAuthenticated={isAuthenticated}
           path="/u/:userID"
@@ -59,13 +66,15 @@ const App = () => {
         </Route>
 
         <Route path="*">
-          <div style={{ textAlign: 'center' }}>
-            <h2>К сожалению, такой страницы не существует :(</h2>
-            <Link to="/">Вернуться домой</Link>
-          </div>
+          <Box textAlign="center">
+            <Typography>К сожалению, такой страницы не существует :(</Typography>
+            <Typography component={Link} to="/" color="primary">
+              Вернуться домой
+            </Typography>
+          </Box>
         </Route>
       </Switch>
-    </BrowserRouter>
+    </>
   )
 }
 

@@ -1,22 +1,24 @@
+import { AxiosResponse } from 'axios'
 import React from 'react'
-import { postAPI } from '../api/post.api'
+import { IGetPostsResponse } from '../api/post.api'
 import { IPost } from '../redux/re-ducks/types'
 
-const usePosts = (page: number) => {
+export const usePosts = (
+  page: number,
+  method: (page: number) => Promise<AxiosResponse<IGetPostsResponse>>
+) => {
   const [loading, setLoading] = React.useState(false)
   const [posts, setPosts] = React.useState<IPost[]>([])
   const [hasNextPage, setHasNextPage] = React.useState(false)
 
   React.useEffect(() => {
     setLoading(true)
-    postAPI.fetchPosts(page).then((res) => {
+    method(page).then((res) => {
       setPosts((prevPosts) => [...prevPosts, ...res.data.posts])
       setHasNextPage(res.data.currentPage < res.data.totalPages)
       setLoading(false)
     })
-  }, [page])
+  }, [method, page])
 
   return { posts, loading, hasNextPage }
 }
-
-export default usePosts

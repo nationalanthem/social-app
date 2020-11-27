@@ -2,7 +2,7 @@ import { Box, Container, CircularProgress, Typography } from '@material-ui/core'
 import React from 'react'
 import { Post } from '../components/FeedPost/FeedPost'
 import { Comment } from '../components/FeedPost/FeedComment'
-import usePosts from '../hooks/usePosts'
+import { usePosts } from '../hooks/usePosts'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectUser } from '../redux/re-ducks/user/selectors'
 import { postAPI } from '../api/post.api'
@@ -17,7 +17,7 @@ const FeedPage = () => {
 
   const [page, setPage] = React.useState(1)
 
-  const { posts, loading, hasNextPage } = usePosts(page)
+  const { posts, loading, hasNextPage } = usePosts(page, postAPI.fetchPosts)
 
   const lastPost = useObserver(loading, hasNextPage, setPage)
 
@@ -30,51 +30,45 @@ const FeedPage = () => {
 
   return (
     <Container maxWidth="md">
-      {!posts.length && !loading && (
-        <Box mt={5}>
-          <Typography align="center">Ничего нет</Typography>
-        </Box>
-      )}
+      {!posts.length && !loading && <Typography align="center">Ничего нет</Typography>}
 
       {!user || (!posts.length && loading) ? (
         <Box display="flex" alignItems="center" justifyContent="center" height="90vh">
           <CircularProgress />
         </Box>
       ) : (
-        <Box mt={5}>
-          {posts.map((post, index) => {
-            return (
-              <Post
-                key={post._id}
-                ref={posts.length === index + 1 ? lastPost : null}
-                authorID={post.author._id}
-                postID={post._id}
-                authorUsername={post.author.username}
-                isUser={user._id === post.author._id}
-                userUsername={user.username}
-                image_url={post.image}
-                description={post.description}
-                timestamp={post.createdAt}
-                onRequestDeletePost={handleRequestDeletePost}
-              >
-                {post.comments.map((comment) => (
-                  <Comment
-                    key={comment._id}
-                    authorID={comment.author._id}
-                    postID={post._id}
-                    commentID={comment._id}
-                    authorUsername={comment.author.username}
-                    isUser={user._id === comment.author._id}
-                    commentBody={comment.body}
-                  />
-                ))}
-              </Post>
-            )
-          })}
-        </Box>
+        posts.map((post, index) => {
+          return (
+            <Post
+              key={post._id}
+              ref={posts.length === index + 1 ? lastPost : null}
+              authorID={post.author._id}
+              postID={post._id}
+              authorUsername={post.author.username}
+              isUser={user._id === post.author._id}
+              userUsername={user.username}
+              image_url={post.image}
+              description={post.description}
+              timestamp={post.createdAt}
+              onRequestDeletePost={handleRequestDeletePost}
+            >
+              {post.comments.map((comment) => (
+                <Comment
+                  key={comment._id}
+                  authorID={comment.author._id}
+                  postID={post._id}
+                  commentID={comment._id}
+                  authorUsername={comment.author.username}
+                  isUser={user._id === comment.author._id}
+                  commentBody={comment.body}
+                />
+              ))}
+            </Post>
+          )
+        })
       )}
 
-      {loading && posts.length >= 2 && (
+      {loading && posts.length >= 3 && (
         <Box mt={10} mb={10} display="flex" alignItems="center" justifyContent="center">
           <CircularProgress />
         </Box>

@@ -129,7 +129,7 @@ export const Post = React.forwardRef(
             src={image_url}
           />
         </Box>
-        <Typography className={classes.timestamp} color="textSecondary" variant="body2">
+        <Typography className={classes.timestamp} variant="body2">
           {formatDistance(new Date(timestamp), unix, {
             locale: ru,
             includeSeconds: true,

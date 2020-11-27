@@ -5,23 +5,20 @@ import App from './App'
 import reportWebVitals from './reportWebVitals'
 import { Provider } from 'react-redux'
 import { store } from './redux/store'
+import { CustomThemeProvider } from './ThemeProvider'
 import { CssBaseline } from '@material-ui/core'
-import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
-
-const theme = createMuiTheme({
-  palette: {
-    type: 'dark',
-  },
-})
+import { BrowserRouter } from 'react-router-dom'
 
 ReactDOM.render(
   <React.StrictMode>
-    <ThemeProvider theme={theme}>
+    <CustomThemeProvider>
       <CssBaseline />
-      <Provider store={store}>
-        <App />
-      </Provider>
-    </ThemeProvider>
+      <BrowserRouter>
+        <Provider store={store}>
+          <App />
+        </Provider>
+      </BrowserRouter>
+    </CustomThemeProvider>
   </React.StrictMode>,
   document.getElementById('root')
 )

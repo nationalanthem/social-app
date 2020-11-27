@@ -1,7 +1,6 @@
 import {
   Box,
   Container,
-  makeStyles,
   Paper,
   Typography,
   Grid,
@@ -11,84 +10,12 @@ import {
   Tooltip,
   IconButton,
 } from '@material-ui/core'
+import { useStyles } from './SinglePost.styles'
 import React from 'react'
 import DeleteIcon from '@material-ui/icons/Delete'
 import { Link } from 'react-router-dom'
 import { ru } from 'date-fns/locale'
 import { formatDistance } from 'date-fns'
-
-const useStyles = makeStyles((theme) => ({
-  container: {
-    marginTop: theme.spacing(5),
-    [theme.breakpoints.down('md')]: {
-      marginBottom: theme.spacing(13),
-    },
-  },
-  imgContainer: {
-    [theme.breakpoints.up('md')]: {
-      height: '750px',
-    },
-    overflow: 'hidden',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgb(53,53,53)',
-  },
-  postHeader: {
-    position: 'relative',
-    display: 'flex',
-    alignItems: 'center',
-    padding: theme.spacing(1),
-  },
-  img: {
-    maxWidth: '100%',
-    maxHeight: '80vh',
-  },
-  link: {
-    color: theme.palette.text.primary,
-    textDecoration: 'none',
-    '&:active': {
-      opacity: 0.5,
-    },
-  },
-  username: {
-    paddingLeft: theme.spacing(2),
-  },
-  bodyContainer: {
-    marginTop: '-7px',
-    overflowX: 'hidden',
-    overflowY: 'auto',
-    [theme.breakpoints.down('md')]: {
-      height: '385px',
-    },
-    [theme.breakpoints.up('md')]: {
-      height: '629px',
-    },
-  },
-  descriptionContainer: {
-    overflowWrap: 'break-word',
-    paddingLeft: '0.5em',
-    paddingTop: theme.spacing(1),
-    marginBottom: theme.spacing(3),
-  },
-  deletePostIcon: {
-    position: 'absolute',
-    top: 8,
-    right: 10,
-  },
-  timestamp: {
-    paddingTop: theme.spacing(2),
-    paddingLeft: theme.spacing(1),
-  },
-  addCommentForm: {
-    display: 'flex',
-    paddingLeft: theme.spacing(1),
-    paddingBottom: theme.spacing(2),
-  },
-  submitBtn: {
-    padding: '0 2em',
-  },
-}))
 
 interface PostProps {
   children: React.ReactNode
@@ -175,7 +102,7 @@ export const Post: React.FC<PostProps> = ({
             </div>
             <hr />
             <div ref={divRef} className={classes.bodyContainer}>
-              <Typography className={classes.timestamp} color="textSecondary" variant="body2">
+              <Typography className={classes.timestamp} variant="body2">
                 {formatDistance(new Date(timestamp), unix, {
                   locale: ru,
                   includeSeconds: true,

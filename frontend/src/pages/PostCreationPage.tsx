@@ -91,7 +91,6 @@ const PostCreationPage = () => {
       const { data: imageData } = await postAPI.uploadImage(formData)
       await postAPI.createPost(data.description, imageData.secure_url)
       dispatch(fetchMyPosts())
-      // dispatch(fetchRecentPosts())
       history.push('/feed')
     } catch (err) {
       setIsLoading(false)

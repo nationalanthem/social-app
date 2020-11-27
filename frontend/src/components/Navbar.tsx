@@ -1,6 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { AppBar, Toolbar, IconButton, Menu, MenuItem, Button } from '@material-ui/core/'
+import { AppBar, Toolbar, IconButton, Menu, MenuItem, Button, Tooltip } from '@material-ui/core/'
 import { Link, useLocation, useHistory } from 'react-router-dom'
 
 import HomeIcon from '@material-ui/icons/Home'
@@ -13,6 +13,9 @@ import PersonIcon from '@material-ui/icons/Person'
 import PersonOutlineOutlinedIcon from '@material-ui/icons/PersonOutlineOutlined'
 
 const useStyles = makeStyles((theme) => ({
+  appBar: {
+    marginBottom: theme.spacing(5),
+  },
   toolbar: {
     justifyContent: 'space-between',
   },
@@ -48,79 +51,95 @@ const Navbar = () => {
     history.push('/profile')
   }
 
+  const handleSettingsClick = () => {
+    setAnchorEl(null)
+    history.push('/settings')
+  }
+
   return (
-    <div>
-      <AppBar position="static">
-        <Toolbar className={classes.toolbar}>
-          {isAuthenticated ? (
-            location.pathname !== '/feed' ? (
+    <AppBar className={classes.appBar} position="static">
+      <Toolbar className={classes.toolbar}>
+        {isAuthenticated ? (
+          location.pathname !== '/feed' ? (
+            <Tooltip title="Домой">
               <IconButton component={Link} to="/feed">
                 <HomeOutlinedIcon />
               </IconButton>
-            ) : (
-              <HomeIcon />
-            )
+            </Tooltip>
           ) : (
-            <HomeOutlinedIcon />
-          )}
+            <HomeIcon />
+          )
+        ) : (
+          <HomeOutlinedIcon />
+        )}
 
-          {isAuthenticated ? (
-            <>
-              {location.pathname !== '/create' ? (
+        {isAuthenticated ? (
+          <>
+            {location.pathname !== '/create' ? (
+              <Tooltip title="Создать пост">
                 <IconButton component={Link} to="/create">
                   <AddBoxOutlinedIcon />
                 </IconButton>
-              ) : (
-                <AddBoxIcon />
-              )}
+              </Tooltip>
+            ) : (
+              <AddBoxIcon />
+            )}
 
-              {location.pathname !== '/followings' ? (
+            {location.pathname !== '/followings' ? (
+              <Tooltip title="Подписки">
                 <IconButton component={Link} to="/followings">
                   <StarBorderIcon />
                 </IconButton>
-              ) : (
-                <StarIcon />
-              )}
+              </Tooltip>
+            ) : (
+              <StarIcon />
+            )}
 
-              <IconButton onClick={handleMenu} color="inherit">
-                {location.pathname !== '/profile' ? <PersonOutlineOutlinedIcon /> : <PersonIcon />}
+            <Tooltip title="Аккаунт">
+              <IconButton onClick={handleMenu}>
+                {location.pathname !== '/profile' && location.pathname !== '/settings' ? (
+                  <PersonOutlineOutlinedIcon />
+                ) : (
+                  <PersonIcon />
+                )}
               </IconButton>
+            </Tooltip>
 
-              <Menu
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={open}
-                onClose={handleClose}
-              >
-                <MenuItem onClick={handleProfileClick}>Мой профиль</MenuItem>
-                <MenuItem onClick={handleExitAccount}>Выйти из аккаунта</MenuItem>
-              </Menu>
-            </>
-          ) : (
-            <div>
-              {location.pathname !== '/login' && (
-                <Button component={Link} to="/login">
-                  Вход
-                </Button>
-              )}
-              {location.pathname !== '/register' && (
-                <Button component={Link} to="/register">
-                  Регистрация
-                </Button>
-              )}
-            </div>
-          )}
-        </Toolbar>
-      </AppBar>
-    </div>
+            <Menu
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={open}
+              onClose={handleClose}
+            >
+              <MenuItem onClick={handleProfileClick}>Мой профиль</MenuItem>
+              <MenuItem onClick={handleSettingsClick}>Настройки</MenuItem>
+              <MenuItem onClick={handleExitAccount}>Выйти из аккаунта</MenuItem>
+            </Menu>
+          </>
+        ) : (
+          <div>
+            {location.pathname !== '/login' && (
+              <Button component={Link} to="/login">
+                Вход
+              </Button>
+            )}
+            {location.pathname !== '/register' && (
+              <Button component={Link} to="/register">
+                Регистрация
+              </Button>
+            )}
+          </div>
+        )}
+      </Toolbar>
+    </AppBar>
   )
 }
 

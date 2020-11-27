@@ -13,7 +13,7 @@ export const useStyles = makeStyles((theme) => ({
   imageContainer: {
     margin: '1.5em -16px',
     maxHeight: '40vh',
-    backgroundColor: 'rgb(53, 53, 53)',
+    backgroundColor: theme.palette.background.default,
   },
   image: {
     display: 'block',
@@ -23,6 +23,7 @@ export const useStyles = makeStyles((theme) => ({
   },
   timestamp: {
     marginBottom: theme.spacing(2),
+    color: theme.palette.text.secondary,
   },
   description: {
     overflowWrap: 'break-word',

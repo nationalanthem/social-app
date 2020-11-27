@@ -44,6 +44,8 @@ class PostAPI {
 
   constructor() {
     this.token = localStorage.getItem('token')!
+    this.fetchPosts = this.fetchPosts.bind(this)
+    this.fetchFollowings = this.fetchFollowings.bind(this)
   }
 
   async uploadImage(formData: FormData): Promise<AxiosResponse<IUploadImageResponse>> {

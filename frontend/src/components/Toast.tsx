@@ -19,7 +19,7 @@ interface ToastProps {
   closeBtn: boolean
 }
 
-const Toast: React.FC<ToastProps> = (props) => {
+const Toast: React.FC<ToastProps> = ({ severity, message, duration, closeBtn }) => {
   const [open, setOpen] = React.useState(true)
   const classes = useStyles()
 
@@ -33,14 +33,14 @@ const Toast: React.FC<ToastProps> = (props) => {
 
   return (
     <div className={classes.root}>
-      <Snackbar open={open} autoHideDuration={props.duration} onClose={handleClose}>
+      <Snackbar open={open} autoHideDuration={duration} onClose={handleClose}>
         <Alert
-          onClose={props.closeBtn ? handleClose : undefined}
-          severity={props.severity}
+          onClose={closeBtn ? handleClose : undefined}
+          severity={severity}
           elevation={6}
           variant="filled"
         >
-          {props.message}
+          {message}
         </Alert>
       </Snackbar>
     </div>
