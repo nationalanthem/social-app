@@ -77,29 +77,33 @@ export const Post: React.FC<PostProps> = ({
               className={classes.img}
             />
           </Grid>
+
           <Grid item md={6} xs={12}>
             <div className={classes.postHeader}>
-              <Avatar>{authorUsername.charAt(0).toUpperCase()}</Avatar>
-              <Link className={classes.link} to={isUser ? '/profile' : `/u/${authorID}`}>
-                <Typography variant="h6" component="h2" className={classes.username}>
-                  {authorUsername}
+              <Box display="flex" alignItems="center" flexGrow={1}>
+                <Avatar>{authorUsername.charAt(0).toUpperCase()}</Avatar>
+                <Typography className={classes.username} variant="h6" component="h2">
+                  <Link className={classes.link} to={isUser ? '/profile' : `/u/${authorID}`}>
+                    {authorUsername}
+                  </Link>
                 </Typography>
-              </Link>
+              </Box>
               {isUser && (
                 <Tooltip title="Удалить" arrow placement="left">
                   <IconButton
-                    className={classes.deletePostIcon}
                     onClick={() => {
                       setIsDeleting(true)
                       onRequestDeletePostClick()
                     }}
                     disabled={isDeleting}
+                    className={classes.deleteIcon}
                   >
                     <DeleteIcon />
                   </IconButton>
                 </Tooltip>
               )}
             </div>
+
             <hr />
             <div ref={divRef} className={classes.bodyContainer}>
               <Typography className={classes.timestamp} variant="body2">
@@ -117,20 +121,24 @@ export const Post: React.FC<PostProps> = ({
 
               {children}
             </div>
+
             <Box className={classes.addCommentForm}>
-              <TextField
-                onChange={handleCommentBodyChange}
-                value={commentBody}
-                type="text"
-                label="Добавьте комментарий..."
-                fullWidth
-                variant="outlined"
-                size="small"
-              />
+              <Box flexGrow={1}>
+                <TextField
+                  onChange={handleCommentBodyChange}
+                  value={commentBody}
+                  type="text"
+                  label="Добавьте комментарий..."
+                  fullWidth
+                  variant="outlined"
+                  size="small"
+                />
+              </Box>
               <Button
                 disabled={!commentBody}
                 onClick={handleCommentSubmit}
                 className={classes.submitBtn}
+                size="large"
               >
                 Добавить
               </Button>

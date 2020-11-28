@@ -23,8 +23,18 @@ const useStyles = makeStyles((theme) => ({
 
 const Navbar = () => {
   const classes = useStyles()
-
+  const [authState, setAuthState] = React.useState<boolean | null>(null)
   const isAuthenticated = !!localStorage.getItem('token')
+
+  React.useEffect(() => {
+    if (isAuthenticated && !authState) {
+      setAuthState(isAuthenticated)
+    }
+
+    if (!isAuthenticated && authState) {
+      window.location.href = '/login'
+    }
+  }, [isAuthenticated, authState])
 
   const history = useHistory()
   const location = useLocation()

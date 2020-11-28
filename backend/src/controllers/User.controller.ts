@@ -21,7 +21,7 @@ class UserController {
     User.findById(userID)
       .populate('followers followings', '_id username')
       .exec((error, data) => {
-        if (error) return res.status(400).json({ error })
+        if (error) return res.status(404).json({ error: 'Такого пользователя не существует' })
         res.json({ data })
       })
   }

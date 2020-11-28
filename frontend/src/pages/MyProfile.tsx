@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { selectIfMyPostsLoaded, selectMyPosts } from '../redux/re-ducks/myPosts/selectors'
 import { fetchMyPosts } from '../redux/re-ducks/myPosts/effects'
 import { selectUser } from '../redux/re-ducks/user/selectors'
-import { Box, CircularProgress, GridListTile, Link, makeStyles } from '@material-ui/core'
+import { Box, CircularProgress, GridListTile, Link, makeStyles  } from '@material-ui/core'
 import { Link as RouterLink, useHistory } from 'react-router-dom'
 import { Container, GridList } from '@material-ui/core'
 import {
@@ -42,6 +42,17 @@ const useStyles = makeStyles((theme) => ({
   galleryContainer: {
     marginTop: '5em',
   },
+  root: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+    overflow: 'hidden',
+    marginBottom: theme.spacing(15)
+  },
+  gridList: {
+    width: 500,
+    height: 500,
+  },
   image: {
     maxWidth: '100%',
     filter: 'grayscale(85%)',
@@ -59,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
   bold: {
     fontWeight: 700,
   },
-  root: {
+  avatar: {
     width: 200,
     height: 200,
   },
@@ -114,7 +125,7 @@ const MyProfile = () => {
           justifyContent="center"
           alignItems="center"
         >
-          <Avatar alt={`Аватар пользователя ${user.username}`} classes={{ root: classes.root }}>
+          <Avatar alt={`Аватар пользователя ${user.username}`} classes={{ root: classes.avatar }}>
             {user.username.charAt(0).toUpperCase()}
           </Avatar>
 
@@ -230,9 +241,10 @@ const MyProfile = () => {
       </Container>
 
       <Container maxWidth="lg" className={classes.galleryContainer}>
-        <GridList cellHeight={300} cols={3} spacing={5}>
+        <div className={classes.root}>
+        <GridList cellHeight={160} className={classes.gridList} cols={3} spacing={5}>
           {myPosts.map((post) => (
-            <GridListTile key={post._id}>
+            <GridListTile cols={1} key={post._id}>
               <RouterLink to={`/p/${post._id}`}>
                 <img
                   src={post.image}
@@ -248,6 +260,7 @@ const MyProfile = () => {
             </GridListTile>
           ))}
         </GridList>
+        </div>
       </Container>
     </div>
   )

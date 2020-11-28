@@ -9,6 +9,7 @@ import { selectUser } from '../redux/re-ducks/user/selectors'
 import { useHistory, useParams } from 'react-router-dom'
 import { IPost } from '../redux/re-ducks/types'
 import { fetchMyPosts } from '../redux/re-ducks/myPosts/effects'
+import Toast from '../components/Toast'
 
 const SinglePostPage = () => {
   const dispatch = useDispatch()
@@ -16,9 +17,13 @@ const SinglePostPage = () => {
   const { postID } = useParams<{ postID: string }>()
   const history = useHistory()
   const [postData, setPostData] = React.useState<IPost | null>(null)
+  const [postLoadingError, setPostLoadingError] = React.useState<string>()
 
   React.useEffect(() => {
-    postAPI.getPostById(postID).then((res) => setPostData(res.data.data))
+    postAPI
+      .getPostById(postID)
+      .then((res) => setPostData(res.data.data))
+      .catch((err) => setPostLoadingError(err.response.data.error))
   }, [postID])
 
   const handleRequestedAddCommentClick = (
@@ -45,6 +50,10 @@ const SinglePostPage = () => {
       dispatch(fetchMyPosts())
       history.replace('/')
     })
+  }
+
+  if (postLoadingError) {
+    return <Toast severity="error" closeBtn={false} duration={null} message={postLoadingError} />
   }
 
   return (

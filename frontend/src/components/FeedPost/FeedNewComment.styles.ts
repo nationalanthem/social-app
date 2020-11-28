@@ -11,7 +11,15 @@ export const useStyles = makeStyles((theme) => ({
   commentBody: {
     overflowWrap: 'break-word',
     position: 'relative',
-    width: '97%',
+    [theme.breakpoints.up('sm')]: {
+      width: '97%',
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '96.5%',
+    },
+    [theme.breakpoints.down('xs')]: {
+      width: '93%',
+    },
   },
   commentUsername: {
     fontWeight: 'bolder',

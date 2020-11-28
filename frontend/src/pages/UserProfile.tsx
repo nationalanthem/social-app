@@ -22,6 +22,7 @@ import {
   ListItemText,
   Typography,
 } from '@material-ui/core'
+import Toast from '../components/Toast'
 
 interface CustomDialogProps {
   dialogTitle: string
@@ -56,6 +57,17 @@ const useStyles = makeStyles((theme) => ({
       filter: 'grayscale(0%)',
     },
   },
+  root: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+    overflow: 'hidden',
+    marginBottom: theme.spacing(15),
+  },
+  gridList: {
+    width: 500,
+    height: 500,
+  },
   clickable: {
     cursor: 'pointer',
     '&:active': {
@@ -65,7 +77,7 @@ const useStyles = makeStyles((theme) => ({
   bold: {
     fontWeight: 700,
   },
-  root: {
+  avatar: {
     width: 200,
     height: 200,
   },
@@ -86,6 +98,8 @@ const UserProfile = () => {
     selectFollowingStatus(state, userID)
   )
 
+  const [userLoadingError, setUserLoadingError] = React.useState<string>()
+
   const [userData, setUserData] = React.useState<IUserPopulated | null>(null)
   const [postsData, setPostsData] = React.useState<IPostsFromUserId[] | null>(null)
 
@@ -94,15 +108,21 @@ const UserProfile = () => {
   const [isFollowingsModalOpen, setIsFollowingsModalOpen] = React.useState(false)
 
   React.useEffect(() => {
-    userAPI.getUserById(userID).then((res) => {
-      setUserData(res.data.data)
-    })
+    userAPI
+      .getUserById(userID)
+      .then((res) => {
+        setUserData(res.data.data)
+      })
+      .catch((err) => setUserLoadingError(err.response.data.error))
   }, [userID])
 
   React.useEffect(() => {
-    postAPI.getPostsFromUser(userID).then((res) => {
-      setPostsData(res.data.data)
-    })
+    postAPI
+      .getPostsFromUser(userID)
+      .then((res) => {
+        setPostsData(res.data.data)
+      })
+      .catch(() => {})
   }, [userID])
 
   const handleFollowerClick = (id: string) => {
@@ -151,6 +171,10 @@ const UserProfile = () => {
     }
   }
 
+  if (userLoadingError) {
+    return <Toast severity="error" closeBtn={false} duration={null} message={userLoadingError} />
+  }
+
   if (!userData || !postsData || !user)
     return (
       <Box display="flex" alignItems="center" justifyContent="center" height="90vh">
@@ -168,7 +192,10 @@ const UserProfile = () => {
           justifyContent="center"
           alignItems="center"
         >
-          <Avatar alt={`Аватар пользователя ${userData.username}`} classes={{ root: classes.root }}>
+          <Avatar
+            alt={`Аватар пользователя ${userData.username}`}
+            classes={{ root: classes.avatar }}
+          >
             {userData.username.charAt(0).toUpperCase()}
           </Avatar>
 
@@ -305,24 +332,26 @@ const UserProfile = () => {
       </Container>
 
       <Container maxWidth="lg" className={classes.galleryContainer}>
-        <GridList cellHeight={300} cols={3} spacing={5}>
-          {postsData.map((post) => (
-            <GridListTile key={post._id}>
-              <RouterLink to={`/p/${post._id}`}>
-                <img
-                  src={post.image}
-                  className={classes.image}
-                  draggable={false}
-                  alt={
-                    post.description.length > 50
-                      ? `${post.description.slice(0, 50)}...`
-                      : post.description
-                  }
-                />
-              </RouterLink>
-            </GridListTile>
-          ))}
-        </GridList>
+        <div className={classes.root}>
+          <GridList cellHeight={160} className={classes.gridList} cols={3} spacing={5}>
+            {postsData.map((post) => (
+              <GridListTile cols={1} key={post._id}>
+                <RouterLink to={`/p/${post._id}`}>
+                  <img
+                    src={post.image}
+                    className={classes.image}
+                    draggable={false}
+                    alt={
+                      post.description.length > 50
+                        ? `${post.description.slice(0, 50)}...`
+                        : post.description
+                    }
+                  />
+                </RouterLink>
+              </GridListTile>
+            ))}
+          </GridList>
+        </div>
       </Container>
     </div>
   )

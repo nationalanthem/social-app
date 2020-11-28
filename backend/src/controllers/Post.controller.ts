@@ -148,7 +148,7 @@ class PostController {
       .populate('author', '_id username')
       .populate('comments.author', '_id username')
       .exec((err, post) => {
-        if (err) return res.status(400).json({ status: 'error', error: err })
+        if (err) return res.status(404).json({ error: 'Такой публикации не существует' })
         res.json({ status: 'ok', data: post })
       })
   }

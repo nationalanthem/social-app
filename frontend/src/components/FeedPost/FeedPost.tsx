@@ -97,8 +97,8 @@ export const Post = React.forwardRef(
 
     return (
       <Paper elevation={5} className={classes.root}>
-        <Box display="flex" alignItems="center" justifyContent="space-between" position="relative">
-          <Box display="flex" alignItems="center">
+        <Box display="flex" overflow="auto" flexWrap="wrap">
+          <Box display="flex" alignItems="center" flexGrow={1}>
             <Avatar className={classes.avatar}>{authorUsername.charAt(0).toUpperCase()}</Avatar>
             <Typography component="h3" variant="h6">
               <Link className={classes.link} to={isUser ? '/profile' : `/u/${authorID}`}>
@@ -106,7 +106,7 @@ export const Post = React.forwardRef(
               </Link>
             </Typography>
           </Box>
-          <Box display="flex" alignItems="baseline">
+          <Box margin="auto">
             <PostOptions
               isAuthor={isUser}
               linkToPost={`/p/${postID}`}
@@ -117,6 +117,7 @@ export const Post = React.forwardRef(
             />
           </Box>
         </Box>
+
         <Box className={classes.imageContainer} position="relative">
           {isDeleting && (
             <Box className={classes.deleted}>
@@ -129,6 +130,7 @@ export const Post = React.forwardRef(
             src={image_url}
           />
         </Box>
+
         <Typography className={classes.timestamp} variant="body2">
           {formatDistance(new Date(timestamp), unix, {
             locale: ru,
@@ -136,6 +138,7 @@ export const Post = React.forwardRef(
             addSuffix: true,
           })}
         </Typography>
+
         <Typography className={classes.description} variant="body1">
           {description}
         </Typography>
@@ -155,16 +158,19 @@ export const Post = React.forwardRef(
               ))
             : null}
         </Box>
+
         <Box className={classes.addCommentForm}>
-          <TextField
-            onChange={handleCommentChange}
-            value={commentBody}
-            disabled={isDeleting}
-            type="text"
-            label="Напишите комментарий"
-            multiline={true}
-            fullWidth
-          />
+          <Box flexGrow={1}>
+            <TextField
+              onChange={handleCommentChange}
+              value={commentBody}
+              disabled={isDeleting}
+              type="text"
+              label="Напишите комментарий"
+              multiline={true}
+              fullWidth
+            />
+          </Box>
           <Button
             ref={ref}
             disabled={!commentBody}

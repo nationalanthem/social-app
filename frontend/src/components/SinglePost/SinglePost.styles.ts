@@ -8,24 +8,31 @@ export const useStyles = makeStyles((theme) => ({
     },
   },
   imgContainer: {
-    [theme.breakpoints.up('md')]: {
-      height: '750px',
-    },
+    height: 'auto',
     overflow: 'hidden',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: theme.palette.background.default,
   },
+
   postHeader: {
-    position: 'relative',
     display: 'flex',
     alignItems: 'center',
+    overflow: 'auto',
+    flexWrap: 'wrap',
     padding: theme.spacing(1),
   },
+  deleteIcon: {
+    margin: 'auto',
+  },
+
   img: {
     maxWidth: '100%',
     maxHeight: '80vh',
+  },
+  username: {
+    marginLeft: theme.spacing(2),
   },
   link: {
     color: theme.palette.text.primary,
@@ -34,9 +41,7 @@ export const useStyles = makeStyles((theme) => ({
       opacity: 0.5,
     },
   },
-  username: {
-    paddingLeft: theme.spacing(2),
-  },
+
   bodyContainer: {
     marginTop: '-7px',
     overflowX: 'hidden',
@@ -54,11 +59,6 @@ export const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(1),
     marginBottom: theme.spacing(3),
   },
-  deletePostIcon: {
-    position: 'absolute',
-    top: 8,
-    right: 10,
-  },
   timestamp: {
     paddingTop: theme.spacing(2),
     paddingLeft: theme.spacing(1),
@@ -66,10 +66,16 @@ export const useStyles = makeStyles((theme) => ({
   },
   addCommentForm: {
     display: 'flex',
+    flexWrap: 'wrap',
     paddingLeft: theme.spacing(1),
     paddingBottom: theme.spacing(2),
   },
   submitBtn: {
     padding: '0 2em',
+    [theme.breakpoints.down('xs')]: {
+      marginTop: theme.spacing(1),
+      width: '100%',
+      height: 50,
+    },
   },
 }))

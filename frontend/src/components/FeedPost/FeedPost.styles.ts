@@ -40,10 +40,15 @@ export const useStyles = makeStyles((theme) => ({
   },
   addCommentForm: {
     display: 'flex',
+    flexWrap: 'wrap',
     marginBottom: theme.spacing(1),
   },
   submit: {
     marginLeft: theme.spacing(2),
+    [theme.breakpoints.down('xs')]: {
+      marginTop: theme.spacing(1),
+      width:'100%',
+    }
   },
   deleted: {
     position: 'absolute',
