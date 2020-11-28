@@ -76,7 +76,6 @@ class UserController {
 
       if (user) {
         res.status(409).json({
-          status: 'error',
           message: 'Такой пользователь уже существует',
         })
         return
@@ -90,14 +89,12 @@ class UserController {
       })
 
       res.json({
-        status: 'ok',
         message: 'Вы успешно зарегистрировались',
         data: newUser.username,
       })
-    } catch (err) {
+    } catch (error) {
       res.status(500).json({
-        status: 'error',
-        message: err.toString(),
+        error,
       })
     }
   }
@@ -107,7 +104,6 @@ class UserController {
       if (err) return next(err)
       if (!user)
         return res.status(403).json({
-          status: 'error',
           message: 'Неправильное имя пользователя или пароль',
         })
 
@@ -122,7 +118,6 @@ class UserController {
         }
 
         return res.json({
-          status: 'ok',
           data,
         })
       })

@@ -1,7 +1,7 @@
 import { Box, Container, CircularProgress, Typography } from '@material-ui/core'
 import React from 'react'
 import { Post } from '../components/FeedPost/FeedPost'
-import { Comment } from '../components/FeedPost/FeedComment'
+import { Comment } from '../components/Comment/Comment'
 import { usePosts } from '../hooks/usePosts'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectUser } from '../redux/re-ducks/user/selectors'

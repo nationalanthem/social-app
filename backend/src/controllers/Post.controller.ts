@@ -10,7 +10,7 @@ class PostController {
     try {
       const errors = validationResult(req)
       if (!errors.isEmpty()) {
-        res.status(400).json({ status: 'error', errors: errors.array() })
+        res.status(400).json({ errors: errors.array() })
         return
       }
 
@@ -24,14 +24,11 @@ class PostController {
         comments: [],
       }
 
-      const newPost = await Post.create(post)
+      await Post.create(post)
 
-      res.status(201).json({ status: 'ok', data: newPost })
-    } catch (err) {
-      res.status(500).json({
-        status: 'error',
-        error: err,
-      })
+      res.sendStatus(201)
+    } catch (error) {
+      res.status(500).json({ error })
     }
   }
 
@@ -41,16 +38,13 @@ class PostController {
 
     Post.findById(postID)
       .populate('author', '_id username')
-      .exec((err, result) => {
-        if (err) return res.status(400).json({ status: 'error', error: err })
+      .exec((error, result) => {
+        if (error) return res.status(400).json({ error })
         if (!result) return res.sendStatus(404)
         if (result.author._id.equals(user._id)) {
-          result.deleteOne((err) => {
-            if (err) return res.status(400).json({ status: 'error', error: err })
-            res.json({
-              status: 'ok',
-              message: 'Публикация удалена',
-            })
+          result.deleteOne((error) => {
+            if (error) return res.status(400).json({ error })
+            res.send()
           })
         } else {
           res.sendStatus(403)
@@ -59,6 +53,12 @@ class PostController {
   }
 
   addComment(req: Request, res: Response): void {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array() })
+      return
+    }
+
     const { postID, body } = req.body
     const user = req.user as IUser
 
@@ -69,10 +69,10 @@ class PostController {
 
     Post.findByIdAndUpdate(postID, { $push: { comments: comment } }, { new: true })
       .populate('comments.author', '_id username')
-      .exec((err, result) => {
-        if (err) return res.status(400).json({ status: 'error', error: err })
+      .exec((error, result) => {
+        if (error) return res.status(400).json({ error })
 
-        res.json({ status: 'ok', data: result })
+        res.json({ data: result })
       })
   }
 
@@ -82,15 +82,15 @@ class PostController {
 
     Post.findById(postID)
       .populate('comments.author', '_id username')
-      .exec((err, result) => {
-        if (err) return res.status(400).json({ status: 'error', error: err })
+      .exec((error, result) => {
+        if (error) return res.status(400).json({ error })
         if (!result) return res.sendStatus(404)
         const commentIndex = result.comments.findIndex((comment) => comment._id?.equals(commentID))
         if (commentIndex === -1) return res.sendStatus(404)
         if (result.comments[commentIndex].author._id.equals(user._id)) {
-          result.updateOne({ $pull: { comments: { _id: commentID } } }, (err) => {
-            if (err) return res.status(400).json({ status: 'error', error: err })
-            res.json({ status: 'ok', message: 'Комментарий удалён' })
+          result.updateOne({ $pull: { comments: { _id: commentID } } }, (error) => {
+            if (error) return res.status(400).json({ error })
+            res.send()
           })
         } else res.sendStatus(403)
       })
@@ -147,9 +147,9 @@ class PostController {
     Post.findById(postID)
       .populate('author', '_id username')
       .populate('comments.author', '_id username')
-      .exec((err, post) => {
-        if (err) return res.status(404).json({ error: 'Такой публикации не существует' })
-        res.json({ status: 'ok', data: post })
+      .exec((error, post) => {
+        if (error) return res.status(404).json({ error: 'Такой публикации не существует' })
+        res.json({ data: post })
       })
   }
 
@@ -159,9 +159,9 @@ class PostController {
     Post.find({ author: userID })
       .select('-comments -author')
       .sort('-createdAt')
-      .exec((err, posts) => {
-        if (err) return res.status(400).json({ status: 'error', error: err })
-        res.json({ status: 'ok', data: posts })
+      .exec((error, posts) => {
+        if (error) return res.status(400).json({ error })
+        res.json({ data: posts })
       })
   }
 
@@ -171,8 +171,8 @@ class PostController {
     Post.find({ author: user._id })
       .populate('author', '_id username')
       .sort('-createdAt')
-      .exec((err, data) => {
-        if (err) return res.status(400).json({ status: 'error', error: err })
+      .exec((error, data) => {
+        if (error) return res.status(400).json({ error })
         res.json({
           status: 'ok',
           data,

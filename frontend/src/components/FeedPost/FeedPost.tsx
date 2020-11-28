@@ -69,6 +69,9 @@ export const Post = React.forwardRef(
     }, [])
 
     const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+      if (e.target.value.length > 1000) {
+        e.target.value = e.target.value.slice(0, 1000)
+      }
       setCommentBody(e.target.value)
     }
 
@@ -95,6 +98,11 @@ export const Post = React.forwardRef(
       })
     }
 
+    const handleDeletePost = () => {
+      setIsDeleting(true)
+      if (onRequestDeletePost) onRequestDeletePost(postID)
+    }
+
     return (
       <Paper elevation={5} className={classes.root}>
         <Box display="flex" overflow="auto" flexWrap="wrap">
@@ -110,14 +118,10 @@ export const Post = React.forwardRef(
             <PostOptions
               isAuthor={isUser}
               linkToPost={`/p/${postID}`}
-              onDelete={() => {
-                setIsDeleting(true)
-                if (onRequestDeletePost) onRequestDeletePost(postID)
-              }}
+              onDelete={handleDeletePost}
             />
           </Box>
         </Box>
-
         <Box className={classes.imageContainer} position="relative">
           {isDeleting && (
             <Box className={classes.deleted}>
@@ -167,7 +171,7 @@ export const Post = React.forwardRef(
               disabled={isDeleting}
               type="text"
               label="Напишите комментарий"
-              multiline={true}
+              helperText={commentBody.length ? commentBody.length + ' / 1000' : null}
               fullWidth
             />
           </Box>

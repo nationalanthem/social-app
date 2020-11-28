@@ -44,6 +44,7 @@ export const useStyles = makeStyles((theme) => ({
 
   bodyContainer: {
     marginTop: '-7px',
+    padding: theme.spacing(2),
     overflowX: 'hidden',
     overflowY: 'auto',
     [theme.breakpoints.down('md')]: {
@@ -55,14 +56,8 @@ export const useStyles = makeStyles((theme) => ({
   },
   descriptionContainer: {
     overflowWrap: 'break-word',
-    paddingLeft: '0.5em',
     paddingTop: theme.spacing(1),
-    marginBottom: theme.spacing(3),
-  },
-  timestamp: {
-    paddingTop: theme.spacing(2),
-    paddingLeft: theme.spacing(1),
-    color: theme.palette.text.secondary,
+    marginBottom: theme.spacing(2),
   },
   addCommentForm: {
     display: 'flex',

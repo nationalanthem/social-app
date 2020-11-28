@@ -1,8 +1,8 @@
 import React from 'react'
 import ClearIcon from '@material-ui/icons/Clear'
-import { Typography, Box, IconButton } from '@material-ui/core'
+import { Typography, IconButton } from '@material-ui/core'
 import { Link } from 'react-router-dom'
-import { useStyles } from './FeedNewComment.styles'
+import { useStyles } from '../Comment/Comment.styles'
 
 interface NewCommentProps {
   onRequestDeleteCommentClick: () => void
@@ -16,34 +16,29 @@ export const NewComment: React.FC<NewCommentProps> = ({
   commentBody,
 }) => {
   const classes = useStyles()
-
   const [isDeleting, setIsDeleting] = React.useState(false)
+
+  const handleDelete = () => {
+    setIsDeleting(true)
+    onRequestDeleteCommentClick()
+  }
 
   return (
     <>
-      <Box mb={2} className={isDeleting ? classes.deleted : undefined}>
-        <Box className={classes.commentBody}>
-          <Typography variant="body2" component="h3" className={classes.commentUsername}>
+      <div className={isDeleting ? classes.deleted : undefined}>
+        <div className={classes.commentWrapper}>
+          <Typography variant="body2" className={classes.commentUsername}>
             <Link className={classes.link} to={'/profile'}>
               {username}
             </Link>
           </Typography>
-          <Typography variant="body2" component="span">
-            {commentBody}
-          </Typography>
+          <Typography variant="body2">{commentBody}</Typography>
 
-          <IconButton
-            onClick={() => {
-              setIsDeleting(true)
-              onRequestDeleteCommentClick()
-            }}
-            className={classes.deleteCommentIcon}
-            size="small"
-          >
-            {isDeleting ? null : <ClearIcon fontSize="small" />}
+          <IconButton onClick={handleDelete} className={classes.deleteCommentIcon} size="small">
+            {!isDeleting && <ClearIcon fontSize="small" />}
           </IconButton>
-        </Box>
-      </Box>
+        </div>
+      </div>
     </>
   )
 }

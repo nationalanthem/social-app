@@ -11,23 +11,24 @@ export const useStyles = makeStyles((theme) => ({
   commentWrapper: {
     overflowWrap: 'break-word',
     position: 'relative',
-    paddingLeft: theme.spacing(1),
-    marginBottom: theme.spacing(2),
+    marginBottom: theme.spacing(1),
+    marginRight: theme.spacing(2),
   },
   commentUsername: {
     fontWeight: 'bolder',
-    marginRight: '10px',
+    marginRight: 10,
     float: 'left',
   },
   deleteCommentIcon: {
     position: 'absolute',
     top: 0,
-    right: 10,
+    right: -25,
+    cursor: 'pointer',
     '&:active': {
       opacity: 0.5,
     },
   },
-  delete: {
+  deleted: {
     opacity: 0.25,
   },
 }))

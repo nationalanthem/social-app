@@ -40,7 +40,7 @@ const PostOptions: React.FC<PostOptionsProps> = ({ isAuthor, onDelete, linkToPos
         <MenuItem component={Link} to={linkToPost} onClick={handleClose}>
           Перейти к публикации
         </MenuItem>
-        {isAuthor ? <MenuItem onClick={handleDeleteClick}>Удалить</MenuItem> : null}
+        {isAuthor && <MenuItem onClick={handleDeleteClick}>Удалить</MenuItem>}
       </Menu>
     </div>
   )

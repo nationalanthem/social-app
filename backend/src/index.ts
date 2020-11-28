@@ -9,6 +9,7 @@ import { userController } from './controllers/User.controller'
 import { registerValidation } from './validations/register.validation'
 import { postController } from './controllers/Post.controller'
 import { postValidation } from './validations/post.validation'
+import { commentValidation } from './validations/comment.validation'
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -50,7 +51,12 @@ app.get(
   postController.getPostsFromUser
 )
 
-app.put('/addComment', passport.authenticate('jwt', { session: false }), postController.addComment)
+app.put(
+  '/addComment',
+  commentValidation,
+  passport.authenticate('jwt', { session: false }),
+  postController.addComment
+)
 app.delete(
   '/deleteComment/:postID/:commentID',
   passport.authenticate('jwt', { session: false }),

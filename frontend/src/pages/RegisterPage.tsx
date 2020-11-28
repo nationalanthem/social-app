@@ -142,7 +142,10 @@ const RegisterPage = () => {
 
           <div className={classes.accountExist}>
             <Typography variant="body1">
-              Уже есть аккаунт? <Link to="/login">Войдите</Link>
+              Уже есть аккаунт?{' '}
+              <Typography color="textPrimary" component={Link} to="/login">
+                Войдите
+              </Typography>
             </Typography>
           </div>
         </form>

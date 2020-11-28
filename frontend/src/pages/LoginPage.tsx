@@ -93,7 +93,10 @@ const LoginPage = () => {
 
           <div className={classes.accountNotExist}>
             <Typography variant="body1">
-              Нет аккаунта? <Link to="/register">Зарегистрируйтесь</Link>
+              Нет аккаунта?{' '}
+              <Typography color="textPrimary" component={Link} to="/register">
+                Зарегистрируйтесь
+              </Typography>
             </Typography>
           </div>
         </form>

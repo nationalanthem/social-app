@@ -57,6 +57,9 @@ export const Post: React.FC<PostProps> = ({
   const handleCommentBodyChange = (
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
+    if (e.target.value.length > 1000) {
+      e.target.value = e.target.value.slice(0, 1000)
+    }
     setCommentBody(e.target.value)
   }
 
@@ -64,6 +67,11 @@ export const Post: React.FC<PostProps> = ({
     if (!commentBody) return
     onRequestAddCommentClick(commentBody, divRef)
     setCommentBody('')
+  }
+
+  const handleDeletePost = () => {
+    setIsDeleting(true)
+    onRequestDeletePostClick()
   }
 
   return (
@@ -91,10 +99,7 @@ export const Post: React.FC<PostProps> = ({
               {isUser && (
                 <Tooltip title="Удалить" arrow placement="left">
                   <IconButton
-                    onClick={() => {
-                      setIsDeleting(true)
-                      onRequestDeletePostClick()
-                    }}
+                    onClick={handleDeletePost}
                     disabled={isDeleting}
                     className={classes.deleteIcon}
                   >
@@ -106,7 +111,7 @@ export const Post: React.FC<PostProps> = ({
 
             <hr />
             <div ref={divRef} className={classes.bodyContainer}>
-              <Typography className={classes.timestamp} variant="body2">
+              <Typography color="textSecondary" variant="body2">
                 {formatDistance(new Date(timestamp), unix, {
                   locale: ru,
                   includeSeconds: true,
@@ -131,6 +136,7 @@ export const Post: React.FC<PostProps> = ({
                   label="Добавьте комментарий..."
                   fullWidth
                   variant="outlined"
+                  helperText={commentBody.length ? commentBody.length + ' / 1000' : null}
                   size="small"
                 />
               </Box>

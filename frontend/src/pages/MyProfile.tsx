@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { selectIfMyPostsLoaded, selectMyPosts } from '../redux/re-ducks/myPosts/selectors'
 import { fetchMyPosts } from '../redux/re-ducks/myPosts/effects'
 import { selectUser } from '../redux/re-ducks/user/selectors'
-import { Box, CircularProgress, GridListTile, Link, makeStyles  } from '@material-ui/core'
+import { Box, CircularProgress, Link, makeStyles } from '@material-ui/core'
 import { Link as RouterLink, useHistory } from 'react-router-dom'
-import { Container, GridList } from '@material-ui/core'
+import { Container } from '@material-ui/core'
 import {
   Avatar,
   Dialog,
@@ -38,23 +38,59 @@ export const CustomDialog: React.FC<CustomDialogProps> = ({
   )
 }
 
-const useStyles = makeStyles((theme) => ({
-  galleryContainer: {
+export const useStyles = makeStyles((theme) => ({
+  galleryWrapper: {
     marginTop: '5em',
   },
-  root: {
+  galleryContainer: {
+    [theme.breakpoints.down('sm')]: {
+      maxWidth: 325,
+    },
+    [theme.breakpoints.up('sm')]: {
+      maxWidth: 535,
+    },
+    [theme.breakpoints.up('md')]: {
+      maxWidth: 895,
+    },
+    margin: '0 auto',
     display: 'flex',
     flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    overflow: 'hidden',
-    marginBottom: theme.spacing(15)
   },
-  gridList: {
-    width: 500,
-    height: 500,
+  imageDiv: {
+    [theme.breakpoints.down('sm')]: {
+      width: 100,
+      height: 100,
+    },
+    [theme.breakpoints.up('sm')]: {
+      width: 170,
+      height: 170,
+    },
+    [theme.breakpoints.up('md')]: {
+      width: 290,
+      height: 290,
+    },
+    width: 200,
+    height: 200,
+    marginBottom: theme.spacing(1),
+    marginRight: theme.spacing(1),
   },
   image: {
-    maxWidth: '100%',
+    [theme.breakpoints.down('sm')]: {
+      width: 100,
+      height: 100,
+    },
+    [theme.breakpoints.up('sm')]: {
+      width: 170,
+      height: 170,
+    },
+    [theme.breakpoints.up('md')]: {
+      width: 290,
+      height: 290,
+    },
+    width: 200,
+    height: 200,
+    objectFit: 'cover',
+    objectPosition: 'center',
     filter: 'grayscale(85%)',
     transition: '0.5s all',
     '&:hover': {
@@ -66,6 +102,9 @@ const useStyles = makeStyles((theme) => ({
     '&:active': {
       opacity: 0.5,
     },
+  },
+  link: {
+    display: 'block',
   },
   bold: {
     fontWeight: 700,
@@ -153,6 +192,7 @@ const MyProfile = () => {
                 <Link
                   color="textPrimary"
                   underline="none"
+                  className={classes.link}
                   onClick={() => setIsFollowersModalOpen(true)}
                 >
                   <Typography variant="body1" className={classes.bold} component="span">
@@ -200,6 +240,7 @@ const MyProfile = () => {
                 <Link
                   color="textPrimary"
                   underline="none"
+                  className={classes.link}
                   onClick={() => setIsFollowingsModalOpen(true)}
                 >
                   <Typography variant="body1" className={classes.bold} component="span">
@@ -240,11 +281,10 @@ const MyProfile = () => {
         </Box>
       </Container>
 
-      <Container maxWidth="lg" className={classes.galleryContainer}>
-        <div className={classes.root}>
-        <GridList cellHeight={160} className={classes.gridList} cols={3} spacing={5}>
+      <Container maxWidth="lg" className={classes.galleryWrapper}>
+        <div className={classes.galleryContainer}>
           {myPosts.map((post) => (
-            <GridListTile cols={1} key={post._id}>
+            <div className={classes.imageDiv} key={post._id}>
               <RouterLink to={`/p/${post._id}`}>
                 <img
                   src={post.image}
@@ -257,9 +297,8 @@ const MyProfile = () => {
                   }
                 />
               </RouterLink>
-            </GridListTile>
+            </div>
           ))}
-        </GridList>
         </div>
       </Container>
     </div>

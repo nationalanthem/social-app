@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Link, CircularProgress, GridListTile, makeStyles } from '@material-ui/core'
+import { Box, Link, CircularProgress } from '@material-ui/core'
 import { Link as RouterLink, useParams } from 'react-router-dom'
 import { IPostsFromUserId, postAPI } from '../api/post.api'
 import { userAPI } from '../api/user.api'
@@ -7,7 +7,7 @@ import { IUserPopulated } from '../redux/re-ducks/types'
 import { useSelector } from 'react-redux'
 import { RootState } from '../redux/rootReducer'
 import { selectFollowingStatus, selectUser } from '../redux/re-ducks/user/selectors'
-import { Container, GridList } from '@material-ui/core'
+import { Container } from '@material-ui/core'
 import { useHistory } from 'react-router-dom'
 import { fetchUser } from '../redux/re-ducks/user/effects'
 import { useDispatch } from 'react-redux'
@@ -23,6 +23,7 @@ import {
   Typography,
 } from '@material-ui/core'
 import Toast from '../components/Toast'
+import { useStyles } from './MyProfile'
 
 interface CustomDialogProps {
   dialogTitle: string
@@ -44,48 +45,6 @@ export const CustomDialog: React.FC<CustomDialogProps> = ({
     </Dialog>
   )
 }
-
-const useStyles = makeStyles((theme) => ({
-  galleryContainer: {
-    marginTop: '5em',
-  },
-  image: {
-    maxWidth: '100%',
-    filter: 'grayscale(85%)',
-    transition: '0.5s all',
-    '&:hover': {
-      filter: 'grayscale(0%)',
-    },
-  },
-  root: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    overflow: 'hidden',
-    marginBottom: theme.spacing(15),
-  },
-  gridList: {
-    width: 500,
-    height: 500,
-  },
-  clickable: {
-    cursor: 'pointer',
-    '&:active': {
-      opacity: 0.5,
-    },
-  },
-  bold: {
-    fontWeight: 700,
-  },
-  avatar: {
-    width: 200,
-    height: 200,
-  },
-  username: {
-    marginTop: theme.spacing(5),
-    marginBottom: theme.spacing(5),
-  },
-}))
 
 const UserProfile = () => {
   const classes = useStyles()
@@ -234,6 +193,7 @@ const UserProfile = () => {
                 <Link
                   color="textPrimary"
                   underline="none"
+                  className={classes.link}
                   onClick={() => setIsFollowersModalOpen(true)}
                 >
                   <Typography variant="body1" className={classes.bold} component="span">
@@ -287,6 +247,7 @@ const UserProfile = () => {
                 <Link
                   color="textPrimary"
                   underline="none"
+                  className={classes.link}
                   onClick={() => setIsFollowingsModalOpen(true)}
                 >
                   <Typography variant="body1" className={classes.bold} component="span">
@@ -331,26 +292,24 @@ const UserProfile = () => {
         </Box>
       </Container>
 
-      <Container maxWidth="lg" className={classes.galleryContainer}>
-        <div className={classes.root}>
-          <GridList cellHeight={160} className={classes.gridList} cols={3} spacing={5}>
-            {postsData.map((post) => (
-              <GridListTile cols={1} key={post._id}>
-                <RouterLink to={`/p/${post._id}`}>
-                  <img
-                    src={post.image}
-                    className={classes.image}
-                    draggable={false}
-                    alt={
-                      post.description.length > 50
-                        ? `${post.description.slice(0, 50)}...`
-                        : post.description
-                    }
-                  />
-                </RouterLink>
-              </GridListTile>
-            ))}
-          </GridList>
+      <Container maxWidth="lg" className={classes.galleryWrapper}>
+        <div className={classes.galleryContainer}>
+          {postsData.map((post) => (
+            <div className={classes.imageDiv} key={post._id}>
+              <RouterLink to={`/p/${post._id}`}>
+                <img
+                  src={post.image}
+                  className={classes.image}
+                  draggable={false}
+                  alt={
+                    post.description.length > 50
+                      ? `${post.description.slice(0, 50)}...`
+                      : post.description
+                  }
+                />
+              </RouterLink>
+            </div>
+          ))}
         </div>
       </Container>
     </div>
