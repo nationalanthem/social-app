@@ -85,7 +85,7 @@ const PostCreationPage = () => {
     setIsLoading(true)
 
     formData.append('file', imageInfo.file)
-    formData.append('upload_preset', 'social-app')
+    formData.append('upload_preset', process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET!)
 
     try {
       const { data: imageData } = await postAPI.uploadImage(formData)

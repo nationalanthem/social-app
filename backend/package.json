@@ -2,7 +2,7 @@
   "name": "social-app-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "./dist/index.ts",
+  "main": "./dist/index.js",
   "scripts": {
     "devBackend": "nodemon ./src/index.ts",
     "devFrontend": "npm start --prefix ../frontend",

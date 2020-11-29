@@ -2,8 +2,7 @@ import { Request, Response } from 'express'
 import { validationResult } from 'express-validator'
 import { CommentSchema } from '../models/Post.model'
 import Post, { PostSchema } from '../models/Post.model'
-import User from '../models/User.model'
-import { IUser } from '../models/User.model'
+import User, { UserSchema } from '../models/User.model'
 
 class PostController {
   async createPost(req: Request, res: Response): Promise<void> {
@@ -15,7 +14,7 @@ class PostController {
       }
 
       const { description, image } = req.body
-      const user = req.user as IUser
+      const user = req.user as UserSchema
 
       const post: PostSchema = {
         description,
@@ -34,7 +33,7 @@ class PostController {
 
   deletePost(req: Request, res: Response): void {
     const { postID } = req.params
-    const user = req.user as IUser
+    const user = req.user as UserSchema
 
     Post.findById(postID)
       .populate('author', '_id username')
@@ -60,7 +59,7 @@ class PostController {
     }
 
     const { postID, body } = req.body
-    const user = req.user as IUser
+    const user = req.user as UserSchema
 
     const comment: CommentSchema = {
       body,
@@ -78,7 +77,7 @@ class PostController {
 
   deleteComment(req: Request, res: Response): void {
     const { postID, commentID } = req.params
-    const user = req.user as IUser
+    const user = req.user as UserSchema
 
     Post.findById(postID)
       .populate('comments.author', '_id username')
@@ -117,9 +116,9 @@ class PostController {
 
   async getFollowingsPosts(req: Request, res: Response): Promise<void> {
     const { page = 1 } = req.query
-    const userFromReq = req.user as IUser
+    const userFromReq = req.user as UserSchema
 
-    const user = (await User.findById(userFromReq._id)) as IUser
+    const user = (await User.findById(userFromReq._id)) as UserSchema
 
     try {
       const posts = await Post.find({
@@ -166,7 +165,7 @@ class PostController {
   }
 
   getMyPosts(req: Request, res: Response): void {
-    const user = req.user as IUser
+    const user = req.user as UserSchema
 
     Post.find({ author: user._id })
       .populate('author', '_id username')

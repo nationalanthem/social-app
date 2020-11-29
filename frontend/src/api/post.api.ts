@@ -51,7 +51,7 @@ class PostAPI {
   async uploadImage(formData: FormData): Promise<AxiosResponse<IUploadImageResponse>> {
     try {
       const response = await axios.post(
-        'https://api.cloudinary.com/v1_1/dxe4jr7bn/image/upload',
+        `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload`,
         formData
       )
 

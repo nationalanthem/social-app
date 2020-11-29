@@ -10,13 +10,6 @@ export interface UserSchema {
   validPassword(password: string): Promise<boolean>
 }
 
-export interface IUser {
-  _id: mongoose.Types.ObjectId
-  username?: string
-  followers?: mongoose.Types.ObjectId[]
-  followings?: mongoose.Types.ObjectId[]
-}
-
 export type UserSchemaWithDocument = UserSchema & mongoose.Document
 
 const schema = new mongoose.Schema({

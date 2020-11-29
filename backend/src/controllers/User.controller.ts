@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import { validationResult } from 'express-validator'
-import User, { IUser, UserSchemaWithDocument } from '../models/User.model'
+import User, { UserSchemaWithDocument, UserSchema } from '../models/User.model'
 import { passport } from '../passport'
 
 class UserController {
   ownProfile(req: Request, res: Response): void {
-    const user = req.user as IUser
+    const user = req.user as UserSchema
     User.findById(user._id)
       .populate('followers followings', '_id username')
       .exec((error, data) => {
@@ -28,7 +28,7 @@ class UserController {
 
   followUser(req: Request, res: Response): void {
     const { userID } = req.body
-    const user = req.user as IUser
+    const user = req.user as UserSchema
 
     User.findById(userID, (error, userToFollow) => {
       if (error) return res.status(400).json({ error })
@@ -47,7 +47,7 @@ class UserController {
 
   unfollowUser(req: Request, res: Response): void {
     const { userID } = req.body
-    const user = req.user as IUser
+    const user = req.user as UserSchema
 
     User.findById(userID, (error, userToUnfollow) => {
       if (error) return res.status(400).json({ error })
