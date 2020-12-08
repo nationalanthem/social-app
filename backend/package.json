@@ -8,8 +8,9 @@
     "devFrontend": "npm start --prefix ../frontend",
     "lintFrontend": "npm run lint --prefix ../frontend && npm run ts --prefix ../frontend",
     "lintBackend": "tsc --noEmit -p tsconfig.json",
-    "start": "concurrently \"npm run devBackend\" \"npm run devFrontend\"",
-    "lint": "npm run lintFrontend && npm run lintBackend"
+    "lint": "npm run lintFrontend && npm run lintBackend",
+    "dev": "concurrently \"npm run devBackend\" \"npm run devFrontend\"",
+    "start": "node dist/index.js"
   },
   "author": "nationalanthem",
   "license": "ISC",

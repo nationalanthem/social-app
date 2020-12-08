@@ -1,6 +1,8 @@
 import { config } from 'dotenv'
 config()
 
+import path from 'path'
+
 import express from 'express'
 import { connectToDB } from './database'
 import { passport } from './passport'
@@ -12,6 +14,11 @@ import { postValidation } from './validations/post.validation'
 import { commentValidation } from './validations/comment.validation'
 
 const app = express()
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '..', 'frontend', 'build')))
+}
+
 const PORT = process.env.PORT || 3000
 app.use(express.json())
 app.use(passport.initialize())
@@ -68,7 +75,16 @@ app.delete(
   postController.deletePost
 )
 
+app.get('*', (req, res) =>
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'build', 'index.html'))
+)
+
 connectToDB()
+
 app.listen(PORT, () => {
-  console.log(`Listening at http://localhost:${PORT}`)
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`Listening at http://localhost:${PORT}`)
+  } else {
+    console.log('Server is running.')
+  }
 })
