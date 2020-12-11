@@ -79,6 +79,7 @@ const SinglePostPage = () => {
               authorUsername={comment.author.username}
               commentBody={comment.body}
               onRequestDeleteCommentClick={handleRequestedDeleteCommentClick}
+              isPostByAuthor={postData.author._id === user?._id}
             />
           ))}
         </Post>

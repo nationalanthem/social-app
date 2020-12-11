@@ -19,7 +19,7 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '..', 'frontend', 'build')))
 }
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3001
 app.use(express.json())
 app.use(passport.initialize())
 
@@ -75,16 +75,18 @@ app.delete(
   postController.deletePost
 )
 
-app.get('*', (req, res) =>
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'build', 'index.html'))
-)
+if (process.env.NODE_ENV === 'production') {
+  app.get('*', (req, res) =>
+    res.sendFile(path.join(__dirname, '..', 'frontend', 'build', 'index.html'))
+  )
+}
 
 connectToDB()
 
 app.listen(PORT, () => {
-  if (process.env.NODE_ENV === 'development') {
-    console.log(`Listening at http://localhost:${PORT}`)
-  } else {
+  if (process.env.NODE_ENV === 'production') {
     console.log('Server is running.')
+  } else {
+    console.log(`Listening at http://localhost:${PORT}`)
   }
 })

@@ -13,6 +13,7 @@ interface CommentProps {
   commentBody: string
   commentID: string
   isUser: boolean
+  isPostByAuthor?: boolean
 }
 
 export const Comment: React.FC<CommentProps> = ({
@@ -23,6 +24,7 @@ export const Comment: React.FC<CommentProps> = ({
   commentBody,
   commentID,
   isUser,
+  isPostByAuthor,
 }) => {
   const classes = useStyles()
   const [isDeleting, setIsDeleting] = React.useState(false)
@@ -62,7 +64,7 @@ export const Comment: React.FC<CommentProps> = ({
             </Button>
           )}
         </Typography>
-        {isUser && (
+        {(isUser || isPostByAuthor) && (
           <IconButton
             onClick={handleDelete}
             className={classes.deleteCommentIcon}

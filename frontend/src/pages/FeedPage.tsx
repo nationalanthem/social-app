@@ -61,6 +61,7 @@ const FeedPage = () => {
                   authorUsername={comment.author.username}
                   isUser={user._id === comment.author._id}
                   commentBody={comment.body}
+                  isPostByAuthor={post.author._id === user._id}
                 />
               ))}
             </Post>

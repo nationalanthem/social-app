@@ -86,7 +86,10 @@ class PostController {
         if (!result) return res.sendStatus(404)
         const commentIndex = result.comments.findIndex((comment) => comment._id?.equals(commentID))
         if (commentIndex === -1) return res.sendStatus(404)
-        if (result.comments[commentIndex].author._id.equals(user._id)) {
+        if (
+          result.comments[commentIndex].author._id.equals(user._id) ||
+          result.author._id.equals(user._id)
+        ) {
           result.updateOne({ $pull: { comments: { _id: commentID } } }, (error) => {
             if (error) return res.status(400).json({ error })
             res.send()
