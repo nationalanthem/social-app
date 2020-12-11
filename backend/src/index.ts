@@ -26,6 +26,11 @@ app.use(passport.initialize())
 app.get('/me', passport.authenticate('jwt', { session: false }), userController.ownProfile)
 app.post('/register', registerValidation, userController.register)
 app.post('/login', userController.login)
+app.post(
+  '/me/changeAvatar',
+  passport.authenticate('jwt', { session: false }),
+  userController.changeAvatar
+)
 app.get(
   '/users/:userID',
   passport.authenticate('jwt', { session: false }),

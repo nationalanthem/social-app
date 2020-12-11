@@ -65,11 +65,13 @@ export type IUserActions = IFetchUserStart | IFetchUserSuccess | IFetchUserFailu
 export interface IUser {
   _id: string
   username: string
+  avatar?: string
 }
 
 export interface IUserPopulated {
   _id: string
   username: string
+  avatar?: string
   followers: IUser[]
   followings: IUser[]
 }

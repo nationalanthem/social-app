@@ -1,5 +1,6 @@
 import { Container, Typography, makeStyles } from '@material-ui/core'
 import React from 'react'
+import { AddAvatarForm } from '../components/AddAvatarForm'
 import { ThemeSwitcher } from '../components/ThemeSwitcher'
 
 const useStyles = makeStyles((theme) => ({
@@ -18,6 +19,10 @@ const OptionsPage = () => {
       <div className={classes.option}>
         <Typography>Ночной режим</Typography>
         <ThemeSwitcher />
+      </div>
+      <div className={classes.option}>
+        <Typography>Изображение профиля</Typography>
+        <AddAvatarForm />
       </div>
     </Container>
   )

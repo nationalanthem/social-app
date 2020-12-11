@@ -39,6 +39,7 @@ const FollowingsPage = () => {
               image_url={post.image}
               description={post.description}
               timestamp={post.createdAt}
+              avatar={post.author.avatar}
             >
               {post.comments.map((comment) => (
                 <Comment

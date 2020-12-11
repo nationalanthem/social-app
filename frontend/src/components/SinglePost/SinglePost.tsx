@@ -27,6 +27,7 @@ interface PostProps {
   image_url: string
   description: string
   timestamp: Date
+  avatar?: string
 }
 
 export const Post: React.FC<PostProps> = ({
@@ -38,6 +39,7 @@ export const Post: React.FC<PostProps> = ({
   description,
   isUser,
   timestamp,
+  avatar,
   children,
 }) => {
   const classes = useStyles()
@@ -89,7 +91,7 @@ export const Post: React.FC<PostProps> = ({
           <Grid item md={6} xs={12}>
             <div className={classes.postHeader}>
               <Box display="flex" alignItems="center" flexGrow={1}>
-                <Avatar>{authorUsername.charAt(0).toUpperCase()}</Avatar>
+                <Avatar src={avatar}>{authorUsername.charAt(0).toUpperCase()}</Avatar>
                 <Typography className={classes.username} variant="h6" component="h2">
                   <Link className={classes.link} to={isUser ? '/profile' : `/u/${authorID}`}>
                     {authorUsername}

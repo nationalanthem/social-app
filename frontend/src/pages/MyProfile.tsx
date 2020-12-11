@@ -2,7 +2,7 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectIfMyPostsLoaded, selectMyPosts } from '../redux/re-ducks/myPosts/selectors'
 import { fetchMyPosts } from '../redux/re-ducks/myPosts/effects'
-import { selectUser } from '../redux/re-ducks/user/selectors'
+import { selectAvatar, selectUser } from '../redux/re-ducks/user/selectors'
 import { Box, CircularProgress, Link, makeStyles } from '@material-ui/core'
 import { Link as RouterLink, useHistory } from 'react-router-dom'
 import { Container } from '@material-ui/core'
@@ -125,6 +125,7 @@ const MyProfile = () => {
   const history = useHistory()
 
   const user = useSelector(selectUser)
+  const avatar = useSelector(selectAvatar)
   const myPosts = useSelector(selectMyPosts)
   const myPostsLoaded = useSelector(selectIfMyPostsLoaded)
 
@@ -164,7 +165,11 @@ const MyProfile = () => {
           justifyContent="center"
           alignItems="center"
         >
-          <Avatar alt={`Аватар пользователя ${user.username}`} classes={{ root: classes.avatar }}>
+          <Avatar
+            alt={`Аватар пользователя ${user.username}`}
+            src={avatar}
+            classes={{ root: classes.avatar }}
+          >
             {user.username.charAt(0).toUpperCase()}
           </Avatar>
 
@@ -222,7 +227,9 @@ const MyProfile = () => {
                     onClick={() => handleFollowerClick(follower._id)}
                   >
                     <ListItemAvatar>
-                      <Avatar>{follower.username.charAt(0).toUpperCase()}</Avatar>
+                      <Avatar src={follower.avatar}>
+                        {follower.username.charAt(0).toUpperCase()}
+                      </Avatar>
                     </ListItemAvatar>
                     <ListItemText primary={follower.username} />
                   </ListItem>
@@ -270,7 +277,9 @@ const MyProfile = () => {
                     onClick={() => handleFollowingClick(following._id)}
                   >
                     <ListItemAvatar>
-                      <Avatar>{following.username.charAt(0).toUpperCase()}</Avatar>
+                      <Avatar src={following.avatar}>
+                        {following.username.charAt(0).toUpperCase()}
+                      </Avatar>
                     </ListItemAvatar>
                     <ListItemText primary={following.username} />
                   </ListItem>

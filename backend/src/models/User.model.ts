@@ -5,6 +5,7 @@ export interface UserSchema {
   _id: mongoose.Types.ObjectId
   username: string
   password: string
+  avatar?: string
   followers: mongoose.Types.ObjectId[]
   followings: mongoose.Types.ObjectId[]
   validPassword(password: string): Promise<boolean>
@@ -21,6 +22,9 @@ const schema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
+  },
+  avatar: {
+    type: String,
   },
   followers: [
     {

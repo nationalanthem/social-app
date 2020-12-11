@@ -40,6 +40,25 @@ class UserAPI {
     }
   }
 
+  async changeAvatar(avatarUrl: string): Promise<AxiosResponse> {
+    try {
+      const response = await axios.post(
+        '/me/changeAvatar',
+        {
+          avatarUrl,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        }
+      )
+      return response
+    } catch (err) {
+      throw err
+    }
+  }
+
   async myProfile(): Promise<AxiosResponse<IMyProfileResponse>> {
     try {
       const response = await axios.get('/me', {

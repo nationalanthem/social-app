@@ -32,6 +32,7 @@ interface IPostProps {
   timestamp: Date
   isUser: boolean
   userUsername: string
+  avatar?: string
   children: any
 }
 
@@ -48,6 +49,7 @@ export const Post = React.forwardRef(
       userUsername,
       isUser,
       postID,
+      avatar,
     }: IPostProps,
     ref:
       | ((instance: HTMLButtonElement | null) => void)
@@ -107,7 +109,9 @@ export const Post = React.forwardRef(
       <Paper elevation={5} className={classes.root}>
         <Box display="flex" overflow="auto" flexWrap="wrap">
           <Box display="flex" alignItems="center" flexGrow={1}>
-            <Avatar className={classes.avatar}>{authorUsername.charAt(0).toUpperCase()}</Avatar>
+            <Avatar src={avatar} className={classes.avatar}>
+              {authorUsername.charAt(0).toUpperCase()}
+            </Avatar>
             <Typography component="h3" variant="h6">
               <Link className={classes.link} to={isUser ? '/profile' : `/u/${authorID}`}>
                 {authorUsername}

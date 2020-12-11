@@ -106,7 +106,7 @@ class PostController {
         .limit(3)
         .skip((+page - 1) * 3)
         .sort('-createdAt')
-        .populate('author', '_id username')
+        .populate('author', '_id username avatar')
         .populate('comments.author', '_id username')
 
       const count = await Post.countDocuments()
@@ -130,7 +130,7 @@ class PostController {
         .limit(3)
         .skip((+page - 1) * 3)
         .sort('-createdAt')
-        .populate('author', '_id username')
+        .populate('author', '_id username avatar')
         .populate('comments.author', '_id username')
 
       const count = await Post.find({}).countDocuments({
@@ -147,7 +147,7 @@ class PostController {
     const { postID } = req.params
 
     Post.findById(postID)
-      .populate('author', '_id username')
+      .populate('author', '_id username avatar')
       .populate('comments.author', '_id username')
       .exec((error, post) => {
         if (error) return res.status(404).json({ error: 'Такой публикации не существует' })

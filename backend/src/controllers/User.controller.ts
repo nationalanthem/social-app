@@ -8,18 +8,28 @@ class UserController {
   ownProfile(req: Request, res: Response): void {
     const user = req.user as UserSchema
     User.findById(user._id)
-      .populate('followers followings', '_id username')
+      .populate('followers followings', '_id username avatar')
       .exec((error, data) => {
         if (error) return res.status(400).json({ error })
         res.json({ data })
       })
   }
 
+  changeAvatar(req: Request, res: Response): void {
+    const { avatarUrl } = req.body
+    const user = req.user as UserSchema
+
+    User.updateOne({ _id: user._id }, { $set: { avatar: avatarUrl } }).exec((error, _) => {
+      if (error) return res.status(400).json({ error })
+      res.send()
+    })
+  }
+
   getUserById(req: Request, res: Response): void {
     const { userID } = req.params
 
     User.findById(userID)
-      .populate('followers followings', '_id username')
+      .populate('followers followings', '_id username avatar')
       .exec((error, data) => {
         if (error) return res.status(404).json({ error: 'Такого пользователя не существует' })
         res.json({ data })

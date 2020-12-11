@@ -51,6 +51,7 @@ const FeedPage = () => {
               description={post.description}
               timestamp={post.createdAt}
               onRequestDeletePost={handleRequestDeletePost}
+              avatar={post.author.avatar}
             >
               {post.comments.map((comment) => (
                 <Comment

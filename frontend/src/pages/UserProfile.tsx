@@ -152,6 +152,7 @@ const UserProfile = () => {
           alignItems="center"
         >
           <Avatar
+            src={userData.avatar}
             alt={`Аватар пользователя ${userData.username}`}
             classes={{ root: classes.avatar }}
           >
@@ -224,7 +225,9 @@ const UserProfile = () => {
                       onClick={() => handleFollowerClick(follower._id)}
                     >
                       <ListItemAvatar>
-                        <Avatar>{follower.username.charAt(0).toUpperCase()}</Avatar>
+                        <Avatar src={follower.avatar}>
+                          {follower.username.charAt(0).toUpperCase()}
+                        </Avatar>
                       </ListItemAvatar>
                       <ListItemText
                         primary={`${follower.username}${
@@ -277,7 +280,9 @@ const UserProfile = () => {
                     onClick={() => handleFollowingClick(following._id)}
                   >
                     <ListItemAvatar>
-                      <Avatar>{following.username.charAt(0).toUpperCase()}</Avatar>
+                      <Avatar src={following.avatar}>
+                        {following.username.charAt(0).toUpperCase()}
+                      </Avatar>
                     </ListItemAvatar>
                     <ListItemText
                       primary={`${following.username}${
