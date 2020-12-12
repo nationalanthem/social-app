@@ -6,6 +6,12 @@ export interface UserSchema {
   username: string
   password: string
   avatar?: string
+  activity?: {
+    activityType: string
+    post?: mongoose.Types.ObjectId
+    body?: string
+    user: mongoose.Types.ObjectId
+  }[]
   followers: mongoose.Types.ObjectId[]
   followings: mongoose.Types.ObjectId[]
   validPassword(password: string): Promise<boolean>
@@ -23,9 +29,25 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  avatar: {
-    type: String,
-  },
+  avatar: String,
+  activity: [
+    {
+      activityType: String,
+      target: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Post',
+      },
+      body: String,
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+      timestamp: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
   followers: [
     {
       type: mongoose.Schema.Types.ObjectId,

@@ -72,6 +72,17 @@ export interface IUserPopulated {
   _id: string
   username: string
   avatar?: string
+  activity: {
+    _id: string
+    timestamp: Date
+    activityType: string
+    target?: {
+      _id: string
+      image: string
+    }
+    body?: string
+    user: IUser
+  }[]
   followers: IUser[]
   followings: IUser[]
 }

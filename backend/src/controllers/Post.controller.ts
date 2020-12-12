@@ -70,7 +70,19 @@ class PostController {
       .populate('comments.author', '_id username')
       .exec((error, result) => {
         if (error) return res.status(400).json({ error })
-
+        if (!result) return res.sendStatus(404)
+        if (!result.author.equals(user._id)) {
+          User.updateOne(
+            { _id: result.author },
+            {
+              $push: {
+                activity: { activityType: 'comment', target: result._id, body, user: user._id },
+              },
+            }
+          ).exec((error, _) => {
+            if (error) return res.status(400).json({ error })
+          })
+        }
         res.json({ data: result })
       })
   }
@@ -92,6 +104,23 @@ class PostController {
         ) {
           result.updateOne({ $pull: { comments: { _id: commentID } } }, (error) => {
             if (error) return res.status(400).json({ error })
+            if (!result.author.equals(user._id)) {
+              User.updateOne(
+                { _id: result.author },
+                {
+                  $pull: {
+                    activity: {
+                      activityType: 'comment',
+                      target: result._id,
+                      body: result.comments[commentIndex].body,
+                      user: user._id,
+                    },
+                  },
+                }
+              ).exec((error, _) => {
+                if (error) return res.status(400).json({ error })
+              })
+            }
             res.send()
           })
         } else res.sendStatus(403)

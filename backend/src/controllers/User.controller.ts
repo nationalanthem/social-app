@@ -9,6 +9,8 @@ class UserController {
     const user = req.user as UserSchema
     User.findById(user._id)
       .populate('followers followings', '_id username avatar')
+      .populate('activity.target', '_id image')
+      .populate('activity.user', '_id username avatar')
       .exec((error, data) => {
         if (error) return res.status(400).json({ error })
         res.json({ data })
@@ -47,10 +49,15 @@ class UserController {
 
       userToFollow.updateOne({ $push: { followers: user._id } }).exec((error, _) => {
         if (error) return res.status(400).json({ error })
-        User.findByIdAndUpdate(user._id, { $push: { followings: userID } }, (error, _) => {
-          if (error) return res.status(400).json({ error })
-          res.send()
-        })
+        userToFollow
+          .updateOne({ $push: { activity: { activityType: 'follow', user: user._id } } })
+          .exec((error, _) => {
+            if (error) return res.status(400).json({ error })
+            User.findByIdAndUpdate(user._id, { $push: { followings: userID } }, (error, _) => {
+              if (error) return res.status(400).json({ error })
+              res.send()
+            })
+          })
       })
     })
   }
@@ -66,10 +73,15 @@ class UserController {
 
       userToUnfollow.updateOne({ $pull: { followers: user._id } }).exec((error, _) => {
         if (error) return res.status(400).json({ error })
-        User.findByIdAndUpdate(user._id, { $pull: { followings: userID } }, (error, _) => {
-          if (error) return res.status(400).json({ error })
-          res.send()
-        })
+        userToUnfollow
+          .updateOne({ $pull: { activity: { activityType: 'follow', user: user._id } } })
+          .exec((error, _) => {
+            if (error) return res.status(400).json({ error })
+            User.findByIdAndUpdate(user._id, { $pull: { followings: userID } }, (error, _) => {
+              if (error) return res.status(400).json({ error })
+              res.send()
+            })
+          })
       })
     })
   }

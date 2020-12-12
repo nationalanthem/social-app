@@ -66,6 +66,11 @@ const Navbar = () => {
     history.push('/settings')
   }
 
+  const handleActivityClick = () => {
+    setAnchorEl(null)
+    history.push('/activity')
+  }
+
   return (
     <AppBar className={classes.appBar} position="static">
       <Toolbar className={classes.toolbar}>
@@ -130,6 +135,7 @@ const Navbar = () => {
               onClose={handleClose}
             >
               <MenuItem onClick={handleProfileClick}>Мой профиль</MenuItem>
+              <MenuItem onClick={handleActivityClick}>Активность</MenuItem>
               <MenuItem onClick={handleSettingsClick}>Настройки</MenuItem>
               <MenuItem onClick={handleExitAccount}>Выйти из аккаунта</MenuItem>
             </Menu>

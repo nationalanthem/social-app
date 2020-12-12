@@ -14,6 +14,7 @@ import UserProfile from './pages/UserProfile'
 import FollowingsPage from './pages/FollowingsPage'
 import { Typography, Box } from '@material-ui/core'
 import SettingsPage from './pages/SettingsPage'
+import ActivityPage from './pages/ActivityPage'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -42,6 +43,11 @@ const App = () => {
           isAuthenticated={isAuthenticated}
           path="/settings"
           component={SettingsPage}
+        />
+        <ProtectedRoute
+          isAuthenticated={isAuthenticated}
+          path="/activity"
+          component={ActivityPage}
         />
         <ProtectedRoute
           isAuthenticated={isAuthenticated}
