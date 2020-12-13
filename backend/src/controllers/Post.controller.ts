@@ -104,23 +104,22 @@ class PostController {
         ) {
           result.updateOne({ $pull: { comments: { _id: commentID } } }, (error) => {
             if (error) return res.status(400).json({ error })
-            if (!result.author.equals(user._id)) {
-              User.updateOne(
-                { _id: result.author },
-                {
-                  $pull: {
-                    activity: {
-                      activityType: 'comment',
-                      target: result._id,
-                      body: result.comments[commentIndex].body,
-                      user: user._id,
-                    },
+
+            User.updateOne(
+              { _id: result.author },
+              {
+                $pull: {
+                  activity: {
+                    activityType: 'comment',
+                    target: result._id,
+                    body: result.comments[commentIndex].body,
+                    user: result.comments[commentIndex].author,
                   },
-                }
-              ).exec((error, _) => {
-                if (error) return res.status(400).json({ error })
-              })
-            }
+                },
+              }
+            ).exec((error, _) => {
+              if (error) return res.status(400).json({ error })
+            })
             res.send()
           })
         } else res.sendStatus(403)

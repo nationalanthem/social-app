@@ -4,9 +4,15 @@ import { Typography, IconButton, Button } from '@material-ui/core'
 import { Link } from 'react-router-dom'
 import { useStyles } from './Comment.styles'
 import { postAPI } from '../../api/post.api'
+import { useDispatch } from 'react-redux'
+import { fetchUser } from '../../redux/re-ducks/user/effects'
 
 interface CommentProps {
-  onRequestDeleteCommentClick?: (commentID: string) => void
+  onRequestDeleteCommentClick?: (
+    commentID: string,
+    isUser: boolean,
+    isPostByAuthor?: boolean
+  ) => void
   postID?: string
   authorUsername: string
   authorID: string
@@ -27,6 +33,7 @@ export const Comment: React.FC<CommentProps> = ({
   isPostByAuthor,
 }) => {
   const classes = useStyles()
+  const dispatch = useDispatch()
   const [isDeleting, setIsDeleting] = React.useState(false)
 
   const [comment, setComment] = React.useState(
@@ -42,9 +49,11 @@ export const Comment: React.FC<CommentProps> = ({
   const handleDelete = () => {
     setIsDeleting(true)
     if (onRequestDeleteCommentClick) {
-      onRequestDeleteCommentClick(commentID)
+      onRequestDeleteCommentClick(commentID, isUser, isPostByAuthor)
     } else {
-      postAPI.deleteComment(postID!, commentID)
+      postAPI.deleteComment(postID!, commentID).then((_) => {
+        if (isPostByAuthor && !isUser) dispatch(fetchUser())
+      })
     }
   }
 

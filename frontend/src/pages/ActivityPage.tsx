@@ -19,7 +19,7 @@ const ActivityPage = () => {
 
   if (!user) {
     return (
-      <Box display="flex" alignItems="center" justifyContent="center" height="90vh">
+      <Box display="flex" alignItems="center" justifyContent="center" height="80vh">
         <CircularProgress />
       </Box>
     )
@@ -27,23 +27,25 @@ const ActivityPage = () => {
 
   return (
     <Container maxWidth="md">
-      {!user.activity.length && <Typography align="center">Нет активности</Typography>}
-
-      <List className={classes.root}>
-        {user.activity.map((activity) => (
-          <ActivityItem
-            key={activity._id}
-            activityType={activity.activityType}
-            userID={activity.user._id}
-            userName={activity.user.username}
-            userAvatar={activity.user.avatar}
-            postBody={activity.body}
-            postID={activity.target?._id}
-            postImage={activity.target?.image}
-            timestamp={activity.timestamp}
-          />
-        ))}
-      </List>
+      {!user.activity.length ? (
+        <Typography align="center">Нет активности</Typography>
+      ) : (
+        <List className={classes.root}>
+          {user.activity.map((activity) => (
+            <ActivityItem
+              key={activity._id}
+              activityType={activity.activityType}
+              userID={activity.user._id}
+              userName={activity.user.username}
+              userAvatar={activity.user.avatar}
+              postBody={activity.body}
+              postID={activity.target?._id}
+              postImage={activity.target?.image}
+              timestamp={activity.timestamp}
+            />
+          ))}
+        </List>
+      )}
     </Container>
   )
 }

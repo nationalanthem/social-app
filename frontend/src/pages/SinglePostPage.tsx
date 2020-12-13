@@ -10,6 +10,7 @@ import { useHistory, useParams } from 'react-router-dom'
 import { IPost } from '../redux/re-ducks/types'
 import { fetchMyPosts } from '../redux/re-ducks/myPosts/effects'
 import Toast from '../components/Toast'
+import { fetchUser } from '../redux/re-ducks/user/effects'
 
 const SinglePostPage = () => {
   const dispatch = useDispatch()
@@ -39,9 +40,18 @@ const SinglePostPage = () => {
     })
   }
 
-  const handleRequestedDeleteCommentClick = (commentID: string) => {
+  const handleRequestedDeleteCommentClick = (
+    commentID: string,
+    isUser: boolean,
+    isPostByAuthor?: boolean
+  ) => {
     postAPI.deleteComment(postID, commentID).then((_) => {
-      postAPI.getPostById(postID).then((res) => setPostData(res.data.data))
+      postAPI
+        .getPostById(postID)
+        .then((res) => setPostData(res.data.data))
+        .then((_) => {
+          if (isPostByAuthor && !isUser) dispatch(fetchUser())
+        })
     })
   }
 

@@ -16,6 +16,9 @@ const userReducer = produce((draft: Draft<IUserState>, action: IUserActions) => 
       draft.loading = false
       draft.error = null
       draft.user = action.payload
+      draft.user.activity = action.payload.activity.sort(
+        (a, b) => +new Date(b.timestamp) - +new Date(a.timestamp)
+      )
       break
     case UserActionTypes.FETCH_USER_FAILURE:
       draft.loading = false
