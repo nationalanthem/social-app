@@ -27,6 +27,17 @@ class UserController {
     })
   }
 
+  getUsersByName(req: Request, res: Response): void {
+    const { username } = req.params
+
+    User.find({ username: { $regex: username, $options: 'i' } })
+      .populate('followers followings', '_id username avatar')
+      .exec((error, data) => {
+        if (error) return res.status(400).json({ error })
+        res.json({ data })
+      })
+  }
+
   getUserById(req: Request, res: Response): void {
     const { userID } = req.params
 

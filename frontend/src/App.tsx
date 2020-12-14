@@ -15,6 +15,7 @@ import FollowingsPage from './pages/FollowingsPage'
 import { Typography, Box } from '@material-ui/core'
 import SettingsPage from './pages/SettingsPage'
 import ActivityPage from './pages/ActivityPage'
+import UserSearch from './pages/UserSearch'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -33,6 +34,7 @@ const App = () => {
         <Route exact path="/">
           {isAuthenticated ? <Redirect to="/feed" /> : <Redirect to="/login" />}
         </Route>
+        <ProtectedRoute isAuthenticated={isAuthenticated} path="/users" component={UserSearch} />
         <ProtectedRoute
           isAuthenticated={isAuthenticated}
           path="/followings"

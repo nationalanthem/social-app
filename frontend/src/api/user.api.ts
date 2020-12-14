@@ -5,6 +5,10 @@ interface IMyProfileResponse {
   data: IUserPopulated
 }
 
+interface IGetUsersByNameResponse {
+  data: IUserPopulated[]
+}
+
 interface IGetUserByIdResponse {
   data: IUserPopulated
 }
@@ -62,6 +66,19 @@ class UserAPI {
   async myProfile(): Promise<AxiosResponse<IMyProfileResponse>> {
     try {
       const response = await axios.get('/me', {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      })
+      return response
+    } catch (err) {
+      throw err
+    }
+  }
+
+  async getUsersByName(username: string): Promise<AxiosResponse<IGetUsersByNameResponse>> {
+    try {
+      const response = await axios.get(`/search/users/${username}`, {
         headers: {
           Authorization: `Bearer ${this.token}`,
         },

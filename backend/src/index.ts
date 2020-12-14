@@ -32,6 +32,11 @@ app.post(
   userController.changeAvatar
 )
 app.get(
+  '/search/users/:username',
+  passport.authenticate('jwt', { session: false }),
+  userController.getUsersByName
+)
+app.get(
   '/users/:userID',
   passport.authenticate('jwt', { session: false }),
   userController.getUserById

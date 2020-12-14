@@ -5,6 +5,8 @@ import { Link, useLocation, useHistory } from 'react-router-dom'
 
 import HomeIcon from '@material-ui/icons/Home'
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined'
+import PageviewIcon from '@material-ui/icons/Pageview'
+import PageviewOutlinedIcon from '@material-ui/icons/PageviewOutlined'
 import AddBoxIcon from '@material-ui/icons/AddBox'
 import AddBoxOutlinedIcon from '@material-ui/icons/AddBoxOutlined'
 import StarBorderIcon from '@material-ui/icons/StarBorder'
@@ -90,6 +92,16 @@ const Navbar = () => {
 
         {isAuthenticated ? (
           <>
+            {location.pathname !== '/users' ? (
+              <Tooltip title="Поиск людей">
+                <IconButton component={Link} to="/users">
+                  <PageviewOutlinedIcon />
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <PageviewIcon />
+            )}
+
             {location.pathname !== '/create' ? (
               <Tooltip title="Создать пост">
                 <IconButton component={Link} to="/create">
