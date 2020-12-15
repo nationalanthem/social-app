@@ -1,4 +1,4 @@
-import { Container, Grid, TextField, Typography } from '@material-ui/core'
+import { Container, Grid, TextField, Typography, Box, CircularProgress } from '@material-ui/core'
 import debounce from 'debounce'
 import React from 'react'
 import { userAPI } from '../api/user.api'
@@ -32,12 +32,14 @@ const UserSearch = () => {
 
   const [inputValue, setInputValue] = React.useState('')
   const [users, setUsers] = React.useState<IUserPopulated[] | null>(null)
+  const [isLoading, setIsLoading] = React.useState(false)
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const db = React.useCallback(
     debounce(async (text: string) => {
       const usersRaw = await userAPI.getUsersByName(text)
       setUsers(usersRaw.data.data)
+      setIsLoading(false)
     }, 1000),
     []
   )
@@ -48,8 +50,10 @@ const UserSearch = () => {
       db.clear()
       setInputValue('')
       setUsers(null)
+      setIsLoading(false)
       return
     }
+    setIsLoading(true)
     setInputValue(value)
     db(value)
   }
@@ -68,41 +72,50 @@ const UserSearch = () => {
         fullWidth={true}
         placeholder="Начните вводить имя пользователя"
       />
-      <Grid container spacing={2}>
-        {users &&
-          users.map((user) => (
-            <Grid item key={user._id}>
-              <Card className={classes.card}>
-                <CardActionArea>
-                  <Link className={classes.link} to={`/u/${user._id}`}>
-                    <CardMedia
-                      className={classes.media}
-                      image={user.avatar ? user.avatar : undefined}
-                      title={user.username}
-                    />
-                    <CardContent>
-                      <Typography gutterBottom variant="h5" component="h2">
-                        {user.username}
-                      </Typography>
-                      <Typography variant="body1" color="textSecondary" component="p">
-                        Подписчиков:{' '}
-                        <Typography variant="body2" color="textPrimary" component="span">
-                          {user.followers.length}
+      {isLoading ? (
+        <Box display="flex" alignItems="center" justifyContent="center" height="10vh">
+          <CircularProgress />
+        </Box>
+      ) : users && users.length ? (
+        <Grid container spacing={2}>
+          {users &&
+            users.map((user) => (
+              <Grid item key={user._id}>
+                <Card className={classes.card}>
+                  <CardActionArea>
+                    <Link className={classes.link} to={`/u/${user._id}`}>
+                      <CardMedia
+                        className={classes.media}
+                        image={user.avatar ? user.avatar : undefined}
+                        title={user.username}
+                      />
+                      <CardContent>
+                        <Typography gutterBottom variant="h5" component="h2">
+                          {user.username}
                         </Typography>
-                      </Typography>
-                      <Typography variant="body1" color="textSecondary" component="p">
-                        Подписок:{' '}
-                        <Typography variant="body2" color="textPrimary" component="span">
-                          {user.followings.length}
+                        <Typography variant="body1" color="textSecondary" component="p">
+                          Подписчиков:{' '}
+                          <Typography variant="body2" color="textPrimary" component="span">
+                            {user.followers.length}
+                          </Typography>
                         </Typography>
-                      </Typography>
-                    </CardContent>
-                  </Link>
-                </CardActionArea>
-              </Card>
-            </Grid>
-          ))}
-      </Grid>
+                        <Typography variant="body1" color="textSecondary" component="p">
+                          Подписок:{' '}
+                          <Typography variant="body2" color="textPrimary" component="span">
+                            {user.followings.length}
+                          </Typography>
+                        </Typography>
+                      </CardContent>
+                    </Link>
+                  </CardActionArea>
+                </Card>
+              </Grid>
+            ))}
+        </Grid>
+      ) : (
+        users &&
+        !users.length && <Typography align="center">Нет пользователей с таким именем</Typography>
+      )}
     </Container>
   )
 }
