@@ -2,7 +2,7 @@
 
 > Instagram-like приложение для обмена фотографиями
 
-[Демонстрация](https://ancient-taiga-38223.herokuapp.com/)
+[Демонстрация](https://intense-gorge-25098.herokuapp.com/)
 
 ## Возможности
 
