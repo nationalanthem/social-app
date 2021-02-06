@@ -5,7 +5,7 @@ import Post, { PostSchema } from '../models/Post.model'
 import User, { UserSchema } from '../models/User.model'
 
 class PostController {
-  async createPost(req: Request, res: Response): Promise<void> {
+  async createPost(req: Request, res: Response) {
     try {
       const errors = validationResult(req)
       if (!errors.isEmpty()) {
@@ -27,22 +27,22 @@ class PostController {
 
       res.sendStatus(201)
     } catch (error) {
-      res.status(500).json({ error })
+      res.status(500).json({ error: error.message })
     }
   }
 
-  deletePost(req: Request, res: Response): void {
+  deletePost(req: Request, res: Response) {
     const { postID } = req.params
     const user = req.user as UserSchema
 
     Post.findById(postID)
       .populate('author', '_id username')
       .exec((error, result) => {
-        if (error) return res.status(400).json({ error })
+        if (error) return res.status(400).json({ error: error.message })
         if (!result) return res.sendStatus(404)
         if (result.author._id.equals(user._id)) {
           result.deleteOne((error) => {
-            if (error) return res.status(400).json({ error })
+            if (error) return res.status(400).json({ error: error.message })
             res.send()
           })
         } else {
@@ -51,7 +51,7 @@ class PostController {
       })
   }
 
-  addComment(req: Request, res: Response): void {
+  addComment(req: Request, res: Response) {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       res.status(400).json({ errors: errors.array() })
@@ -69,7 +69,7 @@ class PostController {
     Post.findByIdAndUpdate(postID, { $push: { comments: comment } }, { new: true })
       .populate('comments.author', '_id username')
       .exec((error, result) => {
-        if (error) return res.status(400).json({ error })
+        if (error) return res.status(400).json({ error: error.message })
         if (!result) return res.sendStatus(404)
         if (!result.author.equals(user._id)) {
           User.updateOne(
@@ -80,21 +80,21 @@ class PostController {
               },
             }
           ).exec((error, _) => {
-            if (error) return res.status(400).json({ error })
+            if (error) return res.status(400).json({ error: error.message })
           })
         }
         res.json({ data: result })
       })
   }
 
-  deleteComment(req: Request, res: Response): void {
+  deleteComment(req: Request, res: Response) {
     const { postID, commentID } = req.params
     const user = req.user as UserSchema
 
     Post.findById(postID)
       .populate('comments.author', '_id username')
       .exec((error, result) => {
-        if (error) return res.status(400).json({ error })
+        if (error) return res.status(400).json({ error: error.message })
         if (!result) return res.sendStatus(404)
         const commentIndex = result.comments.findIndex((comment) => comment._id?.equals(commentID))
         if (commentIndex === -1) return res.sendStatus(404)
@@ -103,7 +103,7 @@ class PostController {
           result.author._id.equals(user._id)
         ) {
           result.updateOne({ $pull: { comments: { _id: commentID } } }, (error) => {
-            if (error) return res.status(400).json({ error })
+            if (error) return res.status(400).json({ error: error.message })
 
             User.updateOne(
               { _id: result.author },
@@ -118,7 +118,7 @@ class PostController {
                 },
               }
             ).exec((error, _) => {
-              if (error) return res.status(400).json({ error })
+              if (error) return res.status(400).json({ error: error.message })
             })
             res.send()
           })
@@ -126,7 +126,7 @@ class PostController {
       })
   }
 
-  async getPosts(req: Request, res: Response): Promise<void> {
+  async getPosts(req: Request, res: Response) {
     const { page = 1 } = req.query
 
     try {
@@ -141,11 +141,11 @@ class PostController {
 
       res.json({ posts, totalPages: Math.ceil(count / 3), currentPage: +page })
     } catch (error) {
-      res.status(500).json({ error })
+      res.status(500).json({ error: error.message })
     }
   }
 
-  async getFollowingsPosts(req: Request, res: Response): Promise<void> {
+  async getFollowingsPosts(req: Request, res: Response) {
     const { page = 1 } = req.query
     const userFromReq = req.user as UserSchema
 
@@ -167,11 +167,11 @@ class PostController {
 
       res.json({ posts, totalPages: Math.ceil(count / 3), currentPage: +page })
     } catch (error) {
-      res.status(500).json({ error })
+      res.status(500).json({ error: error.message })
     }
   }
 
-  getPostById(req: Request, res: Response): void {
+  getPostById(req: Request, res: Response) {
     const { postID } = req.params
 
     Post.findById(postID)
@@ -183,26 +183,26 @@ class PostController {
       })
   }
 
-  getPostsFromUser(req: Request, res: Response): void {
+  getPostsFromUser(req: Request, res: Response) {
     const { userID } = req.params
 
     Post.find({ author: userID })
       .select('-comments -author')
       .sort('-createdAt')
       .exec((error, posts) => {
-        if (error) return res.status(400).json({ error })
+        if (error) return res.status(400).json({ error: error.message })
         res.json({ data: posts })
       })
   }
 
-  getMyPosts(req: Request, res: Response): void {
+  getMyPosts(req: Request, res: Response) {
     const user = req.user as UserSchema
 
     Post.find({ author: user._id })
       .populate('author', '_id username')
       .sort('-createdAt')
       .exec((error, data) => {
-        if (error) return res.status(400).json({ error })
+        if (error) return res.status(400).json({ error: error.message })
         res.json({
           status: 'ok',
           data,

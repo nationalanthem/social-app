@@ -5,38 +5,39 @@ import User, { UserSchemaWithDocument, UserSchema } from '../models/User.model'
 import { passport } from '../passport'
 
 class UserController {
-  ownProfile(req: Request, res: Response): void {
+  ownProfile(req: Request, res: Response) {
     const user = req.user as UserSchema
+
     User.findById(user._id)
       .populate('followers followings', '_id username avatar')
       .populate('activity.target', '_id image')
       .populate('activity.user', '_id username avatar')
       .exec((error, data) => {
-        if (error) return res.status(400).json({ error })
+        if (error) return res.status(400).json({ error: error.message })
         res.json({ data })
       })
   }
 
-  changeAvatar(req: Request, res: Response): void {
+  changeAvatar(req: Request, res: Response) {
     const { avatarUrl } = req.body
     const user = req.user as UserSchema
 
     User.updateOne({ _id: user._id }, { $set: { avatar: avatarUrl } }).exec((error, _) => {
-      if (error) return res.status(400).json({ error })
+      if (error) return res.status(400).json({ error: error.message })
       res.send()
     })
   }
 
-  getUsersByName(req: Request, res: Response): void {
+  getUsersByName(req: Request, res: Response) {
     const { username } = req.params
 
     User.find({ username: { $regex: username, $options: 'i' } }).exec((error, data) => {
-      if (error) return res.status(400).json({ error })
+      if (error) return res.status(400).json({ error: error.message })
       res.json({ data })
     })
   }
 
-  getUserById(req: Request, res: Response): void {
+  getUserById(req: Request, res: Response) {
     const { userID } = req.params
 
     User.findById(userID)
@@ -47,23 +48,23 @@ class UserController {
       })
   }
 
-  followUser(req: Request, res: Response): void {
+  followUser(req: Request, res: Response) {
     const { userID } = req.body
     const user = req.user as UserSchema
 
     User.findById(userID, (error, userToFollow) => {
-      if (error) return res.status(400).json({ error })
+      if (error) return res.status(400).json({ error: error.message })
       if (!userToFollow) return res.sendStatus(404)
       if (userToFollow.followers.includes(user._id)) return res.sendStatus(409)
 
       userToFollow.updateOne({ $push: { followers: user._id } }).exec((error, _) => {
-        if (error) return res.status(400).json({ error })
+        if (error) return res.status(400).json({ error: error.message })
         userToFollow
           .updateOne({ $push: { activity: { activityType: 'follow', user: user._id } } })
           .exec((error, _) => {
-            if (error) return res.status(400).json({ error })
+            if (error) return res.status(400).json({ error: error.message })
             User.findByIdAndUpdate(user._id, { $push: { followings: userID } }, (error, _) => {
-              if (error) return res.status(400).json({ error })
+              if (error) return res.status(400).json({ error: error.message })
               res.send()
             })
           })
@@ -71,23 +72,23 @@ class UserController {
     })
   }
 
-  unfollowUser(req: Request, res: Response): void {
+  unfollowUser(req: Request, res: Response) {
     const { userID } = req.body
     const user = req.user as UserSchema
 
     User.findById(userID, (error, userToUnfollow) => {
-      if (error) return res.status(400).json({ error })
+      if (error) return res.status(400).json({ error: error.message })
       if (!userToUnfollow) return res.sendStatus(404)
       if (!userToUnfollow.followers.includes(user._id)) return res.sendStatus(409)
 
       userToUnfollow.updateOne({ $pull: { followers: user._id } }).exec((error, _) => {
-        if (error) return res.status(400).json({ error })
+        if (error) return res.status(400).json({ error: error.message })
         userToUnfollow
           .updateOne({ $pull: { activity: { activityType: 'follow', user: user._id } } })
           .exec((error, _) => {
-            if (error) return res.status(400).json({ error })
+            if (error) return res.status(400).json({ error: error.message })
             User.findByIdAndUpdate(user._id, { $pull: { followings: userID } }, (error, _) => {
-              if (error) return res.status(400).json({ error })
+              if (error) return res.status(400).json({ error: error.message })
               res.send()
             })
           })
@@ -95,7 +96,7 @@ class UserController {
     })
   }
 
-  async register(req: Request, res: Response): Promise<void> {
+  async register(req: Request, res: Response) {
     try {
       const errors = validationResult(req)
       if (!errors.isEmpty()) {
@@ -125,12 +126,12 @@ class UserController {
       })
     } catch (error) {
       res.status(500).json({
-        error,
+        error: error.message,
       })
     }
   }
 
-  login(req: Request, res: Response, next: NextFunction): void {
+  login(req: Request, res: Response, next: NextFunction) {
     passport.authenticate('local', (err, user) => {
       if (err) return next(err)
       if (!user)

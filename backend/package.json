@@ -10,6 +10,7 @@
     "lintBackend": "tsc --noEmit -p tsconfig.json",
     "lint": "npm run lintFrontend && npm run lintBackend",
     "dev": "concurrently \"npm run devBackend\" \"npm run devFrontend\"",
+    "devBuild": "tsc -p tsconfig.json",
     "start": "node dist/index.js"
   },
   "author": "nationalanthem",
@@ -35,7 +36,7 @@
     "@types/passport-local": "^1.0.33",
     "concurrently": "^5.3.0",
     "nodemon": "^2.0.6",
-    "ts-node": "^9.0.0",
+    "ts-node": "^9.1.1",
     "typescript": "^4.0.5"
   }
 }

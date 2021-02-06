@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios'
+import axios from 'axios'
 import { IPost } from '../redux/re-ducks/types'
 
 interface IUploadImageResponse {
@@ -40,166 +40,113 @@ interface IGetPostsFromUser {
 }
 
 class PostAPI {
-  token: string
+  token: string | null
 
   constructor() {
-    this.token = localStorage.getItem('token')!
+    this.token = localStorage.getItem('token')
     this.fetchPosts = this.fetchPosts.bind(this)
     this.fetchFollowings = this.fetchFollowings.bind(this)
   }
 
-  async uploadImage(formData: FormData): Promise<AxiosResponse<IUploadImageResponse>> {
-    try {
-      const response = await axios.post(
-        `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload`,
-        formData
-      )
-
-      return response
-    } catch (err) {
-      throw err
-    }
+  uploadImage(formData: FormData) {
+    return axios.post<IUploadImageResponse>(
+      `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload`,
+      formData
+    )
   }
 
-  async createPost(description: string, image: string): Promise<AxiosResponse> {
-    try {
-      const response = await axios.post(
-        '/createPost',
-        {
-          description,
-          image,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${this.token}`,
-          },
-        }
-      )
-
-      return response
-    } catch (err) {
-      throw err
-    }
-  }
-
-  async deletePost(postID: string): Promise<AxiosResponse> {
-    try {
-      const response = await axios.delete(`/deletePost/${postID}`, {
+  createPost(description: string, image: string) {
+    return axios.post(
+      '/createPost',
+      {
+        description,
+        image,
+      },
+      {
         headers: {
           Authorization: `Bearer ${this.token}`,
         },
-      })
-
-      return response
-    } catch (err) {
-      throw err
-    }
+      }
+    )
   }
 
-  async addComment(postID: string, body: string): Promise<AxiosResponse<IAddCommentResponse>> {
-    try {
-      const response = await axios.put(
-        '/addComment',
-        {
-          postID,
-          body,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${this.token}`,
-          },
-        }
-      )
-
-      return response
-    } catch (err) {
-      throw err
-    }
+  deletePost(postID: string) {
+    return axios.delete(`/deletePost/${postID}`, {
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+      },
+    })
   }
 
-  async deleteComment(postID: string, commentID: string): Promise<AxiosResponse> {
-    try {
-      const response = await axios.delete(`/deleteComment/${postID}/${commentID}`, {
+  addComment(postID: string, body: string) {
+    return axios.put<IAddCommentResponse>(
+      '/addComment',
+      {
+        postID,
+        body,
+      },
+      {
         headers: {
           Authorization: `Bearer ${this.token}`,
         },
-      })
-
-      return response
-    } catch (err) {
-      throw err
-    }
+      }
+    )
   }
 
-  async fetchPosts(page?: number): Promise<AxiosResponse<IGetPostsResponse>> {
-    try {
-      const response = await axios.get('/posts', {
-        headers: {
-          Authorization: `Bearer ${this.token}`,
-        },
-        params: {
-          page,
-        },
-      })
-      return response
-    } catch (err) {
-      throw err
-    }
+  deleteComment(postID: string, commentID: string) {
+    return axios.delete(`/deleteComment/${postID}/${commentID}`, {
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+      },
+    })
   }
 
-  async fetchFollowings(page?: number): Promise<AxiosResponse<IGetPostsResponse>> {
-    try {
-      const response = await axios.get('/posts/followings', {
-        headers: {
-          Authorization: `Bearer ${this.token}`,
-        },
-        params: {
-          page,
-        },
-      })
-      return response
-    } catch (err) {
-      throw err
-    }
+  fetchPosts(page?: number) {
+    return axios.get<IGetPostsResponse>('/posts', {
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+      },
+
+      params: {
+        page,
+      },
+    })
   }
 
-  async getPostById(postID: string): Promise<AxiosResponse<IGetSinglePostResponse>> {
-    try {
-      const response = await axios.get(`/posts/${postID}`, {
-        headers: {
-          Authorization: `Bearer ${this.token}`,
-        },
-      })
-      return response
-    } catch (err) {
-      throw err
-    }
+  fetchFollowings(page?: number) {
+    return axios.get<IGetPostsResponse>('/posts/followings', {
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+      },
+
+      params: {
+        page,
+      },
+    })
   }
 
-  async getPostsFromUser(userID: string): Promise<AxiosResponse<IGetPostsFromUser>> {
-    try {
-      const response = await axios.get(`/posts/from/${userID}`, {
-        headers: {
-          Authorization: `Bearer ${this.token}`,
-        },
-      })
-      return response
-    } catch (err) {
-      throw err
-    }
+  getPostById(postID: string) {
+    return axios.get<IGetSinglePostResponse>(`/posts/${postID}`, {
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+      },
+    })
   }
 
-  async getMyPosts(): Promise<AxiosResponse<IGetMyPostsResponse>> {
-    try {
-      const response = await axios.get('/posts/my', {
-        headers: {
-          Authorization: `Bearer ${this.token}`,
-        },
-      })
-      return response
-    } catch (err) {
-      throw err
-    }
+  getPostsFromUser(userID: string) {
+    return axios.get<IGetPostsFromUser>(`/posts/from/${userID}`, {
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+      },
+    })
+  }
+
+  getMyPosts() {
+    return axios.get<IGetMyPostsResponse>('/posts/my', {
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+      },
+    })
   }
 }
 
