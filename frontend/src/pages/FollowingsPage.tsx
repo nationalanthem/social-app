@@ -1,4 +1,4 @@
-import { Box, Container, CircularProgress, Typography } from '@material-ui/core'
+import { Box, Container, CircularProgress, Typography, makeStyles } from '@material-ui/core'
 import React from 'react'
 import { Post } from '../components/FeedPost/FeedPost'
 import { Comment } from '../components/Comment/Comment'
@@ -8,7 +8,18 @@ import { usePosts } from '../hooks/usePosts'
 import { useObserver } from '../hooks/useObserver'
 import { postAPI } from '../api/post.api'
 
+const useStyles = makeStyles((theme) => ({
+  loading: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 'calc(100vh - 104px)',
+  },
+}))
+
 const FollowingsPage = () => {
+  const classes = useStyles()
+
   const user = useSelector(selectUser)
 
   const [page, setPage] = React.useState(1)
@@ -22,7 +33,7 @@ const FollowingsPage = () => {
       {!posts.length && !loading && <Typography align="center">Ничего нет</Typography>}
 
       {!user || (!posts.length && loading) ? (
-        <Box display="flex" alignItems="center" justifyContent="center" height="90vh">
+        <Box className={classes.loading}>
           <CircularProgress />
         </Box>
       ) : (

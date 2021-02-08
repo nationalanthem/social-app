@@ -117,6 +117,12 @@ export const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(5),
     marginBottom: theme.spacing(5),
   },
+  loading: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 'calc(100vh - 104px)',
+  },
 }))
 
 const MyProfile = () => {
@@ -150,7 +156,7 @@ const MyProfile = () => {
 
   if ((!myPosts.length && !myPostsLoaded) || !user)
     return (
-      <Box display="flex" alignItems="center" justifyContent="center" height="90vh">
+      <Box className={classes.loading}>
         <CircularProgress />
       </Box>
     )

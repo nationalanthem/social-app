@@ -136,7 +136,7 @@ const UserProfile = () => {
 
   if (!userData || !postsData || !user)
     return (
-      <Box display="flex" alignItems="center" justifyContent="center" height="90vh">
+      <Box className={classes.loading}>
         <CircularProgress />
       </Box>
     )

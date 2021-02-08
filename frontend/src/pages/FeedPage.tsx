@@ -1,4 +1,4 @@
-import { Box, Container, CircularProgress, Typography } from '@material-ui/core'
+import { Box, Container, CircularProgress, Typography, makeStyles } from '@material-ui/core'
 import React from 'react'
 import { Post } from '../components/FeedPost/FeedPost'
 import { Comment } from '../components/Comment/Comment'
@@ -10,7 +10,17 @@ import { fetchMyPosts } from '../redux/re-ducks/myPosts/effects'
 import { useHistory } from 'react-router-dom'
 import { useObserver } from '../hooks/useObserver'
 
+const useStyles = makeStyles((theme) => ({
+  loading: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 'calc(100vh - 104px)',
+  },
+}))
+
 const FeedPage = () => {
+  const classes = useStyles()
   const dispatch = useDispatch()
   const history = useHistory()
   const user = useSelector(selectUser)
@@ -33,7 +43,7 @@ const FeedPage = () => {
       {!posts.length && !loading && <Typography align="center">Ничего нет</Typography>}
 
       {!user || (!posts.length && loading) ? (
-        <Box display="flex" alignItems="center" justifyContent="center" height="90vh">
+        <Box className={classes.loading}>
           <CircularProgress />
         </Box>
       ) : (

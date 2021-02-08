@@ -1,4 +1,4 @@
-import { Box, Container } from '@material-ui/core'
+import { Box, Container, makeStyles } from '@material-ui/core'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Post } from '../components/SinglePost/SinglePost'
@@ -12,7 +12,17 @@ import { fetchMyPosts } from '../redux/re-ducks/myPosts/effects'
 import Toast from '../components/Toast'
 import { fetchUser } from '../redux/re-ducks/user/effects'
 
+const useStyles = makeStyles((theme) => ({
+  loading: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 'calc(100vh - 104px)',
+  },
+}))
+
 const SinglePostPage = () => {
+  const classes = useStyles()
   const dispatch = useDispatch()
   const user = useSelector(selectUser)
   const { postID } = useParams<{ postID: string }>()
@@ -95,7 +105,7 @@ const SinglePostPage = () => {
           ))}
         </Post>
       ) : (
-        <Box display="flex" alignItems="center" justifyContent="center" height="90vh">
+        <Box className={classes.loading}>
           <CircularProgress />
         </Box>
       )}

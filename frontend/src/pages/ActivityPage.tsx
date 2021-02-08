@@ -11,6 +11,12 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
     margin: '0 auto',
   },
+  loading: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 'calc(100vh - 104px)',
+  },
 }))
 
 const ActivityPage = () => {
@@ -19,7 +25,7 @@ const ActivityPage = () => {
 
   if (!user) {
     return (
-      <Box display="flex" alignItems="center" justifyContent="center" height="80vh">
+      <Box className={classes.loading}>
         <CircularProgress />
       </Box>
     )

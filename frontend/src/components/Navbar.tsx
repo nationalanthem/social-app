@@ -14,12 +14,20 @@ import StarIcon from '@material-ui/icons/Star'
 import PersonIcon from '@material-ui/icons/Person'
 import PersonOutlineOutlinedIcon from '@material-ui/icons/PersonOutlineOutlined'
 
+import { NavbarButton } from './NavbarButton'
+
 const useStyles = makeStyles((theme) => ({
   appBar: {
     marginBottom: theme.spacing(5),
   },
   toolbar: {
     justifyContent: 'space-between',
+  },
+  iconBox: {
+    boxSizing: 'border-box',
+    padding: '12px',
+    width: 48,
+    height: 48,
   },
 }))
 
@@ -58,73 +66,55 @@ const Navbar = () => {
     window.location.href = '/login'
   }
 
-  const handleProfileClick = () => {
+  const handleNavbarButtonClick = (pushTo: string) => () => {
     setAnchorEl(null)
-    history.push('/profile')
-  }
-
-  const handleSettingsClick = () => {
-    setAnchorEl(null)
-    history.push('/settings')
-  }
-
-  const handleActivityClick = () => {
-    setAnchorEl(null)
-    history.push('/activity')
+    history.push(pushTo)
   }
 
   return (
     <AppBar className={classes.appBar} position="static">
       <Toolbar className={classes.toolbar}>
         {isAuthenticated ? (
-          location.pathname !== '/feed' ? (
-            <Tooltip title="Домой">
-              <IconButton component={Link} to="/feed">
-                <HomeOutlinedIcon />
-              </IconButton>
-            </Tooltip>
-          ) : (
-            <HomeIcon />
-          )
+          <NavbarButton
+            path="/feed"
+            iconButton={<HomeOutlinedIcon />}
+            icon={<HomeIcon />}
+            title="Домой"
+          />
         ) : (
-          <HomeOutlinedIcon />
+          <div className={classes.iconBox}>
+            <HomeOutlinedIcon />
+          </div>
         )}
 
         {isAuthenticated ? (
           <>
-            {location.pathname !== '/users' ? (
-              <Tooltip title="Поиск людей">
-                <IconButton component={Link} to="/users">
-                  <PageviewOutlinedIcon />
-                </IconButton>
-              </Tooltip>
-            ) : (
-              <PageviewIcon />
-            )}
+            <NavbarButton
+              path="/users"
+              iconButton={<PageviewOutlinedIcon />}
+              icon={<PageviewIcon />}
+              title="Поиск людей"
+            />
 
-            {location.pathname !== '/create' ? (
-              <Tooltip title="Создать пост">
-                <IconButton component={Link} to="/create">
-                  <AddBoxOutlinedIcon />
-                </IconButton>
-              </Tooltip>
-            ) : (
-              <AddBoxIcon />
-            )}
+            <NavbarButton
+              path="/create"
+              iconButton={<AddBoxOutlinedIcon />}
+              icon={<AddBoxIcon />}
+              title="Создать пост"
+            />
 
-            {location.pathname !== '/followings' ? (
-              <Tooltip title="Подписки">
-                <IconButton component={Link} to="/followings">
-                  <StarBorderIcon />
-                </IconButton>
-              </Tooltip>
-            ) : (
-              <StarIcon />
-            )}
+            <NavbarButton
+              path="/followings"
+              iconButton={<StarBorderIcon />}
+              icon={<StarIcon />}
+              title="Подписки"
+            />
 
             <Tooltip title="Аккаунт">
               <IconButton onClick={handleMenu}>
-                {location.pathname !== '/profile' && location.pathname !== '/settings' ? (
+                {location.pathname !== '/profile' &&
+                location.pathname !== '/settings' &&
+                location.pathname !== '/activity' ? (
                   <PersonOutlineOutlinedIcon />
                 ) : (
                   <PersonIcon />
@@ -146,9 +136,9 @@ const Navbar = () => {
               open={open}
               onClose={handleClose}
             >
-              <MenuItem onClick={handleProfileClick}>Мой профиль</MenuItem>
-              <MenuItem onClick={handleActivityClick}>Активность</MenuItem>
-              <MenuItem onClick={handleSettingsClick}>Настройки</MenuItem>
+              <MenuItem onClick={handleNavbarButtonClick('/profile')}>Мой профиль</MenuItem>
+              <MenuItem onClick={handleNavbarButtonClick('/activity')}>Активность</MenuItem>
+              <MenuItem onClick={handleNavbarButtonClick('/settings')}>Настройки</MenuItem>
               <MenuItem onClick={handleExitAccount}>Выйти из аккаунта</MenuItem>
             </Menu>
           </>
